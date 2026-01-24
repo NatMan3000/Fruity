@@ -18,16 +18,16 @@ export default defineConfig({
         theme_color: '#10b981',
         background_color: '#ffffff',
         display: 'standalone',
-        start_url: '/',
+        start_url: '/Fruity/',
         icons: [
           {
-            src: '/icons/icon-192.svg',
+            src: '/Fruity/icons/icon-192.svg',
             sizes: '192x192',
             type: 'image/svg+xml',
             purpose: 'any maskable'
           },
           {
-            src: '/icons/icon-512.svg',
+            src: '/Fruity/icons/icon-512.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any maskable'
