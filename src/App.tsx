@@ -23,21 +23,21 @@ function App() {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-400 to-green-500">
+    <div className="min-h-screen bg-gradient-to-b from-yellow-400 to-green-400">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-10">
+      <header className="bg-green-400 backdrop-blur-sm  sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-3xl">🍎</span>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Fruity</h1>
-                <p className="text-xs text-gray-500">Australian Fruit Seasons</p>
+                <h1 className="text-xl font-bold text-black-900">Fruity</h1>
+                <p className="text-xs text-black-500">Australian Fruit Seasons</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-sm font-medium text-emerald-600">{currentMonth}</div>
-              <div className="text-xs text-gray-500">{peakSeasonCount} at peak</div>
+              <div className="text-sm font-medium text-black-600">{currentMonth}</div>
+              <div className="text-xs text-gray-700">{peakSeasonCount} at peak</div>
             </div>
           </div>
         </div>
