@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+/* Custom theme variables */
+@theme {
+  --color-primary: #10b981;
+  --color-primary-dark: #059669;
+  --color-secondary: #f59e0b;
+  --color-accent: #ef4444;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Base styles */
+body {
+  @apply bg-gray-50 text-gray-900 min-h-screen;
+  font-family: var(--font-sans);
+}
+
+/* PWA install prompt styling */
+#root {
+  @apply min-h-screen;
+}
