@@ -27,23 +27,33 @@ export function FruitCard({ fruit, currentMonth, onClick }: FruitCardProps) {
         }
       )}
     >
-      {/* Top row: fruit info left, months right */}
-      <div className="flex items-start justify-between gap-2">
-        {/* Fruit name and status */}
-        <div className="flex items-center gap-3 min-w-0">
-          <span className="text-4xl flex-shrink-0">{fruit.emoji}</span>
-          <div className="min-w-0">
-            <h3 className="font-semibold text-gray-900 truncate">{fruit.name}</h3>
-            {isPeak && (
-              <span className="text-xs font-medium text-emerald-600">Peak season!</span>
-            )}
-            {inSeason && !isPeak && (
-              <span className="text-xs font-medium text-amber-600">Available now</span>
-            )}
-            {!inSeason && (
-              <span className="text-xs font-medium text-gray-400">Out of season</span>
-            )}
+      {/* Main row: fruit info left, months right */}
+      <div className="flex items-start justify-between gap-3">
+        {/* Left column: Fruit info + pairings */}
+        <div className="flex-1 min-w-0">
+          {/* Fruit name and status */}
+          <div className="flex items-center gap-3">
+            <span className="text-4xl flex-shrink-0">{fruit.emoji}</span>
+            <div className="min-w-0">
+              <h3 className="font-semibold text-gray-900 truncate">{fruit.name}</h3>
+              {isPeak && (
+                <span className="text-xs font-medium text-emerald-600">Peak season!</span>
+              )}
+              {inSeason && !isPeak && (
+                <span className="text-xs font-medium text-amber-600">Available now</span>
+              )}
+              {!inSeason && (
+                <span className="text-xs font-medium text-gray-400">Out of season</span>
+              )}
+            </div>
           </div>
+
+          {/* Pairings - below fruit info */}
+          {fruit.pairings && fruit.pairings.length > 0 && (
+            <p className="mt-2 text-xs text-gray-500">
+              Pairs with: {fruit.pairings.join(', ')}
+            </p>
+          )}
         </div>
 
         {/* Month badges - 3x4 grid on right */}
@@ -64,14 +74,6 @@ export function FruitCard({ fruit, currentMonth, onClick }: FruitCardProps) {
           })}
         </div>
       </div>
-
-      {/* Quick info preview - bottom */}
-      {fruit.pairings && fruit.pairings.length > 0 && (
-        <p className="mt-3 text-xs text-gray-500 truncate">
-          Pairs with: {fruit.pairings.slice(0, 3).join(', ')}
-          {fruit.pairings.length > 3 && '...'}
-        </p>
-      )}
     </div>
   )
 }

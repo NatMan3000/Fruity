@@ -70,17 +70,20 @@ src/
 - **Search**: Filter by fruit name
 - **Season filter**: Filter by Summer/Autumn/Winter/Spring
 - **In-season toggle**: Show only currently available fruits
+- **Fruit Salad Maker**: Interactive tool to build fruit salads
+- **Season Calendar**: Year-at-a-glance view of all fruit seasons
+- **Fruit Quiz**: Guess the fruit game
+- **Fruit Detail Pages**: Origin, history, nutrition, recipes, pairings with images
 - **Offline support**: PWA works without network after install
 - **Mobile-first**: Responsive grid, installable on home screen
 
 ---
 
-## Hosting (TODO)
+## Hosting
 
-Not yet deployed. Options:
-- Cloudflare Pages (recommended)
-- HomeLab via cloudflared tunnel
-- Vercel/Netlify
+Deployed to GitHub Pages via GitHub Actions workflow.
+
+**URL:** https://natman3000.github.io/Fruity/
 
 ---
 
@@ -89,7 +92,9 @@ Not yet deployed. Options:
 | Date | Event |
 |------|-------|
 | 2026-01-24 | Project created with 40 Australian fruits |
+| 2026-01-26 | Added fruit images, salad maker, quiz, calendar, detail pages |
+| 2026-01-26 | UI refinements - layout, removed borders, tab order |
 
 ---
 
-*Last updated: 2026-01-24*
+*Last updated: 2026-01-26*

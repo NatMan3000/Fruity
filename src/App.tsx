@@ -10,10 +10,11 @@ import { WhatsNew } from './components/WhatsNew'
 import { SeasonCalendar } from './components/SeasonCalendar'
 import { RecipeSuggestions } from './components/RecipeSuggestions'
 import { FruitQuiz } from './components/FruitQuiz'
+import { FruitSaladPage } from './components/salad/FruitSaladPage'
 import { FRUITS } from './assets/fruits'
 import './index.css'
 
-type ViewMode = 'browse' | 'calendar' | 'quiz'
+type ViewMode = 'browse' | 'calendar' | 'quiz' | 'salad'
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -47,7 +48,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-yellow-400 to-green-400">
       {/* Header */}
-      <header className="bg-green-400 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-10">
+      <header className="bg-green-400 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -59,7 +60,7 @@ function App() {
             </div>
             <div className="text-right">
               <div className="text-sm font-medium text-gray-600">{currentMonth}</div>
-              <div className="text-xs text-gray-700">{peakSeasonCount} at peak</div>
+              <div className="text-xs text-gray-700">{peakSeasonCount} fruits currently in peak season</div>
             </div>
           </div>
         </div>
@@ -73,6 +74,7 @@ function App() {
               {[
                 { id: 'browse' as ViewMode, label: '🍎 Fruits', title: 'Browse Fruits' },
                 { id: 'calendar' as ViewMode, label: '📅 Calendar', title: 'Season Calendar' },
+                { id: 'salad' as ViewMode, label: '🥗 Salad', title: 'Fruit Salad Maker' },
                 { id: 'quiz' as ViewMode, label: '🎯 Quiz', title: 'Guess the Fruit' }
               ].map((tab) => (
                 <button
@@ -200,6 +202,11 @@ function App() {
         {/* Quiz View */}
         {!selectedFruit && viewMode === 'quiz' && (
           <FruitQuiz fruits={FRUITS} />
+        )}
+
+        {/* Salad View */}
+        {!selectedFruit && viewMode === 'salad' && (
+          <FruitSaladPage currentMonth={currentMonth} />
         )}
 
         {/* Footer */}

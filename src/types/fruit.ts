@@ -26,8 +26,11 @@ export interface Fruit {
   id: string
   name: string
   emoji: string
+  image?: string                // Wikimedia Commons image URL
   seasonality: FruitSeasonality
   notes?: string
+  origin?: string               // Where the fruit originates from
+  history?: string              // Interesting historical facts
   nutrition?: NutritionalInfo
   pairings?: string[]           // Flavor pairings: ['chocolate', 'mint', 'cream']
   recipes?: RecipeSuggestion[]  // Quick recipe ideas
