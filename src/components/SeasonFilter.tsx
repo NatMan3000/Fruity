@@ -20,7 +20,7 @@ export function SeasonFilter({ selected, onChange }: SeasonFilterProps) {
   const seasons = Object.keys(SEASONS) as Season[]
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex justify-between gap-2">
       <button
         onClick={() => onChange(null)}
         className={clsx(
@@ -36,19 +36,19 @@ export function SeasonFilter({ selected, onChange }: SeasonFilterProps) {
         <button
           key={season}
           onClick={() => onChange(season === selected ? null : season)}
+          title={season}
           className={clsx(
-            'px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5',
+            'px-3 py-2 rounded-lg text-lg transition-colors flex items-center gap-1',
             selected === season
-              ? 'bg-emerald-600 text-white'
+              ? 'bg-emerald-600'
               : season === currentSeason
-              ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 ring-1 ring-emerald-300'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? 'bg-emerald-100 hover:bg-emerald-200 ring-1 ring-emerald-300'
+              : 'bg-gray-100 hover:bg-gray-200'
           )}
         >
           <span>{seasonEmoji[season]}</span>
-          <span>{season}</span>
           {season === currentSeason && selected !== season && (
-            <span className="text-xs opacity-75">(now)</span>
+            <span className="text-xs text-emerald-700 font-medium">now</span>
           )}
         </button>
       ))}

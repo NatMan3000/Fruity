@@ -4,9 +4,10 @@ import { FruitCard } from './FruitCard'
 interface FruitListProps {
   fruits: Fruit[]
   currentMonth: Month
+  onFruitClick?: (fruitId: string) => void
 }
 
-export function FruitList({ fruits, currentMonth }: FruitListProps) {
+export function FruitList({ fruits, currentMonth, onFruitClick }: FruitListProps) {
   if (fruits.length === 0) {
     return (
       <div className="text-center py-12 text-gray-500">
@@ -23,6 +24,7 @@ export function FruitList({ fruits, currentMonth }: FruitListProps) {
           key={fruit.id}
           fruit={fruit}
           currentMonth={currentMonth}
+          onClick={() => onFruitClick?.(fruit.id)}
         />
       ))}
     </div>

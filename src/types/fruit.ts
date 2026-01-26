@@ -9,12 +9,28 @@ export interface FruitSeasonality {
   available: Month[] // Available but not peak
 }
 
+export interface NutritionalInfo {
+  calories: number        // per 100g
+  vitaminC?: number      // mg per 100g
+  fiber?: number         // g per 100g
+  highlights: string[]   // e.g., ['High in Vitamin C', 'Good fiber source']
+}
+
+export interface RecipeSuggestion {
+  name: string
+  type: 'smoothie' | 'dessert' | 'salad' | 'preserve' | 'snack' | 'breakfast'
+  description: string
+}
+
 export interface Fruit {
   id: string
   name: string
   emoji: string
   seasonality: FruitSeasonality
   notes?: string
+  nutrition?: NutritionalInfo
+  pairings?: string[]           // Flavor pairings: ['chocolate', 'mint', 'cream']
+  recipes?: RecipeSuggestion[]  // Quick recipe ideas
 }
 
 export const MONTHS: Month[] = [
