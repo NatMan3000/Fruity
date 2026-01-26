@@ -25,7 +25,7 @@ export function WhatsNew({ fruits, currentMonth, onFruitClick }: WhatsNewProps) 
   return (
     <div className="mb-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-3">
-        🌟 New This Month
+        💥 Just in season this month
       </h2>
       <div className="flex gap-3 overflow-x-auto pb-2">
         {newFruits.map((fruit) => (

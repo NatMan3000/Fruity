@@ -60,7 +60,7 @@ function App() {
             </div>
             <div className="flex flex-col justify-center text-right">
 
-              <div className="text-xs text-gray-700">{peakSeasonCount} fruits in in peak season</div>
+              <div className="text-xs text-gray-700">{peakSeasonCount} fruits in peak season</div>
             </div>
           </div>
         </div>
