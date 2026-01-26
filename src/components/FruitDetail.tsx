@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react'
 import type { Fruit, Month } from '../types/fruit'
+import { MONTHS } from '../types/fruit'
 import { MonthBadge } from './MonthBadge'
 import { isPeakSeason, isInSeason } from '../utils/seasonality'
 
@@ -76,22 +77,20 @@ export function FruitDetail({ fruit, currentMonth, onBack }: FruitDetailProps) {
               <div className="pt-2">
                 <h3 className="text-sm font-semibold text-gray-700 mb-2">When it's available</h3>
                 <div className="flex flex-wrap gap-1">
-                  {fruit.seasonality.peak.map((month) => (
-                    <MonthBadge
-                      key={month}
-                      month={month}
-                      isPeak
-                      isCurrent={month === currentMonth}
-                    />
-                  ))}
-                  {fruit.seasonality.available.map((month) => (
-                    <MonthBadge
-                      key={month}
-                      month={month}
-                      isAvailable
-                      isCurrent={month === currentMonth}
-                    />
-                  ))}
+                  {MONTHS
+                    .filter((month) =>
+                      fruit.seasonality.peak.includes(month) ||
+                      fruit.seasonality.available.includes(month)
+                    )
+                    .map((month) => (
+                      <MonthBadge
+                        key={month}
+                        month={month}
+                        isPeak={fruit.seasonality.peak.includes(month)}
+                        isAvailable={fruit.seasonality.available.includes(month)}
+                        isCurrent={month === currentMonth}
+                      />
+                    ))}
                 </div>
               </div>
             </div>

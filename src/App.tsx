@@ -58,9 +58,9 @@ function App() {
                 <p className="text-xs text-gray-500">Australian Fruit Seasons</p>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-sm font-medium text-gray-600">{currentMonth}</div>
-              <div className="text-xs text-gray-700">{peakSeasonCount} fruits currently in peak season</div>
+            <div className="flex flex-col justify-center text-right">
+
+              <div className="text-xs text-gray-700">{peakSeasonCount} fruits in in peak season</div>
             </div>
           </div>
         </div>

@@ -29,7 +29,7 @@ export function SearchBar({ value, onChange, inSeasonCount, totalCount }: Search
         </button>
       )}
       <div className="absolute -bottom-6 left-0 text-xs text-gray-500">
-        {inSeasonCount} of {totalCount} fruits in season now
+        {inSeasonCount} of {totalCount} fruits currently available. 
       </div>
     </div>
   )
