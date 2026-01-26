@@ -7,26 +7,62 @@ interface SaladBowlProps {
   hasBeenMixed?: boolean
 }
 
-function getFruitPositions(count: number): Array<{ x: number; y: number; rotation: number; delay: number }> {
-  const positions: Array<{ x: number; y: number; rotation: number; delay: number }> = []
+// Shape types for cut fruit pieces
+type FruitShape = 'wedge' | 'chunk' | 'dice' | 'slice' | 'crescent'
+
+// Generate random positions for fruit pieces inside the bowl
+function getMixedFruitPieces(fruits: Fruit[], count: number = 20) {
+  const shapes: FruitShape[] = ['wedge', 'chunk', 'dice', 'slice', 'crescent']
+  const pieces: Array<{
+    color: string
+    x: number
+    y: number
+    size: number
+    rotation: number
+    shape: FruitShape
+  }> = []
+
+  const colors = fruits.length > 0
+    ? fruits.flatMap(f => {
+        // Map emoji to colors
+        const colorMap: Record<string, string[]> = {
+          '🍎': ['#dc2626', '#ef4444'],
+          '🍐': ['#84cc16', '#a3e635'],
+          '🍊': ['#f97316', '#fb923c'],
+          '🍋': ['#facc15', '#fde047'],
+          '🍇': ['#7c3aed', '#a78bfa'],
+          '🍓': ['#dc2626', '#f87171'],
+          '🍒': ['#dc2626', '#b91c1c'],
+          '🫐': ['#3b82f6', '#60a5fa'],
+          '🍑': ['#fb923c', '#fdba74'],
+          '🍌': ['#facc15', '#fef08a'],
+          '🥭': ['#f97316', '#fbbf24'],
+          '🍍': ['#facc15', '#a3e635'],
+          '🥝': ['#22c55e', '#86efac'],
+          '🍈': ['#a3e635', '#d9f99d'],
+          '🍉': ['#dc2626', '#4ade80'],
+        }
+        return colorMap[f.emoji] || ['#f87171', '#fbbf24']
+      })
+    : ['#e5e7eb']
 
   for (let i = 0; i < count; i++) {
-    const seed = i * 137.5
-    const angle = seed % 360
-    const radius = 12 + (i % 4) * 6
-
-    const x = 50 + Math.cos(angle * Math.PI / 180) * radius
-    const y = 42 + Math.sin(angle * Math.PI / 180) * (radius * 0.3)
-
-    positions.push({
-      x: Math.max(25, Math.min(75, x)),
-      y: Math.max(32, Math.min(52, y)),
-      rotation: (seed * 2) % 30 - 15,
-      delay: i * 0.08
+    // Bowl interior ellipse is at cx=100, cy=40, rx=72, ry=20
+    // Rendering applies: cx = 8 + x*1.5, cy = 8 + y*0.4
+    // To fill bowl (cx: 38-158, cy: 24-56), we need x: 20-100, y: 40-120
+    const randomX = 20 + Math.random() * 80   // 20-100 → renders to cx 38-158
+    const randomY = 40 + Math.random() * 80   // 40-120 → renders to cy 24-56
+    pieces.push({
+      color: colors[i % colors.length],
+      x: randomX,
+      y: randomY,
+      size: 5 + Math.random() * 5,
+      rotation: Math.random() * 360,
+      shape: shapes[Math.floor(Math.random() * shapes.length)]
     })
   }
 
-  return positions
+  return pieces
 }
 
 // Simple sound generation using Web Audio API
@@ -54,8 +90,11 @@ function playMixingSound(audioContext: AudioContext) {
   }
 }
 
-export function SaladBowl({ fruits, isMixing }: SaladBowlProps) {
-  const fruitPositions = useMemo(() => getFruitPositions(fruits.length), [fruits.length])
+export function SaladBowl({ fruits, isMixing, hasBeenMixed }: SaladBowlProps) {
+  const mixedPieces = useMemo(
+    () => getMixedFruitPieces(fruits, Math.max(100, fruits.length * 20)),
+    [fruits]
+  )
   const audioContextRef = useRef<AudioContext | null>(null)
   const soundIntervalRef = useRef<number | null>(null)
 
@@ -87,107 +126,182 @@ export function SaladBowl({ fruits, isMixing }: SaladBowlProps) {
   return (
     <div className="relative w-full max-w-xs mx-auto">
       {/* Utensils */}
-      <div className="absolute -left-6 -top-2 z-10">
+      <div className="absolute -left-8 top-0 z-10">
         <div
-          className={`text-3xl origin-bottom transition-transform ${
+          className={`text-4xl origin-bottom transition-transform ${
             isMixing ? 'animate-stir-left' : ''
           }`}
-          style={{ transform: 'rotate(-35deg)' }}
+          style={{ transform: 'rotate(-30deg)' }}
         >
           🥄
         </div>
       </div>
-      <div className="absolute -right-6 -top-2 z-10">
+      <div className="absolute -right-8 top-0 z-10">
         <div
-          className={`text-3xl origin-bottom transition-transform ${
+          className={`text-4xl origin-bottom transition-transform ${
             isMixing ? 'animate-stir-right' : ''
           }`}
-          style={{ transform: 'rotate(35deg) scaleX(-1)' }}
+          style={{ transform: 'rotate(30deg) scaleX(-1)' }}
         >
           🍴
         </div>
       </div>
 
+
       {/* Bowl SVG */}
       <svg
-        viewBox="0 0 200 150"
+        viewBox="0 0 200 140"
         className={`w-full h-auto ${isMixing ? 'animate-bowl-shake' : ''}`}
       >
         <defs>
           <linearGradient id="bowlGradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="50%" stopColor="#16a34a" />
+            <stop offset="60%" stopColor="#16a34a" />
             <stop offset="100%" stopColor="#15803d" />
           </linearGradient>
+          <linearGradient id="bowlInnerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#7ed468" />
+            <stop offset="100%" stopColor="#388d38" />
+          </linearGradient>
+          <clipPath id="bowlInteriorClip">
+            <ellipse cx="100" cy="40" rx="72" ry="22" />
+          </clipPath>
         </defs>
 
         {/* Bowl shadow */}
-        <ellipse cx="100" cy="140" rx="75" ry="8" fill="#00000020" />
+        <ellipse cx="100" cy="130" rx="70" ry="8" fill="rgba(0,0,0,0.1)" />
 
-        {/* Bowl back rim */}
-        <ellipse cx="100" cy="45" rx="85" ry="25" fill="#22c55e" />
-        <ellipse cx="100" cy="45" rx="80" ry="22" fill="#16a34a" />
-
-        {/* Bowl interior */}
-        <ellipse cx="100" cy="55" rx="75" ry="20" fill="#fef9c3" />
-        <ellipse cx="100" cy="55" rx="70" ry="17" fill="#fefce8" />
-
-        {/* Bowl front */}
+        {/* Bowl body - main shape */}
         <path
-          d="M 15 45 Q 15 120, 100 130 Q 185 120, 185 45"
+          d="M 20 40 Q 20 120, 100 125 Q 180 120, 180 40"
           fill="url(#bowlGradient)"
-          stroke="#15803d"
-          strokeWidth="2"
         />
 
-        {/* Bowl rim highlight */}
-        <ellipse cx="100" cy="45" rx="85" ry="25" fill="none" stroke="#4ade80" strokeWidth="3" />
+        {/* Bowl rim */}
+        <ellipse cx="100" cy="40" rx="80" ry="24" fill="#22c55e" />
+        <ellipse cx="100" cy="40" rx="72" ry="20" fill="url(#bowlInnerGradient)" />
 
-        {/* Decorative pattern */}
-        <path
-          d="M 35 70 Q 50 85, 70 75 Q 90 65, 100 75 Q 110 85, 130 75 Q 150 65, 165 80"
-          fill="none"
-          stroke="#a855f7"
-          strokeWidth="3"
-          strokeLinecap="round"
-          opacity="0.7"
-        />
-        <circle cx="50" cy="95" r="4" fill="#a855f7" opacity="0.6" />
-        <circle cx="150" cy="95" r="4" fill="#a855f7" opacity="0.6" />
-        <circle cx="100" cy="110" r="4" fill="#a855f7" opacity="0.6" />
+        {/* Bowl interior with fruits */}
+        <g clipPath="url(#bowlInteriorClip)">
+          {/* Interior background */}
+          <ellipse cx="100" cy="40" rx="72" ry="20" fill="url(#bowlInnerGradient)" />
+
+          {/* Mixed fruit pieces - only show AFTER mixing completes */}
+          {hasBeenMixed && fruits.length > 0 && mixedPieces.map((piece, i) => {
+            const cx = 8 + piece.x * 1.5
+            const cy = 8 + piece.y * 0.4
+            const s = piece.size
+
+            // Render different shapes based on piece type
+            switch (piece.shape) {
+              case 'wedge':
+                // Triangle wedge shape (like a citrus segment)
+                return (
+                  <polygon
+                    key={i}
+                    points={`${cx},${cy - s} ${cx - s * 0.8},${cy + s * 0.6} ${cx + s * 0.8},${cy + s * 0.6}`}
+                    fill={piece.color}
+                    transform={`rotate(${piece.rotation} ${cx} ${cy})`}
+                  />
+                )
+              case 'chunk':
+                // Irregular chunk (pentagon-ish)
+                return (
+                  <polygon
+                    key={i}
+                    points={`${cx - s * 0.3},${cy - s * 0.7} ${cx + s * 0.6},${cy - s * 0.4} ${cx + s * 0.5},${cy + s * 0.5} ${cx - s * 0.4},${cy + s * 0.6} ${cx - s * 0.7},${cy}`}
+                    fill={piece.color}
+                    transform={`rotate(${piece.rotation} ${cx} ${cy})`}
+                  />
+                )
+              case 'dice':
+                // Square/rectangular dice cut
+                return (
+                  <rect
+                    key={i}
+                    x={cx - s * 0.5}
+                    y={cy - s * 0.4}
+                    width={s}
+                    height={s * 0.8}
+                    rx={s * 0.1}
+                    fill={piece.color}
+                    transform={`rotate(${piece.rotation} ${cx} ${cy})`}
+                  />
+                )
+              case 'slice':
+                // Semi-circle slice
+                return (
+                  <path
+                    key={i}
+                    d={`M ${cx - s * 0.7} ${cy} A ${s * 0.7} ${s * 0.5} 0 0 1 ${cx + s * 0.7} ${cy} Z`}
+                    fill={piece.color}
+                    transform={`rotate(${piece.rotation} ${cx} ${cy})`}
+                  />
+                )
+              case 'crescent':
+                // Crescent/curved piece
+                return (
+                  <path
+                    key={i}
+                    d={`M ${cx - s * 0.5} ${cy - s * 0.3} Q ${cx} ${cy - s * 0.8} ${cx + s * 0.5} ${cy - s * 0.3} Q ${cx} ${cy + s * 0.2} ${cx - s * 0.5} ${cy - s * 0.3}`}
+                    fill={piece.color}
+                    transform={`rotate(${piece.rotation} ${cx} ${cy})`}
+                  />
+                )
+              default:
+                return (
+                  <ellipse
+                    key={i}
+                    cx={cx}
+                    cy={cy}
+                    rx={s * 0.6}
+                    ry={s * 0.4}
+                    fill={piece.color}
+                    transform={`rotate(${piece.rotation} ${cx} ${cy})`}
+                  />
+                )
+            }
+          })}
+
+          {/* Whole fruits - show before AND during mixing, animate during mixing */}
+          {!hasBeenMixed && fruits.map((fruit, i) => {
+            const angle = (i / fruits.length) * Math.PI * 2
+            const radius = 25 + (i % 3) * 10
+            const x = 100 + Math.cos(angle) * radius * 0.8
+            const y = 38 + Math.sin(angle) * radius * 0.25
+            return (
+              <text
+                key={fruit.id}
+                x={x}
+                y={y}
+                fontSize="16"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className={isMixing ? 'animate-fruit-mix' : ''}
+                style={isMixing ? {
+                  '--mix-offset-x': `${8 + Math.random() * 8}px`,
+                  '--mix-offset-y': `${4 + Math.random() * 4}px`,
+                  animationDelay: `${i * 0.05}s`,
+                } as React.CSSProperties : undefined}
+              >
+                {fruit.emoji}
+              </text>
+            )
+          })}
+        </g>
+
+
+
+        {/* Bowl highlight */}
+        <ellipse cx="100" cy="40" rx="80" ry="24" fill="none" stroke="#4ade80" strokeWidth="3" />
       </svg>
-
-      {/* Fruits inside bowl */}
-      <div className="absolute inset-0 pointer-events-none" style={{ top: '15%', height: '35%' }}>
-        {fruits.map((fruit, index) => {
-          const pos = fruitPositions[index]
-          if (!pos) return null
-
-          return (
-            <div
-              key={fruit.id}
-              className={`absolute text-2xl md:text-3xl ${
-                isMixing ? 'animate-fruit-mix' : 'animate-fruit-drop'
-              }`}
-              style={{
-                left: `${pos.x}%`,
-                top: `${pos.y}%`,
-                transform: `translate(-50%, -50%) rotate(${pos.rotation}deg)`,
-                animationDelay: isMixing ? `${index * 0.05}s` : `${pos.delay}s`,
-                '--mix-offset-x': `${(index % 3 - 1) * 15}px`,
-                '--mix-offset-y': `${(index % 2 === 0 ? 1 : -1) * 12}px`,
-              } as React.CSSProperties}
-            >
-              {fruit.emoji}
-            </div>
-          )
-        })}
-      </div>
 
       {/* Empty bowl message */}
       {fruits.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center" style={{ top: '-10%' }}>
-          <p className="text-gray-500 text-sm font-medium">Add fruits to your salad!</p>
+        <div className="absolute inset-0 flex items-center justify-center" style={{ top: '10%' }}>
+          <p className="text-gray-500 text-sm font-medium bg-white/80 px-3 py-1 rounded-full">
+            Add fruits to your salad!
+          </p>
         </div>
       )}
     </div>
