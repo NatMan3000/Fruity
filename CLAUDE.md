@@ -15,6 +15,13 @@ A simple PWA for quick fruit seasonality reference in Australia. Shows which fru
 
 ---
 
+## Project History
+
+@TIMELINE.md
+@memory/open-threads.md
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -84,16 +91,6 @@ src/
 Deployed to GitHub Pages via GitHub Actions workflow.
 
 **URL:** https://natman3000.github.io/Fruity/
-
----
-
-## Timeline
-
-| Date | Event |
-|------|-------|
-| 2026-01-24 | Project created with 40 Australian fruits |
-| 2026-01-26 | Added fruit images, salad maker, quiz, calendar, detail pages |
-| 2026-01-26 | UI refinements - layout, removed borders, tab order |
 
 ---
 
