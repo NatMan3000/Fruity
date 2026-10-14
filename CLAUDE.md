@@ -17,8 +17,7 @@ A simple PWA for quick fruit seasonality reference in Australia. Shows which fru
 
 ## Project History
 
-@TIMELINE.md
-@memory/open-threads.md
+`TIMELINE.md`: grep on demand; `open-threads.md`: surfaced at session start
 
 ---
 
