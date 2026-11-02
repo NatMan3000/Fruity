@@ -25,7 +25,11 @@ export default defineConfig({
         scope: '/Fruity/',
         // PNG only: iOS cannot use an SVG home-screen icon and shows a letter placeholder instead.
         // Built by scripts/build-icons.ts (DESIGN.md "App icon").
+        // SVG icons first: the pre-rebuild app listed only SVG icons here and iOS used them for the
+        // home-screen icon; after switching to PNG-only, iOS showed a letter placeholder (Nathan, 2 Nov 2026).
         icons: [
+          { src: '/Fruity/icons/icon-192.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
+          { src: '/Fruity/icons/icon-512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any' },
           { src: '/Fruity/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: '/Fruity/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           { src: '/Fruity/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
