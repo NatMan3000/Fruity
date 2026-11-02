@@ -1,32 +1,37 @@
 import clsx from 'clsx'
-import { CalendarRange, LayoutList } from 'lucide-react'
+import { CalendarRange, LayoutList, type LucideIcon } from 'lucide-react'
 import { Link } from '../components/Link'
-import { PageHeader } from '../components/PageHeader'
+import { TopBar } from '../components/TopBar'
 
-// Shared by the Fruit list and the Year view: title, bag, and the List / Year switch.
-export function FruitTabHeader({ view }: { view: 'list' | 'year' }) {
-  const option = (v: 'list' | 'year', label: string, Icon: typeof LayoutList) => (
-    <Link
-      to={v === 'list' ? { name: 'browse' } : { name: 'year' }}
-      ariaCurrent={view === v ? 'page' : undefined}
-      className={clsx(
-        'inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-[6px] text-small',
-        view === v ? 'bg-card font-semibold text-ink' : 'font-medium text-ink-2',
-      )}
-    >
-      <Icon aria-hidden="true" className="size-4" />
-      {label}
-    </Link>
-  )
+// Shared by the Fruit list and the Year view: title, the List / Year toggle and the bag. The toggle is
+// two round icon buttons (comp-3d's), no words on screen; each still says its name to a screen reader.
+export function FruitTabHeader({ view, intro = false }: { view: 'list' | 'year'; intro?: boolean }) {
+  const option = (v: 'list' | 'year', label: string, Icon: LucideIcon) => {
+    const on = view === v
+    return (
+      <Link
+        to={v === 'list' ? { name: 'browse' } : { name: 'year' }}
+        ariaCurrent={on ? 'page' : undefined}
+        ariaLabel={label}
+        className={clsx(
+          'inline-flex size-11 items-center justify-center rounded-full transition-colors',
+          on ? 'bg-(--bright) text-(--ink)' : 'text-(--bright)',
+        )}
+      >
+        <Icon aria-hidden="true" className="size-5" strokeWidth={2.25} />
+      </Link>
+    )
+  }
   return (
-    <>
-      <PageHeader title="Fruit" />
-      <nav aria-label="Fruit views" className="px-4 pb-2">
-        <div className="flex gap-1 rounded-control bg-tile p-1">
+    <TopBar
+      title="Fruit"
+      intro={intro}
+      right={
+        <nav aria-label="Fruit views" className="flex shrink-0 gap-0.5 rounded-full bg-(--ink) p-0.5">
           {option('list', 'List', LayoutList)}
           {option('year', 'Year', CalendarRange)}
-        </div>
-      </nav>
-    </>
+        </nav>
+      }
+    />
   )
 }

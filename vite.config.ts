@@ -15,9 +15,10 @@ export default defineConfig({
         name: 'Fruity - Australian Fruit Seasons',
         short_name: 'Fruity',
         description: 'Quick reference for fruit seasonality in Australia',
-        // DESIGN.md: paper is the app's real background, so the splash and status bar match it
-        theme_color: '#F6F0E4',
-        background_color: '#F6F0E4',
+        // DESIGN.md: the splash and first status bar are spring's raspberry sorbet; the app then sets
+        // the current season's (or fruit's) colour on theme-color as you move about
+        theme_color: '#B7014E',
+        background_color: '#B7014E',
         display: 'standalone',
         id: '/Fruity/',
         start_url: '/Fruity/',
@@ -31,9 +32,10 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // Precache every fruit image and icon (about 3 MB) and the two fonts: at the shops an unvisited
-        // detail page must still show its photo offline.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}', 'images/fruits/*.webp'],
+        // Precache the fruit stickers, the two fonts and the 3D hero (three.js): at the shops an unvisited
+        // fruit page must still show its art offline, and Now's dish must still drop in. The old 4:3
+        // photos and round icons (<id>-480/-960/-icon.webp) are no longer drawn, so they are left out.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}', 'images/fruits/*-sticker*.webp'],
         // The Fruit Salad Cafe's 3D bowl (three + Rapier physics, about 1.1 MB gzipped) is not
         // precached for everyone: it is cached the first time the game opens, then works offline.
         globIgnores: ['**/BowlScene-*.js'],

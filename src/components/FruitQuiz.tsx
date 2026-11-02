@@ -1,10 +1,9 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import clsx from 'clsx'
 import { ArrowRight, Check, Lightbulb, RotateCcw, X } from 'lucide-react'
 import type { Fruit } from '../types/fruit'
-import { useAusState } from '../hooks/useAusState'
 import { describeMonths, getSeasonality } from '../utils/seasonality'
-import { FruitIcon } from './FruitIcon'
+import { FruitSticker } from './FruitSticker'
 
 interface FruitQuizProps {
   fruits: Fruit[]
@@ -40,7 +39,6 @@ function buildQuestions(fruits: Fruit[]): QuizQuestion[] {
 }
 
 export function FruitQuiz({ fruits }: FruitQuizProps) {
-  const { state } = useAusState()
   const [questions, setQuestions] = useState<QuizQuestion[]>(() => buildQuestions(fruits))
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
@@ -91,55 +89,58 @@ export function FruitQuiz({ fruits }: FruitQuizProps) {
 
   if (questions.length === 0) return null
 
-  const primary = 'inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-control bg-ink font-semibold text-paper active:opacity-90'
+  const primary = 'press block-shadow inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-(--ink) text-body font-extrabold text-(--light)'
 
   if (isGameComplete) {
+    const perfect = score.correct === score.total
     return (
-      <div className="flex flex-col items-center gap-3 rounded-card bg-card p-6 text-center">
-        <h2 className="font-display text-title font-semibold">Quiz complete</h2>
-        <p className="font-display text-hero font-semibold tabular-nums">
+      <div className="block-shadow flex flex-col items-center gap-3 rounded-block bg-(--bright) p-6 text-center text-(--ink)">
+        <h2 className="font-display text-title">Quiz complete</h2>
+        <p className="slap font-display text-[4rem] leading-none tabular-nums" style={{ '--tilt': '-4deg', transform: 'rotate(var(--tilt))' } as CSSProperties}>
           {score.correct} / {score.total}
         </p>
-        <p className="text-body text-ink-2">
-          {score.correct === score.total
+        <p className="text-body font-semibold text-(--ink-soft)">
+          {perfect
             ? 'Perfect score. You really know your fruit.'
             : score.correct >= score.total * 0.6
             ? 'Nicely done. You know your fruit.'
             : 'Keep going, the seasons take a while to learn.'}
         </p>
-        <button type="button" onClick={startNewGame} className={clsx(primary, 'w-full max-w-xs flex-none')}>
-          <RotateCcw aria-hidden="true" className="size-5" />
+        <button type="button" onClick={startNewGame} className={clsx(primary, 'w-full flex-none')}>
+          <RotateCcw aria-hidden="true" className="size-5" strokeWidth={2.5} />
           Play again
         </button>
       </div>
     )
   }
 
-  const peak = getSeasonality(currentQuestion.correctFruit, state).peak
+  const peak = getSeasonality(currentQuestion.correctFruit).peak
 
   return (
-    <div className="flex flex-col gap-5 rounded-card bg-card p-5">
-      <p className="text-small text-ink-2 tabular-nums">
+    <div className="block-shadow flex flex-col gap-5 rounded-block bg-(--bright) p-5 text-(--ink)">
+      <p className="text-small font-bold text-(--ink-soft) tabular-nums">
         Question {currentQuestionIndex + 1} of {questions.length}, score {score.correct}/{score.total}
       </p>
 
-      {/* The fruit, blurred until answered */}
+      {/* The fruit, blurred until answered. One picture only: the sticker draws the art OR the emoji. */}
       <div className="flex justify-center">
-        <span className={clsx('transition-[filter,transform] duration-200 ease-out', showBlur && 'scale-110 blur-lg')}>
-          <FruitIcon fruit={currentQuestion.correctFruit} size="2xl" />
+        <span className="flex size-48 items-center justify-center rounded-full bg-(--pop)">
+          <span className={clsx('transition-[filter,transform] duration-300 ease-out', showBlur ? 'scale-110 blur-lg' : 'scale-100')}>
+            <FruitSticker key={currentQuestion.correctFruit.id} fruit={currentQuestion.correctFruit} size={150} eager slap={!showBlur} />
+          </span>
         </span>
       </div>
 
       {/* Clues */}
       {currentQuestion.cluesRevealed >= 1 && (
         <ul className="flex flex-col gap-2">
-          <li className="rounded-control bg-tile p-3 text-small text-ink">
-            <span className="font-semibold">Peak season:</span>{' '}
+          <li className="pop-in rounded-[20px] bg-(--pop) p-3 text-small font-semibold">
+            <span className="font-extrabold">Peak season:</span>{' '}
             {peak.length ? describeMonths(peak) : 'all year, no peak'}
           </li>
           {currentQuestion.cluesRevealed >= 2 && currentQuestion.correctFruit.pairings && (
-            <li className="rounded-control bg-tile p-3 text-small text-ink">
-              <span className="font-semibold">Goes well with:</span>{' '}
+            <li className="pop-in rounded-[20px] bg-(--pop) p-3 text-small font-semibold">
+              <span className="font-extrabold">Goes well with:</span>{' '}
               {currentQuestion.correctFruit.pairings.slice(0, 3).join(', ')}
             </li>
           )}
@@ -147,7 +148,7 @@ export function FruitQuiz({ fruits }: FruitQuizProps) {
       )}
 
       {/* Options */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2.5">
         {currentQuestion.options.map((fruit) => {
           const isAnswer = fruit.id === currentQuestion.correctFruit.id
           const isPicked = selectedAnswer === fruit.id
@@ -160,16 +161,16 @@ export function FruitQuiz({ fruits }: FruitQuizProps) {
               onClick={() => handleAnswer(fruit.id)}
               disabled={!!selectedAnswer}
               className={clsx(
-                'flex min-h-12 items-center justify-between gap-2 rounded-control px-4 py-3 text-left text-body font-medium',
-                !selectedAnswer && 'bg-tile text-ink active:bg-tile-strong',
-                right && 'bg-peak-soft text-peak-ink',
-                wrong && 'bg-berry-soft text-berry-ink',
-                selectedAnswer && !right && !wrong && 'bg-tile text-ink-2 opacity-60',
+                'chip flex min-h-14 items-center justify-between gap-2 rounded-full px-5 py-3 text-left text-body font-extrabold',
+                !selectedAnswer && 'bg-(--deep) text-(--light)',
+                right && 'tick-in bg-peak text-peak-ink',
+                wrong && 'bg-off text-off-ink',
+                selectedAnswer && !right && !wrong && 'bg-(--deep) text-(--light) opacity-75',
               )}
             >
               {fruit.name}
-              {right && <Check aria-label="Correct" className="size-5 shrink-0" strokeWidth={2.5} />}
-              {wrong && <X aria-label="Wrong" className="size-5 shrink-0" strokeWidth={2.5} />}
+              {right && <Check aria-label="Correct" className="size-5 shrink-0" strokeWidth={3} />}
+              {wrong && <X aria-label="Wrong" className="size-5 shrink-0" strokeWidth={3} />}
             </button>
           )
         })}
@@ -181,16 +182,16 @@ export function FruitQuiz({ fruits }: FruitQuizProps) {
           <button
             type="button"
             onClick={revealClue}
-            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-control bg-tile font-semibold text-ink active:bg-tile-strong"
+            className="press inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full bg-(--pop) text-body font-extrabold text-(--ink)"
           >
-            <Lightbulb aria-hidden="true" className="size-5" />
+            <Lightbulb aria-hidden="true" className="size-5" strokeWidth={2.5} />
             {currentQuestion.cluesRevealed === 0 ? 'Show a clue' : 'Another clue'}
           </button>
         )}
         {selectedAnswer && (
           <button type="button" onClick={nextQuestion} className={primary}>
             {currentQuestionIndex < questions.length - 1 ? 'Next' : 'Finish'}
-            <ArrowRight aria-hidden="true" className="size-5" />
+            <ArrowRight aria-hidden="true" className="size-5" strokeWidth={2.75} />
           </button>
         )}
       </div>

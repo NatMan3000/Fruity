@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { AusState, Fruit, Month } from '../../types/fruit'
+import type { Fruit, Month } from '../../types/fruit'
 import { FruitIcon } from '../../components/FruitIcon'
 import { updateBag, useBag } from '../../hooks/useBag'
 import { addFruit, hasFruit } from '../../utils/bag'
@@ -9,15 +9,14 @@ interface RecipeCardProps {
   fruits: Fruit[]       // what is in the bowl
   allFruits: Fruit[]
   month: Month
-  state: AusState
   onClose: () => void
   closeLabel: string
 }
 
 // "Make it for real": the bowl as a fruit salad a grown-up can make, with one tap to put the
 // fruit in the shopping bag.
-export function RecipeCard({ fruits, allFruits, month, state, onClose, closeLabel }: RecipeCardProps) {
-  const recipe = useMemo(() => buildRecipe(fruits, month, state, allFruits), [fruits, month, state, allFruits])
+export function RecipeCard({ fruits, allFruits, month, onClose, closeLabel }: RecipeCardProps) {
+  const recipe = useMemo(() => buildRecipe(fruits, month, allFruits), [fruits, month, allFruits])
   const bag = useBag()
   const missing = fruits.filter(f => !hasFruit(bag, f.id))
   const addAll = () => updateBag(b => fruits.reduce((acc, f) => addFruit(acc, f), b))

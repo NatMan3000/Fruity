@@ -7,7 +7,7 @@ import { buildRecipe } from './recipe'
 import { TRAITS, traitsOf } from './traits'
 import { levelFor, newStickers, NEW_PROGRESS, scoreServe } from './progress'
 
-const ctx: OrderContext = { month: 'Jan', state: 'VIC' }
+const ctx: OrderContext = { month: 'Jan' }
 const get = (...ids: string[]): Fruit[] => ids.map(id => {
   const f = FRUITS.find(x => x.id === id)
   if (!f) throw new Error(`no fruit ${id}`)
@@ -82,8 +82,8 @@ describe('checkBowl', () => {
     expect(checkBowl(summer, get('mango'), ctx).ok).toBe(true)
     expect(checkBowl(summer, get('banana'), ctx).ok).toBe(false) // all year, never "a summer fruit"
     const fresh = { kind: 'fresh' } as const
-    expect(matches(fresh, get('mango')[0], { month: 'Jan', state: 'VIC' })).toBe(true)
-    expect(matches(fresh, get('mango')[0], { month: 'Jul', state: 'VIC' })).toBe(false)
+    expect(matches(fresh, get('mango')[0], { month: 'Jan' })).toBe(true)
+    expect(matches(fresh, get('mango')[0], { month: 'Jul' })).toBe(false)
     expect(matches(fresh, get('banana')[0], ctx)).toBe(false)
   })
 })
@@ -94,7 +94,7 @@ describe('generateOrder', () => {
     for (let level = 1; level <= MAX_LEVEL; level++) {
       for (const month of MONTHS as Month[]) {
         for (let seed = 1; seed <= 25; seed++) {
-          const c = { month, state: 'VIC' as const }
+          const c = { month }
           const order = generateOrder(level, FRUITS, c, seededRng(seed * 101 + level))
           const shelf = get(...order.shelf)
           expect(new Set(order.shelf).size).toBe(order.shelf.length)
@@ -154,7 +154,7 @@ describe('progress', () => {
 
 describe('buildRecipe', () => {
   it('makes four steps and a dressing from the pairings, skipping fruit already in the bowl', () => {
-    const r = buildRecipe(get('mango', 'banana', 'lime'), 'Jan', 'VIC', FRUITS)
+    const r = buildRecipe(get('mango', 'banana', 'lime'), 'Jan', FRUITS)
     expect(r.steps).toHaveLength(4)
     expect(r.dressing).not.toMatch(/lime/i)
     expect(r.dressing).toMatch(/dressing$/)
@@ -162,7 +162,7 @@ describe('buildRecipe', () => {
   })
 
   it('suggests an in-season swap for out-of-season fruit', () => {
-    const r = buildRecipe(get('cherry'), 'Jul', 'VIC', FRUITS)
+    const r = buildRecipe(get('cherry'), 'Jul', FRUITS)
     expect(r.outOfSeason.map(o => o.fruit.id)).toEqual(['cherry'])
     expect(r.outOfSeason[0].swap).toBeDefined()
   })

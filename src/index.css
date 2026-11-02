@@ -1,128 +1,118 @@
 @import "tailwindcss";
 
-/* Fonts: self-hosted variable WOFF2, Latin subset only (precached by the service worker). DESIGN.md "Type". */
+/* Fonts: self-hosted Latin WOFF2, precached by the service worker. DESIGN.md "Type".
+   Shrikhand (one weight) for names and headings, Bricolage Grotesque (weight axis) for everything else. */
 @font-face {
-  font-family: 'Fraunces';
+  font-family: 'Shrikhand';
   font-style: normal;
   font-display: swap;
-  font-weight: 100 900;
-  src: url('@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2') format('woff2-variations');
+  font-weight: 400;
+  src: url('@fontsource/shrikhand/files/shrikhand-latin-400-normal.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Inter Tight';
+  font-family: 'Bricolage Grotesque';
   font-style: normal;
   font-display: swap;
-  font-weight: 100 900;
-  src: url('@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2') format('woff2-variations');
+  font-weight: 200 800;
+  src: url('@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2') format('woff2-variations');
 }
 
-/* Design tokens: DESIGN.md is the reference; use these names, never raw hex. */
+/* Design tokens: DESIGN.md is the reference. Static tokens live here; the per-screen and per-fruit tones
+   (pop, bright, deep, ink, ink-soft, light, page) are CSS variables set by src/utils/tones.ts `toneVars`,
+   read as bg-(--pop), text-(--ink) and so on. Never raw hex in components. */
 @theme static {
   --color-*: initial;
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  --color-paper: #F6F0E4;
-  --color-card: #FBF7EE;
-  --color-tile: #EFE6D2;
-  --color-tile-strong: #E4D8BF;
-  --color-line: #DDD0B6;
-  --color-ink: #1F2A1C;
-  --color-ink-2: #4A5345;
-  --color-ink-3: #656B5F;
+  /* Season status, Nathan's mapping: peak bright green, in season lighter green, out of season red
+     family. Each fill has its own -ink for the word on it (6:1 or better). */
+  --color-peak: #2BD963;
+  --color-peak-ink: #04310F;
+  --color-season: #B9F08C;
+  --color-season-ink: #173D05;
+  --color-ending: #FFB53D;
+  --color-ending-ink: #3D2100;
+  --color-off: #FF7468;
+  --color-off-ink: #3F0904;
+  --color-always: #D9C8FF;
+  --color-always-ink: #2A1659;
 
-  /* Season status (DESIGN.md "Colour"): green means buy, red-family means not now. Fill for
-     shapes, -ink for text and icons (4.5:1 on card and every fruit tint), -soft for tints. */
-  --color-peak: #1FA34A;
-  --color-peak-ink: #12722F;
-  --color-peak-soft: #DCF9E0;
-  --color-season: #7CC25A;
-  --color-season-ink: #3F6B2B;
-  --color-season-soft: #E3F8DA;
-  --color-off: #DE9D95;
-  --color-off-ink: #A0473F;
-  --color-off-soft: #FEEBE9;
-  --color-ending: #F2A93B;
-  --color-ending-ink: #8F5400;
-  --color-ending-soft: #FEEDD9;
+  /* The die-cut edge of a sticker. The one near-white in the app, and only ever an outline. */
+  --color-sticker: #FFFDF8;
 
-  /* Juice: decoration only, never status. Vivid for marks and icon circles, -soft for pills and
-     selection, -wash for header bands. Each season of the year owns one (spring berry, summer
-     tangerine, autumn grape, winter citrus). */
-  --color-berry: #E5365F;
-  --color-berry-ink: #B3213F;
-  --color-berry-soft: #FEEBEC;
-  --color-berry-wash: #FED1D4;
-  --color-tangerine: #FF8A1E;
-  --color-tangerine-soft: #FEECE1;
-  --color-tangerine-wash: #FFD4B8;
-  --color-citrus: #FFC928;
-  --color-citrus-soft: #FDEFCF;
-  --color-citrus-wash: #F6DB9D;
-  --color-grape: #7E4BB0;
-  --color-grape-soft: #F4ECFE;
-  --color-grape-wash: #E7D5FE;
+  --font-sans: 'Bricolage Grotesque', ui-rounded, system-ui, sans-serif;
+  --font-display: 'Shrikhand', 'Arial Rounded MT Bold', ui-rounded, system-ui, sans-serif;
 
-  --font-sans: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Fraunces', ui-serif, Georgia, serif;
-
-  --text-display: 1.875rem;
-  --text-display--line-height: 2.125rem;
-  --text-hero: 2.125rem;
-  --text-hero--line-height: 2.375rem;
-  --text-title: 1.25rem;
-  --text-title--line-height: 1.625rem;
-  --text-name: 1.125rem;
-  --text-name--line-height: 1.375rem;
+  --text-mega: 3.5rem;            /* month and page titles (Shrikhand) */
+  --text-mega--line-height: 1;
+  --text-hero: 3rem;              /* a fruit's name on its page */
+  --text-hero--line-height: 1.02;
+  --text-title: 1.75rem;          /* section headings */
+  --text-title--line-height: 1.1;
+  --text-name: 1.375rem;          /* fruit names in rows and cards */
+  --text-name--line-height: 1.15;
   --text-body: 1.0625rem;
-  --text-body--line-height: 1.5rem;
+  --text-body--line-height: 1.45;
   --text-small: 0.9375rem;
-  --text-small--line-height: 1.25rem;
+  --text-small--line-height: 1.3;
   --text-caption: 0.8125rem;
-  --text-caption--line-height: 1rem;
+  --text-caption--line-height: 1.2;
 
-  --radius-card: 16px;
-  --radius-control: 10px;
+  --radius-block: 28px;           /* colour blocks, cards, sheets */
+  --radius-control: 999px;        /* buttons, inputs, chips: always pills */
 
+  /* Springs as CSS linear() curves, so no animation library ships. `spring` overshoots about 9%,
+     `bounce` about 23% and wobbles once (the bouncy Year calendar, stickers slapping down). */
+  --ease-spring: linear(0, 0.027, 0.098, 0.198, 0.314, 0.435, 0.556, 0.668, 0.769, 0.857, 0.929, 0.987, 1.030, 1.061, 1.081, 1.092, 1.095, 1.092, 1.085, 1.076, 1.065, 1.053, 1.042, 1.031, 1.022, 1.014, 1.007, 1.001, 0.997, 0.994, 0.992, 0.991, 0.991, 0.991, 0.992, 0.993, 0.994, 0.995, 0.996, 0.997, 1);
+  --ease-bounce: linear(0, 0.044, 0.159, 0.318, 0.499, 0.680, 0.847, 0.988, 1.098, 1.174, 1.218, 1.233, 1.226, 1.200, 1.164, 1.122, 1.080, 1.040, 1.006, 0.980, 0.961, 0.950, 0.946, 0.947, 0.952, 0.961, 0.970, 0.980, 0.990, 0.998, 1.004, 1.009, 1.011, 1.013, 1.013, 1.011, 1.009, 1.007, 1.005, 1.003, 1);
   --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @layer base {
   html {
-    background: var(--color-paper);
+    /* usePageColour sets --screen to the screen's page or fruit colour, so overscroll matches. */
+    background: var(--screen, #B7014E);
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
-    scrollbar-color: var(--color-tile-strong) transparent;
   }
 
   body {
     min-height: 100dvh;
-    background: var(--color-paper);
-    color: var(--color-ink);
+    background: var(--screen, #B7014E);
+    color: var(--on-screen, #FFF2F5);
     font-family: var(--font-sans);
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
-    caret-color: var(--color-ink);
+    font-weight: 500;
     -webkit-font-smoothing: antialiased;
   }
 
   ::selection {
-    background: var(--color-citrus-wash);
-    color: var(--color-ink);
+    background: var(--color-season);
+    color: var(--color-season-ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
+    outline: 3px solid currentColor;
+    outline-offset: 3px;
   }
 
   a {
-    text-underline-offset: 3px;
+    text-underline-offset: 4px;
   }
 
   button {
     cursor: pointer;
   }
+}
+
+/* Shrikhand has one weight: never let the browser fake a bold or an italic. */
+.font-display {
+  font-synthesis: none;
+  font-weight: 400;
+  letter-spacing: -0.005em;
 }
 
 /* Hide scrollbar but keep scrolling (horizontal rails and chip rows) */
@@ -141,20 +131,185 @@
 }
 
 /* ============================================
-   MEANINGFUL MOTION (DESIGN.md "Motion")
+   SURFACES (DESIGN.md "Shape")
    ============================================ */
 
-/* Card to detail: the tapped icon morphs into the hero. */
-::view-transition-group(fruit-hero) {
-  animation-duration: 220ms;
-  animation-timing-function: var(--ease-out-soft);
+/* A chunky colour block sits on a hard offset shadow in the screen's ink, like a printed sticker on a
+   menu board. Pressing it sinks it into its shadow. */
+.block-shadow {
+  box-shadow: 0 5px 0 0 var(--shadow, rgb(30 8 20 / 0.4));
 }
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 180ms;
+.press {
+  transition: transform 140ms var(--ease-out-soft), box-shadow 140ms var(--ease-out-soft), translate 140ms var(--ease-out-soft);
+}
+.press:active {
+  translate: 0 4px;
+}
+.press.block-shadow:active {
+  box-shadow: 0 1px 0 0 var(--shadow, rgb(30 8 20 / 0.4));
 }
 
-/* Fallback where View Transitions are missing: a short fade on the detail page. */
+/* Fruit art as a die-cut sticker. New art carries its white edge baked in (scripts/build-stickers.ts);
+   an emoji gets the same edge traced round the glyph. Both sit on a small peel shadow. */
+.sticker-art {
+  filter: drop-shadow(0 3px 0 rgb(30 8 20 / 0.28));
+}
+.sticker-emoji {
+  filter:
+    drop-shadow(3px 0 0 var(--color-sticker)) drop-shadow(-3px 0 0 var(--color-sticker))
+    drop-shadow(0 3px 0 var(--color-sticker)) drop-shadow(0 -3px 0 var(--color-sticker))
+    drop-shadow(0 3px 0 rgb(30 8 20 / 0.28));
+}
+.sticker-emoji-sm {
+  filter:
+    drop-shadow(2px 0 0 var(--color-sticker)) drop-shadow(-2px 0 0 var(--color-sticker))
+    drop-shadow(0 2px 0 var(--color-sticker)) drop-shadow(0 -2px 0 var(--color-sticker))
+    drop-shadow(0 2px 0 rgb(30 8 20 / 0.24));
+}
+
+/* ============================================
+   MOTION (DESIGN.md "Motion"): playful, springy, one-shot. Transform and opacity only; nothing loops.
+   ============================================ */
+
+/* A block pops up into place (Now cards, Cook cards, Play entries). --i staggers it. */
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(26px) scale(0.88) rotate(var(--from-tilt, -3deg)); }
+  to { opacity: 1; transform: none; }
+}
+.pop-in {
+  animation: pop-in 620ms var(--ease-spring) backwards;
+  animation-delay: calc(60ms + var(--i, 0) * 55ms);
+}
+
+/* List rows swing in from alternating sides (first screenful, first visit of the session). */
+@keyframes swing-in {
+  from { opacity: 0; transform: translateX(var(--from-x, -40px)) rotate(var(--from-tilt, -2deg)); }
+  to { opacity: 1; transform: none; }
+}
+.swing-in {
+  animation: swing-in 560ms var(--ease-spring) backwards;
+  animation-delay: calc(50ms + var(--i, 0) * 50ms);
+}
+
+/* A sticker slaps down from above with an overshoot; --tilt is its resting angle. */
+@keyframes slap {
+  from { opacity: 0; transform: translateY(-10px) scale(1.7) rotate(calc(var(--tilt, 0deg) - 22deg)); }
+  12% { opacity: 1; }
+  to { opacity: 1; transform: rotate(var(--tilt, 0deg)); }
+}
+.slap {
+  animation: slap 640ms var(--ease-bounce) backwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* The month and page titles rise into place. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+.rise {
+  animation: rise 520ms var(--ease-spring) backwards;
+}
+
+/* Fruit page: the blob springs in with a twist, the art drops onto it and squashes as it lands. */
+@keyframes blob-in {
+  from { transform: translateX(-50%) scale(0.4) rotate(-20deg); }
+  to { transform: translateX(-50%); }
+}
+.blob-in {
+  animation: blob-in 700ms var(--ease-bounce) backwards;
+}
+@keyframes drop-squash {
+  0% { transform: translateY(-360px) scale(0.86, 1.16); animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5); }
+  48% { transform: translateY(0) scale(1.18, 0.8); animation-timing-function: var(--ease-out-soft); }
+  74% { transform: translateY(0) scale(0.96, 1.05); animation-timing-function: ease-in-out; }
+  100% { transform: none; }
+}
+.drop-squash {
+  transform-origin: 50% 100%;
+  animation: drop-squash 760ms backwards;
+  animation-delay: 80ms;
+}
+
+/* The Year calendar on a fruit page: bars spring up one after another, bouncing past full height. */
+@keyframes bar-up {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+.bar-up {
+  transform-origin: 50% 100%;
+  animation: bar-up 760ms var(--ease-bounce) backwards;
+  animation-delay: calc(260ms + var(--i, 0) * 32ms);
+}
+@keyframes dot-in {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+.dot-in {
+  animation: dot-in 520ms var(--ease-bounce) backwards;
+  animation-delay: calc(260ms + var(--i, 0) * 32ms);
+}
+
+/* Add to bag: the button swells once (Web Animations in FruitDetailPage), the tick spins in, the header
+   badge pops when the count changes. */
+@keyframes tick-spin {
+  from { transform: scale(0) rotate(-90deg); }
+  to { transform: none; }
+}
+.tick-spin {
+  animation: tick-spin 520ms var(--ease-bounce);
+}
+@keyframes badge-pop {
+  from { transform: scale(0.3); }
+  to { transform: none; }
+}
+.badge-pop {
+  animation: badge-pop 480ms var(--ease-bounce);
+}
+/* The fruit hops into the bag: a sticker flies from the button to the bag in the header. */
+@keyframes fly-to-bag {
+  0% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+  60% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--fly-x), var(--fly-y)) scale(0.25) rotate(200deg); }
+}
+.fly-to-bag {
+  animation: fly-to-bag 620ms cubic-bezier(0.45, -0.25, 0.6, 1) forwards;
+}
+
+/* Tick boxes in the bag fill with a squish. */
+.tick-in {
+  animation: tick-spin 380ms var(--ease-bounce);
+}
+
+/* Chips squish when pressed and swell a touch when on. */
+.chip {
+  transition: transform 260ms var(--ease-overshoot), background-color 160ms ease, color 160ms ease;
+}
+.chip:active {
+  transform: scale(0.92);
+}
+.chip[aria-pressed='true'] {
+  transform: scale(1.04);
+}
+
+/* Tab bar: the current tab's scoop slides across with an overshoot. */
+.tab-scoop {
+  transition: transform 440ms var(--ease-overshoot), background-color 300ms ease;
+}
+
+/* Hero hint and slash: the knife stroke flashes across a fruit as it is cut. */
+@keyframes slash {
+  0% { opacity: 0; transform: rotate(var(--angle)) scaleX(0); }
+  25% { opacity: 1; }
+  60% { opacity: 1; transform: rotate(var(--angle)) scaleX(1); }
+  100% { opacity: 0; transform: rotate(var(--angle)) scaleX(1); }
+}
+.slash {
+  transform-origin: 0 50%;
+  animation: slash 360ms ease-out forwards;
+}
+
+/* Route fade where View Transitions are missing. */
 @keyframes route-fade {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -162,27 +317,12 @@
 .route-fade {
   animation: route-fade 150ms ease-out;
 }
-
-/* Season bar fills upward when a detail page opens. */
-@keyframes segment-fill {
-  from { transform: scaleY(0); opacity: 0; }
-  to { transform: scaleY(1); opacity: 1; }
-}
-.segment-fill {
-  transform-origin: bottom;
-  animation: segment-fill 160ms var(--ease-out-soft) backwards;
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
 }
 
-/* Bag tick */
-@keyframes tick-in {
-  from { transform: scale(0.4); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-.tick-in {
-  animation: tick-in 150ms var(--ease-out-soft);
-}
-
-/* Bottom sheet (native dialog) */
+/* Bottom sheet (native dialog): springs up, slides down. */
 @keyframes sheet-up {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
@@ -196,19 +336,17 @@
   to { opacity: 1; }
 }
 dialog.sheet[open] {
-  animation: sheet-up 220ms var(--ease-out-soft);
+  animation: sheet-up 480ms var(--ease-spring);
 }
 dialog.sheet[data-closing] {
-  animation: sheet-down 180ms ease-out forwards;
+  animation: sheet-down 180ms ease-in forwards;
 }
 dialog.sheet::backdrop {
-  background: color-mix(in srgb, var(--color-ink) 20%, transparent);
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(1.5px);
+  background: rgb(30 8 20 / 0.45);
   animation: backdrop-in 220ms ease-out;
 }
 
-/* Reduced motion: everything above is off. */
+/* Reduced motion: everything above is off; screens appear in their final state. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

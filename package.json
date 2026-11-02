@@ -12,11 +12,14 @@
     "preview": "vite preview",
     "images": "bun scripts/build-images.ts && bun scripts/contact-sheet.ts",
     "icons": "bun scripts/build-icons.ts",
-    "art:import": "bun scripts/import-art.ts"
+    "art:import": "bun scripts/import-art.ts",
+    "stickers": "bun scripts/build-stickers.ts",
+    "art": "bun run art:import && bun run images && bun run stickers",
+    "models:sheet": "bun scripts/model-sheet.ts"
   },
   "dependencies": {
-    "@fontsource-variable/fraunces": "^5.3.0",
-    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource/shrikhand": "^5.3.0",
     "@react-three/fiber": "^9.8.2",
     "@react-three/rapier": "^2.2.0",
     "clsx": "^2.1.1",

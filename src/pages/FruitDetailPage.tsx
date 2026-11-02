@@ -1,159 +1,181 @@
-import { useState } from 'react'
+import { useRef, useState, type CSSProperties } from 'react'
+import { createPortal } from 'react-dom'
 import clsx from 'clsx'
-import { Check, ChevronDown, Hand, MapPin, Plus, Refrigerator } from 'lucide-react'
+import { Check, ChevronDown, Hand, Plus, Refrigerator } from 'lucide-react'
 import type { Fruit, Month } from '../types/fruit'
-import { STATE_NAMES, useAusState } from '../hooks/useAusState'
 import { updateBag, useBag } from '../hooks/useBag'
-import { canMorph } from '../hooks/useRoute'
 import { addFruit, fruitItemId, hasFruit, removeItem } from '../utils/bag'
-import { fruitTints } from '../utils/colour'
-import { fruitImageUrl, hasArt } from '../utils/images'
 import { fruitStatus } from '../utils/seasonality'
 import { statusSentence } from '../utils/status'
-import { PageHeader } from '../components/PageHeader'
+import { FruitHero } from '../components/FruitHero'
+import { FruitSticker } from '../components/FruitSticker'
 import { RecipeIdeas } from '../components/RecipeIdeas'
-import { SeasonBar } from '../components/SeasonBar'
-import { StatusLabel } from '../components/StatusLabel'
+import { SeasonLegend, SeasonStrip } from '../components/SeasonStrip'
+import { StatusSticker } from '../components/StatusSticker'
+import { TopBar } from '../components/TopBar'
 
-const checkedOn = (iso: string) =>
-  new Date(iso).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })
-
+// A fruit's own screen is its colour, edge to edge (App sets the screen tones from the fruit). The blob
+// springs in, the 3D fruit drops onto it spinning (FruitHero; cut it open with a tap), the status is
+// slapped on, and the year's bars bounce up one by one.
 export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }) {
-  const { state } = useAusState()
   const bag = useBag()
   const inBag = hasFruit(bag, fruit.id)
-  const [heroFailed, setHeroFailed] = useState(false)
-  // Without View Transitions the page fades in instead of morphing (DESIGN.md "Motion").
-  const [fade] = useState(() => !canMorph())
-  const hasOverride = !!fruit.stateOverrides?.[state]
-  const tints = fruitTints(fruit.colour)
-  // New art sits on a cream backdrop: multiplied onto the wash it takes the fruit's colour.
-  const blend = hasArt(fruit)
+  const status = fruitStatus(fruit, month)
+  const pairTilt = [-2, 1.5, -1, 2, 0]
 
   return (
-    <article className={clsx('flex flex-col pb-8', fade && 'route-fade')}>
-      {/* The header band is washed in the fruit's own colour (DESIGN.md "Fruit colour"). */}
-      <div className="mb-4 flex flex-col rounded-b-[28px] pb-4" style={{ backgroundColor: tints.wash }}>
-        <PageHeader back={{ name: 'browse' }} />
-        <div className="flex flex-col gap-3 px-4">
-          <div className="aspect-[4/3] overflow-hidden rounded-card" style={{ viewTransitionName: 'fruit-hero', backgroundColor: tints.wash }}>
-            {fruit.image && !heroFailed ? (
-              <img
-                src={fruitImageUrl(fruit, 960)}
-                alt={fruit.name}
-                width={960}
-                height={720}
-                onError={() => setHeroFailed(true)}
-                className={clsx('size-full object-cover', blend && 'mix-blend-multiply')}
-              />
-            ) : (
-              <span role="img" aria-label={fruit.name} className="flex size-full items-center justify-center text-[96px]">{fruit.emoji}</span>
-            )}
-          </div>
-          <h1 className="font-display text-hero font-semibold">{fruit.name}</h1>
-        </div>
+    <article className="flex flex-col pb-8 text-(--ink)">
+      <TopBar back={{ name: 'browse' }} />
+
+      <FruitHero fruit={fruit} />
+
+      <div className="relative z-10 flex flex-col items-start gap-3 px-5 pt-1">
+        <StatusSticker status={status} size="lg" tilt={-6} slap delay={620} />
+        <h1 className="font-display text-hero break-words">{fruit.name}</h1>
+        <p className="text-[18px] leading-snug font-bold">{statusSentence(fruit, month)}</p>
       </div>
 
-      <div className="flex flex-col gap-6 px-4">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <p className="flex flex-wrap items-baseline gap-x-2 text-small text-ink-2">
-              <StatusLabel status={fruitStatus(fruit, month, state)} />
-              <span>in {STATE_NAMES[state]}{hasOverride ? ' (its own season here)' : ''}</span>
-            </p>
-            <p className="text-body text-ink">{statusSentence(fruit, month, state)}</p>
+      <div className="flex flex-col gap-5 px-4 pt-6">
+        {/* The year, as twelve scoops on the fruit's deep tone (the bouncy Market Sticker entrance) */}
+        <section aria-labelledby="year" className="block-shadow rounded-[30px] bg-(--deep) p-4 pb-3 text-(--light)">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-1">
+            <h2 id="year" className="font-display text-[1.5rem] leading-tight">The year</h2>
+            <SeasonLegend short />
           </div>
+          <SeasonStrip fruit={fruit} month={month} size="lg" initials animate />
+        </section>
 
-          <SeasonBar fruit={fruit} month={month} state={state} size="lg" marker initials animate />
-
-          <button
-            type="button"
-            aria-pressed={inBag}
-            onClick={() => updateBag(b => (inBag ? removeItem(b, fruitItemId(fruit.id)) : addFruit(b, fruit)))}
-            className={clsx(
-              'inline-flex h-12 items-center justify-center gap-2 rounded-control font-semibold',
-              inBag ? 'bg-tile text-ink active:bg-tile-strong' : 'bg-ink text-paper active:opacity-90',
-            )}
-          >
-            {inBag ? <Check aria-hidden="true" className="tick-in size-5" strokeWidth={2.5} /> : <Plus aria-hidden="true" className="size-5" />}
-            {inBag ? 'In your bag (tap to remove)' : 'Add to bag'}
-          </button>
-        </div>
+        <AddToBag fruit={fruit} inBag={inBag} />
 
         {(fruit.pick || fruit.storage) && (
-          <div className="flex flex-col gap-2">
-            {fruit.pick && <TipBlock Icon={Hand} title="How to pick" text={fruit.pick} tint={tints.wash} />}
-            {fruit.storage && <TipBlock Icon={Refrigerator} title="How to store" text={fruit.storage} tint={tints.wash} />}
+          <div className="flex flex-col gap-3">
+            {fruit.pick && <Tip Icon={Hand} title="How to pick" text={fruit.pick} />}
+            {fruit.storage && <Tip Icon={Refrigerator} title="How to store" text={fruit.storage} />}
           </div>
         )}
 
-        {fruit.stateNote && <TipBlock Icon={MapPin} title="Varies by state" text={fruit.stateNote} tint={tints.wash} />}
-
         {fruit.recipes && fruit.recipes.length > 0 && (
-          <section aria-labelledby="ideas" className="flex flex-col gap-2">
-            <h2 id="ideas" className="font-display text-title font-semibold">Recipe ideas</h2>
+          <section aria-labelledby="ideas" className="flex flex-col gap-3 pt-2">
+            <h2 id="ideas" className="px-1 font-display text-title">Recipe ideas</h2>
             <RecipeIdeas recipes={fruit.recipes} />
           </section>
         )}
 
         {fruit.pairings && fruit.pairings.length > 0 && (
-          <section aria-labelledby="pairs" className="flex flex-col gap-2">
-            <h2 id="pairs" className="font-display text-title font-semibold">Goes well with</h2>
+          <section aria-labelledby="pairs" className="flex flex-col gap-3 pt-2">
+            <h2 id="pairs" className="px-1 font-display text-title">Goes with</h2>
             <ul className="flex flex-wrap gap-2">
-              {fruit.pairings.map(p => (
-                <li key={p} className="rounded-full px-3 py-1.5 text-small text-ink" style={{ backgroundColor: tints.soft }}>{p}</li>
+              {fruit.pairings.map((p, i) => (
+                <li key={p} className="rounded-full bg-(--deep) px-4 py-2 text-body font-bold text-(--light)" style={{ transform: `rotate(${pairTilt[i % 5]}deg)` }}>
+                  {p}
+                </li>
               ))}
             </ul>
           </section>
         )}
 
-        <details className="group rounded-card bg-card">
-          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
-            <span className="font-display text-title font-semibold">More about it</span>
-            <ChevronDown aria-hidden="true" className="size-5 text-ink-2 transition-transform duration-200 group-open:rotate-180" />
+        {(fruit.notes || fruit.origin || fruit.history || fruit.nutrition) && (
+        <details className="group mt-2 rounded-block bg-(--bright)">
+          <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 [&::-webkit-details-marker]:hidden">
+            <span className="font-display text-[1.375rem]">More about it</span>
+            <ChevronDown aria-hidden="true" className="size-6 transition-transform duration-200 group-open:rotate-180" strokeWidth={2.5} />
           </summary>
-          <div className="flex flex-col gap-4 px-4 pb-4">
-            {fruit.notes && <p className="text-body">{fruit.notes}</p>}
+          <div className="flex flex-col gap-4 px-5 pb-5 text-body">
+            {fruit.notes && <p className="font-medium">{fruit.notes}</p>}
             {fruit.origin && <Fact title="Origin" text={fruit.origin} />}
             {fruit.history && <Fact title="History" text={fruit.history} />}
             {fruit.nutrition && (
               <div className="flex flex-col gap-2">
-                <h3 className="text-small font-semibold text-ink">Nutrition, per 100 g</h3>
+                <h3 className="text-caption font-extrabold tracking-[0.06em] text-(--ink-soft) uppercase">Nutrition, per 100 g</h3>
                 <dl className="grid grid-cols-3 gap-2">
                   <Figure label="Energy" value={`${fruit.nutrition.calories} cal`} />
                   {fruit.nutrition.vitaminC !== undefined && <Figure label="Vitamin C" value={`${fruit.nutrition.vitaminC} mg`} />}
                   {fruit.nutrition.fiber !== undefined && <Figure label="Fibre" value={`${fruit.nutrition.fiber} g`} />}
                 </dl>
-                <p className="text-small text-ink-2">{fruit.nutrition.highlights.join('. ')}.</p>
+                <p className="text-small font-medium text-(--ink-soft)">{fruit.nutrition.highlights.join('. ')}.</p>
               </div>
             )}
-            <div className="flex flex-col gap-1">
-              <h3 className="text-small font-semibold text-ink">Where the season comes from</h3>
-              <ul className="flex flex-col gap-1">
-                {fruit.sources.map(s => (
-                  <li key={s.url} className="text-small text-ink-2">
-                    <a href={s.url} target="_blank" rel="noreferrer" className="text-ink underline">{s.name}</a>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-caption text-ink-3">Checked {checkedOn(fruit.checkedOn)}</p>
-            </div>
           </div>
         </details>
+        )}
       </div>
     </article>
   )
 }
 
-function TipBlock({ Icon, title, text, tint }: { Icon: typeof Hand; title: string; text: string; tint: string }) {
+// Add to bag: a fat dark pill. Adding swells it, turns it peak green, spins the tick in, and a small
+// sticker of the fruit hops up into the bag in the header (whose count then pops).
+function AddToBag({ fruit, inBag }: { fruit: Fruit; inBag: boolean }) {
+  const button = useRef<HTMLButtonElement>(null)
+  const [fly, setFly] = useState<{ x: number; y: number; dx: number; dy: number; key: number } | null>(null)
+
+  const toggle = () => {
+    if (inBag) {
+      updateBag(b => removeItem(b, fruitItemId(fruit.id)))
+      return
+    }
+    updateBag(b => addFruit(b, fruit))
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    // Swell once (Web Animations, so the button is not remounted and keeps keyboard focus).
+    button.current?.animate(
+      [{ transform: 'scale(1)' }, { transform: 'scale(1.07)', offset: 0.35 }, { transform: 'scale(1)' }],
+      { duration: 420, easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)' },
+    )
+    const from = button.current?.getBoundingClientRect()
+    const to = document.querySelector('[data-bag-disc]')?.getBoundingClientRect()
+    if (from && to) {
+      const x = from.left + from.width / 2, y = from.top + from.height / 2
+      setFly({ x, y, dx: to.left + to.width / 2 - x, dy: to.top + to.height / 2 - y, key: Date.now() })
+    }
+  }
+
   return (
-    <section className="flex items-start gap-3 rounded-card bg-card p-4">
-      <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full text-ink" style={{ backgroundColor: tint }}>
-        <Icon aria-hidden="true" className="size-5" />
+    <>
+      <button
+        ref={button}
+        type="button"
+        aria-pressed={inBag}
+        onClick={toggle}
+        className={clsx(
+          'press block-shadow inline-flex h-16 items-center justify-center gap-2.5 rounded-full text-[19px] font-extrabold',
+          inBag ? 'bg-peak text-peak-ink' : 'bg-(--ink) text-(--light)',
+        )}
+      >
+        {inBag ? (
+          <span className="tick-spin inline-flex size-9 items-center justify-center rounded-full bg-peak-ink text-peak">
+            <Check aria-hidden="true" className="size-6" strokeWidth={3.25} />
+          </span>
+        ) : (
+          <Plus aria-hidden="true" className="size-6" strokeWidth={3} />
+        )}
+        {inBag ? 'In your bag' : 'Add to bag'}
+        {inBag && <span className="text-[14px] font-bold">(tap to remove)</span>}
+      </button>
+      {fly && createPortal(
+        <span
+          key={fly.key}
+          aria-hidden="true"
+          className="fly-to-bag pointer-events-none fixed z-50"
+          style={{ left: fly.x - 28, top: fly.y - 28, '--fly-x': `${fly.dx}px`, '--fly-y': `${fly.dy}px` } as CSSProperties}
+          onAnimationEnd={() => setFly(null)}
+        >
+          <FruitSticker fruit={fruit} size={56} />
+        </span>,
+        document.body,
+      )}
+    </>
+  )
+}
+
+function Tip({ Icon, title, text }: { Icon: typeof Hand; title: string; text: string }) {
+  return (
+    <section className="flex items-start gap-3 rounded-block bg-(--bright) p-4">
+      <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-(--pop)">
+        <Icon aria-hidden="true" className="size-6" strokeWidth={2.25} />
       </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <h2 className="text-body font-semibold">{title}</h2>
-        <p className="text-body text-ink-2">{text}</p>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <h2 className="font-display text-[1.25rem] leading-tight">{title}</h2>
+        <p className="text-body leading-snug font-medium text-(--ink-soft)">{text}</p>
       </div>
     </section>
   )
@@ -162,17 +184,17 @@ function TipBlock({ Icon, title, text, tint }: { Icon: typeof Hand; title: strin
 function Fact({ title, text }: { title: string; text: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <h3 className="text-small font-semibold text-ink">{title}</h3>
-      <p className="text-body text-ink-2">{text}</p>
+      <h3 className="text-caption font-extrabold tracking-[0.06em] text-(--ink-soft) uppercase">{title}</h3>
+      <p className="font-medium">{text}</p>
     </div>
   )
 }
 
 function Figure({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-0.5 rounded-control bg-tile p-3">
-      <dt className="text-caption text-ink-2">{label}</dt>
-      <dd className="text-body font-semibold tabular-nums">{value}</dd>
+    <div className="flex flex-col gap-0.5 rounded-[18px] bg-(--pop) p-3">
+      <dt className="text-caption font-bold text-(--ink-soft)">{label}</dt>
+      <dd className="text-[1.125rem] font-extrabold tabular-nums">{value}</dd>
     </div>
   )
 }

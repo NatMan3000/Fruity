@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import type { Fruit, Month } from '../types/fruit'
 import { FRUITS } from '../assets/fruits'
-import { useAusState } from '../hooks/useAusState'
 import { goBack } from '../hooks/useRoute'
 import { useStoredState } from '../hooks/useStoredState'
 import { fruitStatus } from '../utils/seasonality'
@@ -60,8 +59,7 @@ function useReducedMotion(): boolean {
 }
 
 export default function CafeGame({ month }: { month: Month }) {
-  const { state } = useAusState()
-  const ctx: OrderContext = useMemo(() => ({ month, state }), [month, state])
+  const ctx: OrderContext = useMemo(() => ({ month }), [month])
   const reducedMotion = useReducedMotion()
   const [progress, setProgress] = useStoredState<CafeProgress>('fruity.cafe', NEW_PROGRESS, isProgress)
   const level = levelFor(progress.stars)
@@ -268,10 +266,10 @@ export default function CafeGame({ month }: { month: Month }) {
       // Every fruit you'd eat raw, fresh ones first.
       const order = { peak: 0, ending: 1, available: 2, always: 3, off: 4 } as const
       return FRUITS.filter(f => traitsOf(f.id).rawOk)
-        .sort((a, b) => order[fruitStatus(a, month, state)] - order[fruitStatus(b, month, state)] || a.name.localeCompare(b.name))
+        .sort((a, b) => order[fruitStatus(a, month)] - order[fruitStatus(b, month)] || a.name.localeCompare(b.name))
     }
     return round ? round.order.shelf.map(id => fruitsById.get(id)).filter((f): f is Fruit => !!f) : []
-  }, [mode, round, fruitsById, month, state])
+  }, [mode, round, fruitsById, month])
 
   // ---------- Screens ----------
 
@@ -422,13 +420,13 @@ export default function CafeGame({ month }: { month: Month }) {
   return (
     <div className={`cafe${reducedMotion ? ' cafe--calm' : ''}`}>
       {body}
-      {overlay === 'stickers' && <StickerBook stickers={progress.stickers} fruits={FRUITS} state={state} onClose={() => setOverlay(null)} />}
+      {overlay === 'stickers' && <StickerBook stickers={progress.stickers} fruits={FRUITS} onClose={() => setOverlay(null)} />}
       {overlay === 'recipe' && bowlFruits.length > 0 && (
         <RecipeCard
           fruits={bowlFruits}
           allFruits={FRUITS}
           month={month}
-          state={state}
+         
           onClose={() => setOverlay(null)}
           closeLabel={mode === 'free' ? 'Back to the bowl' : 'Back to the cafe'}
         />

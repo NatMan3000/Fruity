@@ -31,13 +31,11 @@ describe('seasonality', () => {
     expect(isPeakSeason(stored, 'Aug')).toBe(false)
   })
 
-  it('a state override changes the result for that state only', () => {
+  it('reads the Victorian season only; per-state overrides on file are ignored', () => {
     const f: Fruit = { ...fruit('mango', ['Jan'], ['Feb']), stateOverrides: { QLD: { peak: ['Oct'], available: ['Nov'] } } }
     expect(isPeakSeason(f, 'Oct')).toBe(false)
-    expect(isPeakSeason(f, 'Oct', 'VIC')).toBe(false)
-    expect(isPeakSeason(f, 'Oct', 'QLD')).toBe(true)
-    expect(isInSeason(f, 'Jan', 'QLD')).toBe(false)
-    expect(isPeakSeason(f, 'Jan', 'NSW')).toBe(true)
+    expect(isInSeason(f, 'Nov')).toBe(false)
+    expect(isPeakSeason(f, 'Jan')).toBe(true)
   })
 
   it('peak implies in season, available is in season but not peak', () => {
@@ -87,12 +85,6 @@ describe('Now screen sections', () => {
     const all = [...s.buyNow, ...s.justLanded, ...s.endingSoon].map(x => x.id)
     expect(new Set(all).size).toBe(all.length)
     expect(all).not.toContain('banana')
-  })
-
-  it('uses the chosen state', () => {
-    const mango = f('mango', ['Jan'], ['Dec', 'Feb'], { stateOverrides: { NT: { peak: ['Oct', 'Nov'], available: ['Sep', 'Dec'] } } })
-    expect(nowSections([mango], 'Nov').buyNow).toEqual([])
-    expect(nowSections([mango], 'Nov', 'NT').buyNow).toEqual([mango])
   })
 
   it('gives each fruit one status word', () => {

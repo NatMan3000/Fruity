@@ -1,8 +1,9 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 
-// Bottom sheet on the native <dialog> (focus trap, Esc, inert background). Slides up 220ms,
-// down 180ms; appears without motion under reduced motion (DESIGN.md "Motion").
+// Bottom sheet on the native <dialog> (focus trap, Esc, inert background), in the screen's `bright`
+// with `ink` text. Springs up, slides down 180ms; appears without motion under reduced motion
+// (DESIGN.md "Motion").
 interface SheetProps {
   open: boolean
   onClose: () => void
@@ -45,20 +46,20 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
     <dialog
       ref={ref}
       aria-labelledby={titleId}
-      className="sheet fixed inset-x-0 top-auto bottom-0 m-0 mx-auto max-h-[85dvh] w-full max-w-lg overflow-hidden rounded-t-card border-0 bg-card p-0 text-ink"
+      className="sheet fixed inset-x-0 top-auto bottom-0 m-0 mx-auto max-h-[85dvh] w-full max-w-lg overflow-hidden rounded-t-block border-0 bg-(--bright) p-0 text-(--ink)"
       onCancel={e => { e.preventDefault(); onClose() }}
       onClick={e => { if (e.target === ref.current) onClose() }}
     >
       <div className="flex max-h-[85dvh] flex-col">
-        <div className="flex items-center gap-3 py-2 pr-2 pl-5">
-          <h2 id={titleId} className="flex-1 font-display text-title font-semibold">{title}</h2>
+        <div className="flex items-center gap-3 pt-3 pr-3 pb-2 pl-5">
+          <h2 id={titleId} className="flex-1 font-display text-title">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-tile active:bg-tile-strong"
+            className="press inline-flex size-11 items-center justify-center rounded-full bg-(--pop) text-(--ink)"
           >
-            <X aria-hidden="true" className="size-5" />
+            <X aria-hidden="true" className="size-5" strokeWidth={2.5} />
           </button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4">{children}</div>

@@ -1,163 +1,142 @@
 ---
 type: design-system
-title: Fruity design system - Greengrocer's Chalkboard
-description: Tokens, type, colour, motion and component rules for the Fruity PWA; implemented in src/index.css.
+title: Fruity design system - Sorbet Sticker
+description: Tokens, type, colour, art, motion and component rules for the Fruity PWA after the D7 hybrid look; implemented in src/index.css and src/utils/tones.ts.
 created: 2026-11-02
 ---
 
-# Fruity design: "Greengrocer's Chalkboard"
+# Fruity design: "Sorbet Sticker"
 
-The direction agreed by the council (designer and shopper seats, round 2; [plans/rebuild-fruity.md](plans/rebuild-fruity.md)). The code is the implementation: every token below lives in `src/index.css` under `@theme`, and components use the token names (`bg-paper`, `text-ink-2`, `bg-peak`), never raw hex. The one exception is a fruit's own `colour`, which is data: its tints are computed by `src/utils/colour.ts` and applied inline.
+The hybrid Nathan picked from three working comps on 2 Nov 2026 (D7, [research/2026-11-02-look-decision.md](research/2026-11-02-look-decision.md)): Sorbet Pop's colours and fruit-page theming, Market Sticker's type, white-outlined stickers and bouncy Year calendar, Juicy 3D's drop-in hero and compact List/Year toggle, plus Nathan's new idea: cut the fruit open in the hero to see inside. Victoria only: the state selector and per-state seasons are gone.
+
+The code is the implementation. Static tokens live in `src/index.css` under `@theme`; the per-screen and per-fruit tones come from `src/utils/tones.ts` as CSS variables and are read as `bg-(--pop)`, `text-(--ink)` and so on. Components never use raw hex; a fruit's own `colour` is data.
 
 ## The scene
 
-Two grown-ups in Melbourne, iPhones, the app installed to the home screen. Mostly used standing in a fruit shop under bright fluorescent light, glancing for three seconds between other things; sometimes on the couch, unhurried, playing the quiz. That scene decides it: a light, warm paper surface that reads in shop glare, big plain rows, status that survives a glance, and delight spent only where time is unhurried (detail pages, Play).
+Two grown-ups in Melbourne, iPhones, the app on the home screen. Mostly a three-second glance in a fruit shop; sometimes on the couch, playing. A gelato counter that knows the month: loud, juicy, every surface a colour, big plain blocks that survive shop glare, and play (the dish, the quiz, the cafe) where time is unhurried.
 
 ## Colour
 
-Juicy on a warm paper base (revised 2 Nov 2026 after Nathan used Phase 2 on his iPhone: "The colours are pretty boring for a fruity app!"). The paper, card and ink neutrals still carry text and structure; colour now comes from three places, each with one job. No pure `#000` or `#fff` anywhere, no gradient text, no glass, no side stripes.
+No white or paper anywhere. Every surface is a season colour or a fruit colour; the only near-white is a sticker's die-cut edge (`sticker`, `#FFFDF8`), and only ever as an outline.
 
-### Neutrals
+### Tones (src/utils/tones.ts)
 
-| Token | Hex | Use |
+One colour becomes a family of tones at fixed OKLCH lightness, so a dark fruit (mulberry) and a pale one (lemon) give blocks of the same weight and the same text colours read on all of them. Yellows are lifted so they don't go mustard.
+
+| Tone | OKLCH | Job |
 |---|---|---|
-| `paper` | `#F6F0E4` | Page background, splash, status bar (`theme_color`, `background_color`) |
-| `card` | `#FBF7EE` | Raised surface: tab bar, sheets, chips, tip blocks |
-| `tile` | `#EFE6D2` | Recessed surface: segmented control, inputs, quiz answers |
-| `tile-strong` | `#E4D8BF` | Pressed state, the Year view's current-month column |
-| `line` | `#DDD0B6` | Hairlines, used sparingly (input edge, sheet grabber) |
-| `ink` | `#1F2A1C` | Text, primary buttons, selected chips |
-| `ink-2` | `#4A5345` | Secondary text (7.1:1 on paper, 5.8:1 or better on every fruit tint) |
-| `ink-3` | `#656B5F` | Tertiary text on paper, card or a fruit's soft tint (4.8:1 or better) |
+| `pop` | the fruit's own L, kept in 0.72-0.9, C up to 0.21 | The colour block: list rows, Buy now, Cook sections, a fruit's whole page |
+| `bright` | L 0.89 (0.94 for yellows), C 0.13 | Tip and recipe cards, header discs, the season's sheets, search field, quiz card |
+| `deep` | L 0.36, C 0.11 | The Year card on a fruit page, chips, quiz answers, pairing pills |
+| `ink` | L 0.22, C 0.06 | Text on pop and bright, the season-bar track, the tab bar, hard shadows |
+| `inkSoft` | L 0.30, C 0.08 | Secondary text on pop and bright |
+| `light` | L 0.96, C 0.035 | Text on deep, ink and a season page; this month's ring |
+| `page` | hand-picked per season | A season screen's background |
 
-### 1. Season status: green means buy, red-family means not now
+`toneVars(t)` turns a family into CSS variables (`--pop`, `--bright`, `--deep`, `--ink`, `--ink-soft`, `--light`, `--page`). Put it on a block and everything inside draws in that fruit's colours.
 
-Nathan's mapping: "my bright green would be peak and maybe less bright green in season, and then out of season would be red". Fill for shapes, `-ink` for text and icons, `-soft` for tints.
+### Screens
 
-| Status | Fill | Text (`-ink`) | Soft | Word + icon |
-|---|---|---|---|---|
-| Peak | `peak` `#1FA34A` bright, saturated green | `#12722F` (5.2:1 on every tint) | `#DCF9E0` | "Peak" + filled star |
-| In season | `season` `#7CC25A` lighter, softer green | `#3F6B2B` (5.4:1) | `#E3F8DA` | "In season" + check |
-| Ending soon | `ending` `#F2A93B` amber | `#8F5400` (5.3:1) | `#FEEDD9` | "Ending soon" + hourglass |
-| Out of season | `off` `#DE9D95` soft, low-saturation rose | `#A0473F` (5.3:1) | `#FEEBE9` | "Out of season" + dashed circle |
-| All year | | `ink-2` | | "All year" + repeat |
+`useScreen` (src/hooks/useScreen.ts, called once in `App`) sets the screen's family on `<html>`, plus `--screen` (background), `--on-screen` (text), `--shadow` and `--scoop` (the tab bar's current pill), and sets `theme-color`, so the page, the overscroll, the tab bar, sheets and the iPhone status bar always agree.
 
-- **Status is colour + word + icon, always**, and in the season bar shape as well. One component (`StatusLabel`) renders the words; nothing else invents a status style.
-- Out of season is red-family but calm on purpose: a bar that is mostly out of season is a row of thin rose lines, not an alarm. The word uses the deeper `off-ink` so it still reads at a glance.
-- Green is reserved for status. Decoration never uses green, so "green means buy" stays true on every screen.
-- The quiz's right answer is `peak-soft` + `peak-ink` + check; the wrong answer is `berry-soft` + `berry-ink` + X.
-
-### 2. Fruit colour: every fruit wears its own
-
-Each fruit in `src/assets/fruits.ts` has a `colour` (#RRGGBB, validated at build): mango orange, kiwifruit green, plum purple, blueberry blue. `src/utils/colour.ts` derives two tints from it **at a fixed OKLCH lightness**, keeping only the hue and a capped chroma, so mulberry and lemon give rows of the same lightness and dark text has the same contrast on every fruit:
-
-| Tint | OKLCH | Where |
+| Screen | Background | Text |
 |---|---|---|
-| `soft` | L 0.955, C up to 0.045 | Fruit rows (Buy now, Fruit list), Cook cards, pairing chips |
-| `wash` | L 0.90, C up to 0.085 | The `FruitIcon` circle, the detail page header band and hero backdrop, tip-block icon circles |
+| Now, Fruit, Year, Cook, Play, quiz, bag sheet | the season's `page` | `light` |
+| A fruit's page | the fruit's `pop` | `ink` |
 
-- Text on a tint is always `ink`, `ink-2`, `ink-3` or a status `-ink`. `scripts/colour-contrast.test.ts` checks every fruit's tints against those (4.5:1) and the peak bar (2.5:1), reading the hexes from `src/index.css`.
-- The new art has a cream studio backdrop; it is drawn with `mix-blend-mode: multiply` on the wash, so the backdrop takes the fruit's colour and the fruit itself barely shifts. Old photos are not blended.
-- Pressed rows darken with `brightness-95` rather than switching to a neutral, so they keep their colour.
+Each season owns a sorbet: spring raspberry (`#B7014E` page), summer blood orange (`#BC3A06`), autumn plum (`#7E2FB8`), winter kiwi (`#006E5A`). Spring's raspberry is the splash and first-paint colour (`index.html`, the manifest).
 
-### 3. Juice: bright accents for decoration
+### Season status: green means buy, red family means not now
 
-| Token | Vivid | `-soft` | `-wash` | Job |
+Nathan's mapping, unchanged: peak bright green, in season lighter green, out of season red family. Fill plus its own `-ink` for the word.
+
+| Status | Fill | Word ink | Shape in the season bar | Sticker |
 |---|---|---|---|---|
-| `berry` | `#E5365F` | `#FEEBEC` | `#FED1D4` | Spring; "Just landed" marker; quiz wrong (`berry-ink` `#B3213F`) |
-| `tangerine` | `#FF8A1E` | `#FEECE1` | `#FFD4B8` | Summer; "Cook this week" marker; current tab pill |
-| `grape` | `#7E4BB0` | `#F4ECFE` | `#E7D5FE` | Autumn |
-| `citrus` | `#FFC928` | `#FDEFCF` | `#F6DB9D` | Winter; text selection |
+| Peak | `peak` `#2BD963` | `#04310F` | full-height pill | "Peak" + filled star |
+| In season | `season` `#B9F08C` | `#173D05` | half-height pill | "In season" + check |
+| Ending (last month) | `ending` `#FFB53D` | `#3D2100` | | "Ending soon" / "Last month" + hourglass |
+| Out of season | `off` `#FF7468` | `#3F0904` | small red dot | "Out of season" + dashed circle |
+| All year | `always` `#D9C8FF` | `#2A1659` | | "All year" + repeat |
 
-- Each season of the year owns one accent (`src/utils/accents.ts`): spring blossom berry, summer tangerine, autumn grape, winter citrus. The Now page's month sits on a band in that season's `-wash` with a vivid season mark (flower, sun, leaf, citrus); the season filter chips carry the same colour as a dot.
-- Now's section headings each have a small vivid marker circle with an icon: Buy now (peak green star, because it is the peak list), Just landed (berry sparkles), Ending soon (amber hourglass), Cook this week (tangerine pot). Icons on vivid circles are 3:1 or better (`ink` on all but grape, `card` on grape).
-- Vivid accents are marks and small shapes only, never a text colour and never a large fill behind text: large areas use `-wash` or `-soft`.
-- Text selection is `citrus-wash`; the caret and focus ring are `ink`.
+- **Status is colour + word + icon, always**, and shape in the bar. `StatusSticker` is the one status style: a tilted pill with a white die-cut edge.
+- The quiz's right answer is `peak`, a wrong one `off`.
 
-### Contrast (checked by `scripts/colour-contrast.test.ts`)
+### Contrast (scripts/colour-contrast.test.ts)
 
-| Pair | Ratio |
-|---|---|
-| `ink-2` on the lowest fruit soft tint / wash | 6.96 / 5.79 |
-| Status `-ink` words on the lowest fruit soft tint | 5.24 (peak) to 5.44 (in season) |
-| `ink` on each season band wash | 10.9 to 11.1 |
-| `peak` bar on the lowest fruit soft tint / on card | 2.85 / 3.07 (plus full height) |
-| `season` and `off` bars on card | 2.02 / 2.10 (plus half height and a thin line) |
+Every text pair above is checked for all 39 fruit and all four seasons at 4.5:1, the season-bar fills at 3:1 on their dark track, and each status word on its fill at 4.5:1. The test reads the static hexes from `src/index.css`, so re-tuning a token is what gets checked; a too-light ink or a pale status word fails it (checked by breaking both on 2 Nov 2026).
 
 ## Type
 
-| Role | Face | Size / line | Weight |
-|---|---|---|---|
-| Page title, fruit name on detail | Fraunces (display) | 30/34, 34/38 on detail | 600 |
-| Section heading | Fraunces | 20/26 | 600 |
-| Fruit name in rows and cards | Fraunces | 18/22 | 600 |
-| Body | Inter Tight | 17/24 | 400 |
-| Small (tips, descriptions) | Inter Tight | 15/20 | 400 |
-| Caption, status word, tab label | Inter Tight | 13/16 | 500-600 |
+| Role | Face | Size |
+|---|---|---|
+| Month and page titles | Shrikhand | `clamp(2.5rem, 13vw, 3.5rem)` |
+| A fruit's name on its page | Shrikhand | `text-hero` 48/49 |
+| Section headings | Shrikhand | `text-title` 28/31 |
+| Fruit names in rows and cards | Shrikhand | `text-name` 22/25 |
+| Body | Bricolage Grotesque 500-600 | `text-body` 17/25 |
+| Small, captions, sticker words | Bricolage Grotesque 600-800 | 15, 13, 11-15 caps |
 
-- Fraunces is the optical-size variable cut (`opsz` + `wght`), Inter Tight the weight variable cut, both self-hosted Latin-subset WOFF2 from `@fontsource-variable` and precached by the service worker. About 112 KB total.
-- Numbers use tabular figures (`tabular-nums`): counts, badges, nutrition, times.
-- Steps are about 1.25 apart; hierarchy comes from scale and weight, not colour.
-- Text fills its container. No measure caps (`max-w-prose`, `ch` widths) inside rows, cards or sheets, and no truncation of content text.
+- Both self-hosted Latin WOFF2 (`@fontsource/shrikhand` 16 KB, `@fontsource-variable/bricolage-grotesque` weight axis 41 KB), precached. Shrikhand has one weight: `.font-display` turns off synthesis so it is never faked bold.
+- Numbers use `tabular-nums`. Text fills its container: no measure caps in blocks or sheets, no truncation of content text; long names wrap.
 
 ## Shape and space
 
-- **Radii pair:** `rounded-card` 16px for rows, cards, sheets and the hero; `rounded-control` 10px for buttons, inputs and segmented controls. Chips, badges and fruit icons are fully round.
-- **Depth without shadows:** tonal steps (`paper` page, `card` raised, `tile` recessed). No drop shadows, no 1px divider lines between rows (gaps do that).
-- **Spacing:** Tailwind's 4px scale only. Page gutter 16px (`px-4`). Within a group 8-12px (`gap-2`, `gap-3`), between sections 24px (`gap-6`). Use `gap`, not margins.
-- **Targets:** every tappable thing is at least 44x44px.
-- **Safe areas:** page headers pad `env(safe-area-inset-top)`, the tab bar pads `env(safe-area-inset-bottom)`. Shell height is `min-h-[100dvh]`, never `h-screen`.
+- **Chunky blocks:** `rounded-block` 28px for rows, cards, sheets; every button, input and chip is a pill. A block sits on a hard 5px offset shadow in the screen's ink (`.block-shadow`) and sinks into it when pressed (`.press`).
+- **Spacing:** Tailwind's 4px scale. Gutter 16px. Within a group 8-16px, between sections 36px.
+- **Targets:** at least 44x44px. **Safe areas:** headers pad `env(safe-area-inset-top)`, the floating tab bar `env(safe-area-inset-bottom)`; shell `min-h-[100dvh]`.
 
 ## Fruit art
 
-- One generated studio set on a warm cream background (`images-src/fruits/<id>.png`, imported with `bun run art:import`). `bun run images` writes `<id>-480.webp` and `<id>-960.webp` (4:3) for every fruit, and `<id>-icon.webp` (160x160, square, centred on the fruit) for fruits with new art; `src/assets/art-manifest.json` lists those ids.
-- **`FruitIcon` is the only way a fruit is shown small** (rows, rails, bag, picker, quiz picture). Art icon when the manifest has it, otherwise the emoji, both on a circle in the fruit's `wash` tint. Sizes: `sm` 32, `md` 44, `row` 48 (Now's Buy now rows and rails), `lg` 56 (Fruit list), `xl` 96. CSS rounds the square icon.
-- Fruits without new art keep their old photo as the detail hero until the art lands.
+- **Every fruit picture is a die-cut sticker that sits INSIDE its block** (Nathan found Sorbet's pop-out "a bit weird"). `FruitSticker` is the only way to draw one: the art sticker when the fruit has new art, otherwise its emoji with the same white edge traced round it (`.sticker-emoji`). Exactly one of the two is drawn, never both, which is what fixed the doubled quiz picture. Each fruit has a steady tilt (`tiltOf`).
+- `FruitIcon` (the cafe's name) is a thin wrapper over `FruitSticker`, so the cafe shows the same stickers.
+- **Pipeline, one command:** `bun run art` = `art:import` (copies `<id>.png` from `~/.cache/kai-tmp/fruity-art`) + `images` (webps and `src/assets/art-manifest.json`) + `stickers` (`scripts/build-stickers.ts`: Apple Vision lifts the fruit off its backdrop, `scripts/subject-mask.swift`, macOS only; bakes a 28px white edge; writes `<id>-sticker.webp` 640px and `<id>-sticker-sm.webp` 256px). Stickers rebuild only when their source is newer; `--force` rebuilds all. Generated files are committed.
+- The 4:3 photos and round icons that `images` still writes (`-480`, `-960`, `-icon`) are no longer drawn and are left out of the precache.
 
-## Season bar
+## The 3D heroes (src/three/, src/components/NowHero.tsx, FruitHero.tsx)
 
-The 12-segment bar replaces the old 3x4 month grid everywhere (browse, detail, Year view). Peak, in season and off are told apart by **shape as well as colour**: peak is a full-height bright `peak` green segment, in season a half-height soft `season` green segment, off a thin soft-rose `off` line. The legend draws the same three shapes. The current month carries an `ink` marker under its segment (and a bold initial where initials show). Each bar has a text label for screen readers ("Peak Dec to Feb. In season Oct, Nov, Mar. Now: Nov, in season").
+- **A fruit's page** (`SpinFruit`, comp-3d's drop): the fruit in 3D drops onto a juicier blob spinning, bounces, squashes and coasts to a stop; drag to turn it; cut it open as below (the Slice button reads Put back once it is open). A fruit without a model (`src/three/modelled.ts`, kept in step with the models by a test) shows its white-edged sticker dropping in instead, as does any device without WebGL.
 
-- In the Fruit list every row has the same structure (name and status on one line, the status never wraps under the name, bar below), and the list is one column at every width, so every bar starts at the same x and sits at the same height in its row.
+**On Now:**
+
+- This month's peak fruit drop one by one into a sundae coupe glazed in the season's `pop` with a `light` lip, bounce, squash and settle; the dish rocks on each landing. The fruit with the best insides go in first (watermelon in summer, kiwi and citrus in winter), then Buy now order.
+- **Cut them open:** tap a fruit, or flick quickly sideways across it (22 px inside 100 ms), and it slices: a knife stroke flashes, a few drops of juice fly, the halves fall apart side by side and turn their cut faces up to you. Tap a cut fruit to put it back. A slower sideways drag turns instead (spins the dish, or turns the fruit on its page). A vertical swipe still scrolls the page (`touch-action: pan-y`). No hint text (Nathan, 2 Nov 2026): the Slice button is the cue, and the way in for keyboard and screen-reader users; cuts are announced. The cut, the juice and the gesture live in `src/three/cutting.tsx`, shared by the dish and the fruit page.
+- Round fruit are built as two halves (`models.ts` `cutBody`), each closed by a cap textured with its flesh (`flesh.ts`): watermelon red with black seeds and a white-and-green rind, kiwi with its seed ring and pale core, citrus segments, dragon fruit speckles, passionfruit pulp, avocado, peach, plum and lychee with a stone standing proud of one half, papaya and melons with a seed cavity, and a generic pale flesh for any fruit without a spec. Bunches, berries, bananas and rhubarb hop when tapped instead.
+- Cuts by type (Nathan: "The pineapple would be better if it cut into slices!"): rounds where a fruit is known by its slices: pineapple rings (crown left on the top piece), citrus wheels, kiwifruit rounds, starfruit stars, banana coins, all fanned out like dealt cards. Halves where the inside is the payoff: lengthways for stone fruit, avocado, mango, papaya, strawberry, melons, fig, dragon fruit and lychee; across for passionfruit, pomegranate, persimmon, feijoa and coconut. Faces are canvas-painted flesh that lights itself a little, so the inside keeps its colour whichever way it turns.
+- **Pieces never interpenetrate; the whole body is fully replaced by its pieces.** Two halves lie side by side (staggered in depth if their edges would meet). More pieces all turn the same way, cut face to you, thin out a little, and either lie in a flat row with gaps (small pieces, banana coins) or shingle: each sits above the last by at least its own thickness, so parallel pieces can never meet. A crown piece (pineapple) or banana tip stands at the end of the row. Whatever is not cut (the banana's other fingers) eases back while the pieces come forward. The row is centred where the fruit was. Then `cutOverlaps` (convex hulls of each piece's solid body) checks it exactly and nudges until clear.
+- **Check them:** `bun run models:sheet [dir]` renders every fruit whole and cut from the fruit page's camera into two labelled contact sheets (`models.html` and `src/dev/model-sheet.ts`, dev-only, not in the app build). Run it after touching `src/three/` and look at every tile; it also writes every cut full size (`dir/cut/<id>.png`) and FAILS (exit 1, red label) if any cut piece overlaps another or the rest of the fruit.
+- All 39 fruit are modelled (comp-3d's 31 plus dragon fruit, passionfruit, lychee, feijoa, fig, coconut, custard apple and quince).
+- **Cost:** three.js and React Three Fiber (one shared chunk, 249 KB gzip, also used by the cafe), the models, flesh and cutting (12 KB) and the two scenes (2 KB and 1 KB) load lazily, only once the Buy now list has painted (`requestIdleCallback`). No `manualChunks`: forcing a `three` chunk pulled React into it and made the main entry preload all of three.js (caught 2 Nov 2026). Render on demand (`frameloop="demand"`), DPR capped at 2, one 1024 shadow map. A still poster of three stickers shows until it lands, or for good where WebGL is missing or fails.
 
 ## Motion
 
-Motion only where it means something. CSS and the View Transitions API, no animation library.
+"We like animation." Playful, springy, one-shot. CSS only (springs as `linear()` curves in `--ease-spring` and `--ease-bounce`, Web Animations for the bag swell); no animation library ships.
 
-| Moment | What moves | Timing |
-|---|---|---|
-| Card or row to fruit detail | The tapped icon morphs into the hero (`view-transition-name: fruit-hero`, set on the tapped element only) | 220ms ease-out; a 150ms fade where View Transitions are missing |
-| Detail opens | Season bar segments fill upward (`scaleY`, origin bottom, 8ms stagger) | 160ms each, all done under 250ms |
-| Bag tick | Check fills (`scale` + opacity) | 150ms ease-out |
-| Bottom sheet | Slides up, backdrop fades | 220ms in, 180ms out, ease-out |
+| Moment | What moves |
+|---|---|
+| First visit of a session: Now, Fruit list, Year, Cook | Titles rise; blocks pop in staggered with a slight twist; list rows swing in from alternating sides |
+| A fruit page opens | The blob springs in with a twist, the 3D fruit drops in spinning and coasts to a stop, the status sticker slaps on, the Year bars bounce up one by one (Market Sticker's entrance) |
+| Add to bag | The button swells once and turns peak green, the tick spins in, a small sticker of the fruit hops up into the bag, whose count pops |
+| Tabs | The current pill slides across with an overshoot |
+| Sheet | Springs up, slides down |
+| Hero | Drop-in, cut, juice, rejoin (above) |
 
-- Transform and opacity only, never layout properties. Ease-out, no bounce.
-- No entrance animation on Now. Tab switches are instant.
-- No perpetual animation anywhere (no `animate-pulse`, `animate-ping`, `animate-bounce`, no `infinite` on anything always mounted). The salad maker's stir runs only while mixing (2.5s).
-- `prefers-reduced-motion: reduce` turns all of it off: View Transitions are skipped, sheets appear without sliding, the bar is drawn full.
+- Transform and opacity only. Nothing loops and nothing moves while idle: the 3D scene stops rendering once still.
+- `prefers-reduced-motion: reduce` turns all of it off: screens appear in their final state, the hero's fruit start in the dish and cut without travel, the bag skips the hop.
 
 ## Components
 
-- **Tab bar** (`TabBar`): Now / Fruit / Cook / Play, lucide icons plus labels, fixed to the bottom with the safe-area inset. Current tab: icon in a `tangerine-wash` pill, label `ink` semibold; the rest `ink-3`.
-- **Header bands**: Now's month header and a fruit page's header (back, hero, name) sit on a full-width band with 28px bottom corners, in the season's or the fruit's wash. Status text stays below the band, on paper.
-- **Bag button** (`BagButton`): top right on Now, Fruit, fruit detail and Cook. Badge shows items still to get, tabular, `ink` fill.
-- **Bottom sheet** (`Sheet`): native `<dialog>` (focus trap, Esc to close, background inert), `card` surface, `rounded-card` top corners, a close button. Backdrop is `ink` at 20% with a barely-there blur.
-- **Filter chips**: single-select, tap again to clear. Selected is `ink` fill with a check; unselected chips show a colour dot (peak green, in-season green, each season's accent, `ink-3` for year-round). On a phone the row scrolls sideways and its right edge fades while more chips are hidden past it; from `sm` up the chips wrap, so none is ever out of reach.
-- **State chip**: map pin + state code + chevron; opens the state sheet. The chosen state is stored (`fruity.state`, default `VIC`) and every season calculation reads it.
+- **Top bar** (`TopBar`): a Back disc on a fruit page, the title in Shrikhand, extra controls, and the bag disc (`bright` with an `ink` icon, a count badge in `ink`).
+- **List / Year toggle** (`FruitTabHeader`): two round icon buttons in an `ink` pill, no words on screen, each with its name as an `aria-label` and `aria-current` on the one you are on.
+- **Tab bar** (`TabBar`): a floating `ink` pill; the current tab sits in a `--scoop` pill (the season's `pop`, or the fruit's `bright` on a fruit page).
+- **Colour block rows**: Buy now and the Fruit list are blocks in the fruit's `pop` with the sticker inside on the left, the name in Shrikhand, a status sticker, and the pick tip (Now) or the season bar (list).
+- **Season bar** (`SeasonStrip`): twelve scoops in an `ink` track; this month ringed in `light`; on a fruit page, `lg` with month initials and the bouncy entrance.
+- **Sheet** (`Sheet`): native `<dialog>`, the screen's `bright` with `ink` text, a `pop` close disc.
+- **Filter chips**: `deep` with a colour dot, `pop` with a check when on; they squish when pressed.
 
 ## App icon
 
-A red apple with a lime leaf on a bright green (`#22B04F`) square, drawn as SVG in `scripts/build-icons.ts` (`bun run icons`), rendered with sharp:
-
-| File | Size | Use |
-|---|---|---|
-| `apple-touch-icon.png` | 180, opaque, full bleed | iOS home screen (`<link rel="apple-touch-icon" sizes="180x180">`); iOS rounds the corners |
-| `icon-192.png`, `icon-512.png` | 192, 512 | Manifest `purpose: any` |
-| `icon-maskable-512.png` | 512, apple scaled to 80% | Manifest `purpose: maskable`; the apple stays inside the central safe circle |
-| `favicon.svg` | vector, rounded tile | Browser tab only |
-
-The manifest lists PNGs only. iOS cannot use an SVG home-screen icon: with an SVG in the manifest it showed a letter "F" placeholder. iOS bakes the icon in when the app is added, so a changed icon needs the home-screen app deleted and re-added.
+A red apple with a lime leaf on a bright green square (`scripts/build-icons.ts`, `bun run icons`), PNG only in the manifest: iOS cannot use an SVG home-screen icon. A changed icon needs the home-screen app deleted and re-added.
 
 ## Writing
 
-Australian English (colour, favourite, fibre). No em or en dashes: use " - ", commas or colons. Write "Ai", not "AI". Plain, short, warm; no exclamation marks on status.
+Australian English (colour, favourite, fibre). No em or en dashes: use " - ", commas or colons. Write "Ai", not "AI". Plain, short, warm.

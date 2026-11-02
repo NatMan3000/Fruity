@@ -1,7 +1,5 @@
-// Per-fruit colour (DESIGN.md "Fruit colour"). Each fruit carries one vivid `colour`; the soft
-// surfaces it tints are derived here at a FIXED lightness in OKLCH, so a dark fruit (mulberry) and
-// a pale one (lemon) give rows of the same lightness and dark text keeps the same contrast on all.
-// scripts/colour-contrast.test.ts checks every fruit's tints against the text and bar colours drawn on them.
+// Colour maths for the Sorbet tones (src/utils/tones.ts): sRGB <-> OKLCH, gamut fitting and the
+// WCAG contrast ratio. scripts/colour-contrast.test.ts uses `contrast` to check every text pair.
 
 type Rgb = [number, number, number]
 
@@ -16,7 +14,7 @@ export function hexToRgb(hex: string): Rgb {
 const rgbToHex = (rgb: Rgb) =>
   '#' + rgb.map(c => Math.round(Math.min(1, Math.max(0, c)) * 255).toString(16).padStart(2, '0')).join('').toUpperCase()
 
-function rgbToOklch([r, g, b]: Rgb): [number, number, number] {
+export function rgbToOklch([r, g, b]: Rgb): [number, number, number] {
   const [lr, lg, lb] = [r, g, b].map(toLinear)
   const l = Math.cbrt(0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb)
   const m = Math.cbrt(0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb)
@@ -26,6 +24,8 @@ function rgbToOklch([r, g, b]: Rgb): [number, number, number] {
   const B = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s
   return [L, Math.hypot(A, B), Math.atan2(B, A)]
 }
+
+export const oklchOf = (hex: string) => rgbToOklch(hexToRgb(hex))
 
 // Linear sRGB, unclamped, so the caller can tell when a colour is out of gamut.
 function oklchToLinear(L: number, C: number, h: number): Rgb {
@@ -41,8 +41,8 @@ function oklchToLinear(L: number, C: number, h: number): Rgb {
   ]
 }
 
-// The fruit's hue at lightness L, chroma capped at maxC and pulled in until it fits sRGB.
-function tone(hex: string, L: number, maxC: number): string {
+// The colour's hue at lightness L, chroma capped at maxC and pulled in until it fits sRGB.
+export function tone(hex: string, L: number, maxC: number): string {
   const [, c, h] = rgbToOklch(hexToRgb(hex))
   let C = Math.min(c, maxC)
   let lin = oklchToLinear(L, C, h)
@@ -51,23 +51,6 @@ function tone(hex: string, L: number, maxC: number): string {
     lin = oklchToLinear(L, C, h)
   }
   return rgbToHex(lin.map(fromLinear) as Rgb)
-}
-
-export interface FruitTints {
-  soft: string  // row and card surface
-  wash: string  // icon circle, detail header band
-}
-
-export const TINT = { soft: { L: 0.955, C: 0.045 }, wash: { L: 0.9, C: 0.085 } } as const
-
-const cache = new Map<string, FruitTints>()
-export function fruitTints(colour: string): FruitTints {
-  let t = cache.get(colour)
-  if (!t) {
-    t = { soft: tone(colour, TINT.soft.L, TINT.soft.C), wash: tone(colour, TINT.wash.L, TINT.wash.C) }
-    cache.set(colour, t)
-  }
-  return t
 }
 
 // WCAG 2 contrast ratio between two hex colours.

@@ -1,4 +1,4 @@
-import type { AusState, Fruit, Month, Season } from '../../types/fruit'
+import type { Fruit, Month, Season } from '../../types/fruit'
 import { SEASONS } from '../../types/fruit'
 import { fruitStatus, getSeasonality } from '../../utils/seasonality'
 import { traitsOf, type ColourFamily, type Group, type Shape } from './traits'
@@ -30,7 +30,6 @@ export interface Order {
 
 export interface OrderContext {
   month: Month
-  state: AusState
 }
 
 export type Rng = () => number
@@ -60,15 +59,15 @@ export function shuffle<T>(rng: Rng, list: readonly T[]): T[] {
 
 // A "summer fruit" is one at its best (peak) in a summer month, so banana and stored apples
 // never count as belonging to a season.
-function inSeasonOf(fruit: Fruit, season: Season, state: AusState): boolean {
-  const peak = getSeasonality(fruit, state).peak
+function inSeasonOf(fruit: Fruit, season: Season): boolean {
+  const peak = getSeasonality(fruit).peak
   return SEASONS[season].some(m => peak.includes(m))
 }
 
 // Fresh now: in the shops because it is in season this month. Year-round fruit (banana) is
 // not "fresh now", so the sparkle on the shelf teaches the seasons.
 export function isFreshNow(fruit: Fruit, ctx: OrderContext): boolean {
-  const s = fruitStatus(fruit, ctx.month, ctx.state)
+  const s = fruitStatus(fruit, ctx.month)
   return s === 'peak' || s === 'ending' || s === 'available'
 }
 
@@ -79,7 +78,7 @@ export function matches(trait: Trait, fruit: Fruit, ctx: OrderContext): boolean 
     case 'colour': return t.colours.includes(trait.colour)
     case 'shape': return t.shapes.includes(trait.shape)
     case 'group': return t.groups.includes(trait.group)
-    case 'season': return inSeasonOf(fruit, trait.season, ctx.state)
+    case 'season': return inSeasonOf(fruit, trait.season)
     case 'fresh': return isFreshNow(fruit, ctx)
     case 'pips': return t.pips
     case 'stone': return t.stone

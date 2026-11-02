@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react'
-import type { AusState, Fruit } from '../../types/fruit'
+import type { Fruit } from '../../types/fruit'
 import { FruitIcon } from '../../components/FruitIcon'
 import { describeMonths, getSeasonality } from '../../utils/seasonality'
 import { CUSTOMERS } from '../customers'
@@ -9,14 +9,13 @@ import { CustomerFace } from './CustomerFace'
 interface StickerBookProps {
   stickers: string[]
   fruits: Fruit[]
-  state: AusState
   onClose: () => void
 }
 
 // A tiny tilt per sticker, the same every time, so the page looks hand-stuck.
 const tilt = (id: string) => ([...id].reduce((a, c) => a + c.charCodeAt(0), 0) % 9) - 4
 
-export function StickerBook({ stickers, fruits, state, onClose }: StickerBookProps) {
+export function StickerBook({ stickers, fruits, onClose }: StickerBookProps) {
   const [tab, setTab] = useState<'fruit' | 'friends'>('fruit')
   const have = new Set(stickers)
   const fruitCount = fruits.filter(f => have.has(fruitSticker(f.id))).length
@@ -38,7 +37,7 @@ export function StickerBook({ stickers, fruits, state, onClose }: StickerBookPro
       <ul className="cafe-book__grid">
         {tab === 'fruit' && fruits.map(f => {
           const got = have.has(fruitSticker(f.id))
-          const peak = getSeasonality(f, state).peak
+          const peak = getSeasonality(f).peak
           return (
             <li key={f.id} className={`cafe-sticker${got ? '' : ' cafe-sticker--locked'}`} style={{ '--tilt': `${tilt(f.id)}deg`, '--fruit': f.colour } as CSSProperties}>
               <span className="cafe-sticker__art">

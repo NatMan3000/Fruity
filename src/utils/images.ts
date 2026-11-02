@@ -1,20 +1,13 @@
 import type { Fruit } from '../types/fruit'
 import artManifest from '../assets/art-manifest.json'
 
-export type ImageSize = 480 | 960
-
-// Ids with new generated art (written by scripts/build-images.ts).
+// Ids with new generated art (written by scripts/build-images.ts). Every one of them also has a die-cut
+// sticker with a white edge (scripts/build-stickers.ts): <id>-sticker.webp (640px) and
+// <id>-sticker-sm.webp (256px), transparent, square. Fruit without art show their emoji as a sticker.
 const withArt = new Set<string>(artManifest)
 export const hasArt = (fruit: Fruit) => withArt.has(fruit.id)
 
-// `fruit.image` is a stem such as 'images/fruits/mango'; the build script writes <stem>-480.webp and <stem>-960.webp.
-export function fruitImageUrl(fruit: Fruit, size: ImageSize): string | undefined {
-  if (!fruit.image) return undefined
-  return `${import.meta.env.BASE_URL}${fruit.image.replace(/^\//, '')}-${size}.webp`
-}
-
-// The round icon (160px square webp), only for fruits with new art; otherwise FruitIcon shows the emoji.
-export function fruitIconUrl(fruit: Fruit): string | undefined {
-  if (!fruit.image || !withArt.has(fruit.id)) return undefined
-  return `${import.meta.env.BASE_URL}${fruit.image.replace(/^\//, '')}-icon.webp`
+export function stickerUrl(fruit: Fruit, size: 'sm' | 'lg'): string | undefined {
+  if (!withArt.has(fruit.id)) return undefined
+  return `${import.meta.env.BASE_URL}images/fruits/${fruit.id}-sticker${size === 'sm' ? '-sm' : ''}.webp`
 }

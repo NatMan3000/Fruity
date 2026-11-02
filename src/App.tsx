@@ -1,19 +1,19 @@
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react'
-import type { AusState } from './types/fruit'
 import { FRUITS } from './assets/fruits'
-import { AusStateContext, isAusState } from './hooks/useAusState'
 import { useCurrentMonth } from './hooks/useCurrentMonth'
 import { navigate, useRoute } from './hooks/useRoute'
+import { useScreen } from './hooks/useScreen'
 import { useStoredState } from './hooks/useStoredState'
 import { UiContext } from './hooks/useUi'
 import { isBrowseFilterOrNull, type BrowseFilter } from './utils/browse'
 import { tabFor, type Route } from './utils/route'
+import { seasonOf } from './utils/seasonality'
+import { seasonTones, tonesOf } from './utils/tones'
 import { BagSheet } from './components/BagSheet'
 import { FruitQuiz } from './components/FruitQuiz'
 import { Link } from './components/Link'
-import { PageHeader } from './components/PageHeader'
-import { StateSheet } from './components/StateSheet'
 import { TabBar } from './components/TabBar'
+import { TopBar } from './components/TopBar'
 import { CafeLoading } from './cafe/CafeLoading'
 import { BrowsePage } from './pages/BrowsePage'
 import { CookPage } from './pages/CookPage'
@@ -30,14 +30,16 @@ const isString = (v: unknown): v is string => typeof v === 'string'
 function App() {
   const route = useRoute()
   const month = useCurrentMonth()
-  const [state, setState] = useStoredState<AusState>('fruity.state', 'VIC', isAusState)
   const [query, setQuery] = useStoredState('fruity.search', '', isString)
   const [filter, setFilter] = useStoredState<BrowseFilter | null>('fruity.filter', null, isBrowseFilterOrNull)
   const [bagOpen, setBagOpen] = useState(false)
-  const [statesOpen, setStatesOpen] = useState(false)
 
-  const ausState = useMemo(() => ({ state, setState }), [state, setState])
-  const ui = useMemo(() => ({ openBag: () => setBagOpen(true), openStates: () => setStatesOpen(true) }), [])
+  // Season screens wear the season's sorbet; a fruit's page wears the fruit (DESIGN.md "Colour").
+  const fruitHere = route.name === 'fruit' ? FRUITS.find(f => f.id === route.id) : undefined
+  const tones = useMemo(() => (fruitHere ? tonesOf(fruitHere.colour) : seasonTones(seasonOf(month))), [fruitHere, month])
+  useScreen(tones, fruitHere ? 'fruit' : 'season')
+
+  const ui = useMemo(() => ({ openBag: () => setBagOpen(true) }), [])
   const browseWith = useCallback((f: BrowseFilter) => {
     setQuery('')
     setFilter(f)
@@ -45,18 +47,15 @@ function App() {
   }, [setQuery, setFilter])
 
   return (
-    <AusStateContext.Provider value={ausState}>
-      <UiContext.Provider value={ui}>
-        <div className="min-h-[100dvh] pb-[calc(env(safe-area-inset-bottom)+4.5rem)]">
-          <main className="mx-auto w-full max-w-2xl">
-            <Screen route={route} month={month} query={query} setQuery={setQuery} filter={filter} setFilter={setFilter} browseWith={browseWith} />
-          </main>
-        </div>
-        <TabBar active={tabFor(route)} />
-        <BagSheet open={bagOpen} onClose={() => setBagOpen(false)} />
-        <StateSheet open={statesOpen} onClose={() => setStatesOpen(false)} />
-      </UiContext.Provider>
-    </AusStateContext.Provider>
+    <UiContext.Provider value={ui}>
+      <div className="min-h-[100dvh] pb-[calc(env(safe-area-inset-bottom)+6.5rem)]">
+        <main className="mx-auto w-full max-w-2xl">
+          <Screen route={route} month={month} query={query} setQuery={setQuery} filter={filter} setFilter={setFilter} browseWith={browseWith} />
+        </main>
+      </div>
+      <TabBar active={tabFor(route)} />
+      <BagSheet open={bagOpen} onClose={() => setBagOpen(false)} />
+    </UiContext.Provider>
   )
 }
 
@@ -90,7 +89,8 @@ function Screen({ route, month, query, setQuery, filter, setFilter, browseWith }
     case 'quiz':
       return (
         <div className="flex flex-col pb-6">
-          <PageHeader title="Guess the fruit" back={{ name: 'play' }} bag={false} />
+          <TopBar back={{ name: 'play' }} bag={false} />
+          <h1 className="px-5 pb-4 font-display text-[clamp(2.25rem,11vw,3rem)] leading-none">Guess the fruit</h1>
           <div className="px-4"><FruitQuiz fruits={FRUITS} /></div>
         </div>
       )
@@ -106,11 +106,12 @@ function Screen({ route, month, query, setQuery, filter, setFilter, browseWith }
 function NotFound() {
   return (
     <div className="flex flex-col pb-6">
-      <PageHeader back={{ name: 'browse' }} />
-      <div className="flex flex-col items-start gap-3 px-4">
-        <h1 className="font-display text-display font-semibold">We don't know that fruit</h1>
-        <p className="text-body text-ink-2">The link may be old. Every fruit we cover is in the list.</p>
-        <Link to={{ name: 'browse' }} className="inline-flex h-11 items-center rounded-control bg-ink px-4 font-semibold text-paper">
+      <TopBar back={{ name: 'browse' }} />
+      <div className="flex flex-col items-start gap-4 px-5 pt-4">
+        <span aria-hidden="true" className="slap sticker-emoji text-[72px] leading-none" style={{ transform: 'rotate(-8deg)' }}>🤔</span>
+        <h1 className="font-display text-[2.5rem] leading-tight">We don't know that fruit</h1>
+        <p className="text-body font-semibold">The link may be old. Every fruit we cover is in the list.</p>
+        <Link to={{ name: 'browse' }} className="press block-shadow inline-flex h-12 items-center rounded-full bg-(--bright) px-5 font-extrabold text-(--ink)">
           See all fruit
         </Link>
       </div>

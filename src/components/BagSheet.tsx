@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import clsx from 'clsx'
 import { Check, Copy, Share, X } from 'lucide-react'
 import { FRUITS } from '../assets/fruits'
 import { updateBag, useBag } from '../hooks/useBag'
 import { bagText, clearDone, removeItem, toggleDone } from '../utils/bag'
-import { FruitIcon } from './FruitIcon'
+import { FruitSticker } from './FruitSticker'
 import { Sheet } from './Sheet'
 
 type CopyState = 'idle' | 'copied' | 'failed'
@@ -47,7 +47,7 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
         <button
           type="button"
           onClick={shareList}
-          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-control bg-ink font-semibold text-paper active:opacity-90"
+          className="press inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-(--ink) font-extrabold text-(--light)"
         >
           {canShare ? <Share aria-hidden="true" className="size-5" /> : <Copy aria-hidden="true" className="size-5" />}
           {copyState === 'copied' ? 'Copied' : canShare ? 'Share list' : 'Copy list'}
@@ -56,13 +56,13 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
           <button
             type="button"
             onClick={() => updateBag(clearDone)}
-            className="inline-flex h-12 items-center justify-center rounded-control bg-tile px-4 font-semibold text-ink active:bg-tile-strong"
+            className="press inline-flex h-12 items-center justify-center rounded-full bg-(--pop) px-5 font-extrabold text-(--ink)"
           >
             Clear ticked
           </button>
         )}
       </div>
-      <p aria-live="polite" className="text-caption text-ink-2 empty:hidden">
+      <p aria-live="polite" className="text-caption font-semibold text-(--ink-soft) empty:hidden">
         {copyState === 'copied' ? 'List copied as plain text.' : copyState === 'failed' ? 'Could not copy. Try again, or long-press to select.' : ''}
       </p>
     </div>
@@ -71,9 +71,14 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
   return (
     <Sheet open={open} onClose={onClose} title="Bag" footer={footer || undefined}>
       {bag.length === 0 ? (
-        <p className="py-6 text-body text-ink-2">Your bag is empty. Open a fruit and tap Add to bag.</p>
+        <div className="flex flex-col items-center gap-3 py-6 text-center">
+          <span aria-hidden="true" className="slap inline-flex size-20 items-center justify-center rounded-full bg-(--pop) text-[44px] leading-none" style={{ '--tilt': '-6deg', transform: 'rotate(var(--tilt))' } as CSSProperties}>
+            <span className="sticker-emoji">🧺</span>
+          </span>
+          <p className="text-body font-semibold">Your bag is empty. Open a fruit and tap Add to bag.</p>
+        </div>
       ) : (
-        <ul className="flex flex-col gap-1">
+        <ul className="flex flex-col gap-0.5">
           {bag.map(item => {
             const fruit = item.fruitId ? FRUITS.find(f => f.id === item.fruitId) : undefined
             return (
@@ -83,24 +88,24 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
                   role="checkbox"
                   aria-checked={item.done}
                   onClick={() => updateBag(b => toggleDone(b, item.id))}
-                  className="flex min-h-12 flex-1 items-center gap-3 rounded-control px-1 text-left active:bg-tile"
+                  className="flex min-h-14 flex-1 items-center gap-3 rounded-full px-1 text-left active:bg-(--pop)"
                 >
                   <span
                     className={clsx(
                       'inline-flex size-6 shrink-0 items-center justify-center rounded-full',
-                      item.done ? 'bg-peak-ink text-card' : 'bg-card ring-2 ring-tile-strong ring-inset',
+                      item.done ? 'bg-peak text-peak-ink' : 'ring-[2.5px] ring-(--ink-soft) ring-inset',
                     )}
                   >
                     {item.done && <Check aria-hidden="true" className="tick-in size-4" strokeWidth={3} />}
                   </span>
-                  {fruit && <FruitIcon fruit={fruit} size="sm" />}
-                  <span className={clsx('text-body', item.done ? 'text-ink-3 line-through' : 'text-ink')}>{item.name}</span>
+                  {fruit && <FruitSticker fruit={fruit} size={40} />}
+                  <span className={clsx('text-body font-bold', item.done ? 'text-(--ink-soft) line-through' : 'text-(--ink)')}>{item.name}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => updateBag(b => removeItem(b, item.id))}
                   aria-label={`Remove ${item.name}`}
-                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink-3 hover:bg-tile active:bg-tile-strong"
+                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-(--ink-soft) active:bg-(--pop)"
                 >
                   <X aria-hidden="true" className="size-4" />
                 </button>

@@ -1,4 +1,4 @@
-import type { AusState, Fruit, Month } from '../../types/fruit'
+import type { Fruit, Month } from '../../types/fruit'
 import { isInSeason } from '../../utils/seasonality'
 import { traitsOf } from './traits'
 
@@ -76,7 +76,7 @@ export function pickDressing(fruits: Fruit[]): DressingPart[] {
   return chosen
 }
 
-export function buildRecipe(fruits: Fruit[], month: Month, state: AusState, allFruits: Fruit[]): Recipe {
+export function buildRecipe(fruits: Fruit[], month: Month, allFruits: Fruit[]): Recipe {
   const dressing = pickDressing(fruits)
   const liquid = dressing.filter(d => d.role !== 'top')
   const tops = dressing.filter(d => d.role === 'top')
@@ -102,12 +102,12 @@ export function buildRecipe(fruits: Fruit[], month: Month, state: AusState, allF
   ]
 
   const outOfSeason = fruits
-    .filter(f => !isInSeason(f, month, state))
+    .filter(f => !isInSeason(f, month))
     .map(f => {
       const colours = traitsOf(f.id).colours
       const swap = allFruits.find(g =>
         g.id !== f.id && !fruits.some(x => x.id === g.id) && traitsOf(g.id).rawOk &&
-        isInSeason(g, month, state) && g.seasonality.peak.length > 0 &&
+        isInSeason(g, month) && g.seasonality.peak.length > 0 &&
         traitsOf(g.id).colours.some(c => colours.includes(c)))
       return { fruit: f, swap }
     })
