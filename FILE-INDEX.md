@@ -5,3 +5,5 @@
 | `plans/rebuild-fruity.md` | Council consensus and phased rebuild plan (proposed) | 2026-11-02 |
 | `research/2026-11-02-fruity-council/` | The 4 council seats' cases, rounds 1 and 2 | 2026-11-02 |
 | `sessions/` | Session logs | - |
+| `research/2026-11-02-phase1-seasons-diff.md` | Phase 1 proposed Victorian seasons, old vs new, for approval | 2026-11-02 |
+| `data/phase1-seasons-proposed.json` | Phase 1 proposed seasonality data with sources | 2026-11-02 |

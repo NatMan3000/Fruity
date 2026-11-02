@@ -1,0 +1,1610 @@
+[
+  {
+    "id": "mango",
+    "peak": [
+      "Dec",
+      "Jan",
+      "Feb"
+    ],
+    "available": [
+      "Oct",
+      "Nov",
+      "Mar"
+    ],
+    "yearRound": null,
+    "variesByState": true,
+    "stateNote": "NT mangoes start around Aug-Sep and Qld from late Oct, so Darwin and Brisbane shops have mangoes earlier and longer than Melbourne. Vic shops sell Qld and NT fruit; Mildura grows a little Kensington Pride.",
+    "pick": "Heavy for its size, fruity smell at the stem end, gives slightly under your thumb. Skip very hard or wrinkled ones.",
+    "storage": "Ripen on the bench, then fridge for up to about 5 days.",
+    "sources": [
+      {
+        "name": "Australian Mango Industry Association, Our Industry",
+        "url": "https://www.industry.mangoes.net.au/our-industry",
+        "says": "Harvest starts NT July/August, WA Sept/Oct, Qld Oct/Nov; season ends around March/April."
+      },
+      {
+        "name": "Queensland Government (hw.qld.gov.au) mango article",
+        "url": "https://hw.qld.gov.au/?p=26175",
+        "says": "Qld mango season late October to early April (via search summary; page not opened)."
+      },
+      {
+        "name": "Melbourne Market report (The Happy Apple), 28 Oct 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/asia/article/9886925/nothing-beats-stuff-that-s-grown-in-your-own-country/",
+        "says": "28 Oct 2026: mangoes (Kensington Pride and R2E2) in season and volume building."
+      },
+      {
+        "name": "Melbourne Market report, 3 Mar 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/",
+        "says": "3 Mar 2026: Keitt mangoes from Childers finishing; Mildura Kensington Pride in limited volumes."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": ""
+  },
+  {
+    "id": "watermelon",
+    "peak": [
+      "Dec",
+      "Jan",
+      "Feb"
+    ],
+    "available": [
+      "Nov",
+      "Mar",
+      "Apr"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Heavy for its size, a creamy-yellow patch where it sat on the ground, a hollow thud when tapped.",
+    "storage": "Whole on the bench for a few days; cut pieces in the fridge, 3 days.",
+    "sources": [
+      {
+        "name": "Melons Australia via FreshPlaza: melon production spans 12 months",
+        "url": "https://www.freshplaza.com/africa/article/9613040/this-wide-reaching-approach-to-production-allows-for-12-months-of-the-year-production/",
+        "says": "Melons Australia says melons are produced in every month (so Vic availability is wider than the best-quality window)."
+      },
+      {
+        "name": "Melbourne Market report, 3 Mar 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/",
+        "says": "3 Mar 2026: watermelon, rockmelon and papaya performing well."
+      },
+      {
+        "name": "Brisbane Markets produce report, 1 Dec 2023",
+        "url": "https://brisbanemarkets.com.au/brisbane-produce-report-1-december/",
+        "says": "Watermelon growing well and priced for daily purchase (north Qld), Dec 2023."
+      },
+      {
+        "name": "Sydney Markets weekly report 23-29-february-2026",
+        "url": "https://www.sydneymarkets.com.au/recipes-and-produce/market-report/23-29-february-2026",
+        "says": "Seedless watermelon described as at its juicy best in late summer. (read via search summary; the site page would not load)"
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Melons are grown all year in Australia, but Dec-Feb is best value and flavour at Melbourne shops; Nov and Mar-Apr are widely stocked."
+  },
+  {
+    "id": "rockmelon",
+    "peak": [
+      "Dec",
+      "Jan",
+      "Feb"
+    ],
+    "available": [
+      "Sep",
+      "Oct",
+      "Nov",
+      "Mar",
+      "Apr"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Sweet smell at the stem end, a smooth round scar where the stem came off, slight give at the other end.",
+    "storage": "Bench to ripen, then fridge; cut pieces 3 days.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 24 Sep 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9768596/strawberries-and-blueberries-from-queensland-victorian-asparagus-season-has-begun/",
+        "says": "24 Sep 2025: Bowen (Qld) rockmelons starting to come through; Kununurra (NT) rockmelons finishing."
+      },
+      {
+        "name": "Melbourne Market report, 3 Mar 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/",
+        "says": "3 Mar 2026: rockmelon performing well."
+      },
+      {
+        "name": "Queensland rockmelons at peak supply heading into spring (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9353816/queensland-rockmelons-hit-peak-supply-just-in-time-for-spring/",
+        "says": "A Qld wholesaler reported rockmelon at peak supply heading into spring (via search summary)."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Wider available window than before because Qld and NT supply starts in Sep. Peak left at Dec-Feb (no source puts Melbourne peak elsewhere)."
+  },
+  {
+    "id": "honeydew",
+    "peak": [
+      "Dec",
+      "Jan",
+      "Feb"
+    ],
+    "available": [
+      "Sep",
+      "Oct",
+      "Nov",
+      "Mar",
+      "Apr"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Creamy-yellow, slightly waxy skin, heavy for its size, slight give at the blossom end.",
+    "storage": "Bench to ripen, then fridge; cut pieces 3 days.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 24 Sep 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9768596/strawberries-and-blueberries-from-queensland-victorian-asparagus-season-has-begun/",
+        "says": "24 Sep 2025: honeydew from north Qld in good supply, very good quality."
+      },
+      {
+        "name": "Melbourne Market report, 3 Mar 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/",
+        "says": "3 Mar 2026: melons strong at Melbourne Market (honeydew not named separately)."
+      },
+      {
+        "name": "Melons Australia via FreshPlaza: 12-month melon production",
+        "url": "https://www.freshplaza.com/africa/article/9613040/this-wide-reaching-approach-to-production-allows-for-12-months-of-the-year-production/",
+        "says": "Melon production spans every month."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "No source gives a honeydew-only calendar; peak is inferred from the melon group."
+  },
+  {
+    "id": "lychee",
+    "peak": [
+      "Dec",
+      "Jan"
+    ],
+    "available": [
+      "Nov",
+      "Feb"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Bright red to pink, firm, with a dry stem and no brown patches. Skin browns quickly, flavour stays good.",
+    "storage": "Fridge in a bag, up to about a week.",
+    "sources": [
+      {
+        "name": "Australian Lychee Growers Association, via Fruitnet",
+        "url": "https://www.fruitnet.com/asiafruit/tough-season-for-australian-lychees/9025.article",
+        "says": "ALGA: late October to late March, the longest lychee season in the world (via search summary)."
+      },
+      {
+        "name": "The Express (Nov 2025) lychee growers",
+        "url": "https://www.theexpressnewspaper.com.au/lychee-growers-confident-despite-sporatic-flowering-2025-11-15",
+        "says": "Season starts mid-October in Far North Qld and ends late March in northern NSW (via search summary)."
+      }
+    ],
+    "confidence": "medium",
+    "changed": false,
+    "note": "Sources run late Oct to late Mar; Melbourne shops mostly Nov-Feb, so the old months are kept."
+  },
+  {
+    "id": "passionfruit",
+    "peak": [
+      "Dec",
+      "Jan",
+      "Feb",
+      "Jun",
+      "Jul",
+      "Aug"
+    ],
+    "available": [
+      "Nov",
+      "Mar",
+      "Apr",
+      "May"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Heavy for its size; wrinkled skin means ripe and sweet, smooth means less sweet but still fine.",
+    "storage": "Bench until wrinkled, then fridge up to a week.",
+    "sources": [
+      {
+        "name": "Passionfruit Australia, Horticulture Statistics Handbook 2022/23",
+        "url": "https://passionfruitaustralia.org.au/wp-content/uploads/2025/05/Horticulture-Stats-Handbook-2022-23-Passionfruit.pdf",
+        "says": "Seasonality by state chart; industry summary gives two supply peaks, Dec-Feb and Jun-Aug (peaks via search summary; the PDF heat map colours were not machine-readable)."
+      },
+      {
+        "name": "Melbourne Market report, 31 Mar 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9718974/grapes-pineapples-and-golden-sweet-potatoes-best-of-the-bunch-at-melbourne-market/",
+        "says": "31 Mar 2025: pineapple and passionfruit from the Qld/NSW border in prime condition."
+      },
+      {
+        "name": "Melbourne Market report, 24 Sep 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9768596/strawberries-and-blueberries-from-queensland-victorian-asparagus-season-has-begun/",
+        "says": "24 Sep 2025: passionfruit limited, between seasons (some growers supply year-round)."
+      },
+      {
+        "name": "Melbourne Market report, 1 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9825496/autumn-shift-brings-new-produce-to-australian-market/",
+        "says": "1 Apr 2026: Panama passionfruit available."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Two peaks a year, which is new: summer and winter."
+  },
+  {
+    "id": "cherry",
+    "peak": [
+      "Dec"
+    ],
+    "available": [
+      "Nov",
+      "Jan",
+      "Feb"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "Tas cherries run later (late Jan-Feb); NSW and SA start earlier (Oct-Nov).",
+    "pick": "Glossy, firm, with green fresh stems. Skip soft, split or wrinkled ones.",
+    "storage": "Fridge, loose or in a bag, 3-5 days.",
+    "sources": [
+      {
+        "name": "Melbourne Market report (The Happy Apple), 28 Oct 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/asia/article/9886925/nothing-beats-stuff-that-s-grown-in-your-own-country/",
+        "says": "28 Oct 2026: cherries not yet in season; NSW first, then Victoria, about two weeks away."
+      },
+      {
+        "name": "Brisbane Markets produce report, 1 Dec 2023",
+        "url": "https://brisbanemarkets.com.au/brisbane-produce-report-1-december/",
+        "says": "1 Dec 2023: cherry season in full swing from NSW, SA and Victoria."
+      },
+      {
+        "name": "Sydney Markets weekly report 12-18-january-2026",
+        "url": "https://www.sydneymarkets.com.au/recipes-and-produce/market-report/12-18-january-2026",
+        "says": "Late-season cherries mostly from Tasmania in January. (read via search summary; the site page would not load)"
+      }
+    ],
+    "confidence": "high",
+    "changed": true,
+    "note": ""
+  },
+  {
+    "id": "blueberry",
+    "peak": [
+      "Dec",
+      "Jan",
+      "Feb"
+    ],
+    "available": [
+      "Sep",
+      "Oct",
+      "Nov",
+      "Mar"
+    ],
+    "yearRound": null,
+    "variesByState": true,
+    "stateNote": "NSW and Qld blueberries peak roughly Aug-Dec; Tas Jan-Feb; Vic harvest Dec-Feb.",
+    "pick": "Dusty blue bloom, plump and firm, no leaking or wrinkly ones in the punnet.",
+    "storage": "Fridge in the punnet, up to about a week. Wash just before eating.",
+    "sources": [
+      {
+        "name": "Austrade, Blueberries industry capability report",
+        "url": "https://international.austrade.gov.au/content/dam/austrade-assets/international/documents/reports/horticulture-capability-reports/blueberries-austrade-industry-capability-report.pdf",
+        "says": "Lists Victoria harvest as December to February (via search summary)."
+      },
+      {
+        "name": "Tasmanian Government blueberry profile (2014)",
+        "url": "https://nre.tas.gov.au/Documents/Blueberry%20Profile%20updated%20March%202014.pdf",
+        "says": "Fresh Australian blueberries available about 10 months, July to April, main crop NSW."
+      },
+      {
+        "name": "Melbourne Market report, 24 Sep 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9768596/strawberries-and-blueberries-from-queensland-victorian-asparagus-season-has-begun/",
+        "says": "24 Sep 2025: Qld blueberries supply increasing."
+      },
+      {
+        "name": "Melbourne Market report, 13 Jun 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9740919/winter-produce-peaks-at-melbourne-market/",
+        "says": "13 Jun 2025: blueberries in limited supply."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": ""
+  },
+  {
+    "id": "nectarine",
+    "peak": [
+      "Dec",
+      "Jan",
+      "Feb"
+    ],
+    "available": [
+      "Nov",
+      "Mar"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Smells sweet, gives slightly near the stem. Skip rock-hard or bruised.",
+    "storage": "Bench to ripen, then fridge 3-5 days.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 6 Mar 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9711422/grapes-and-victorian-plums-pick-of-the-bunch-at-melbourne-wholesale-market/",
+        "says": "6 Mar 2025: Victorian peaches and nectarines finishing, last supplies in 1-2 weeks."
+      },
+      {
+        "name": "Melbourne Market report, 1 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9825496/autumn-shift-brings-new-produce-to-australian-market/",
+        "says": "1 Apr 2026: nectarines almost finished."
+      },
+      {
+        "name": "Melbourne Market report, 31 Aug 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9867999/queensland-strawberries-peak-as-australian-spring-produce-arrives/",
+        "says": "31 Aug 2026: stone fruit not yet in season, about 5-6 weeks away (so about mid-Oct)."
+      },
+      {
+        "name": "Sydney Markets weekly report 12-18-january-2026",
+        "url": "https://www.sydneymarkets.com.au/recipes-and-produce/market-report/12-18-january-2026",
+        "says": "Peaches and nectarines at their sweetest in January. (read via search summary; the site page would not load)"
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": ""
+  },
+  {
+    "id": "peach",
+    "peak": [
+      "Dec",
+      "Jan",
+      "Feb"
+    ],
+    "available": [
+      "Nov",
+      "Mar"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Sweet smell, a golden or creamy background colour (not green), gives slightly near the stem.",
+    "storage": "Bench to ripen, then fridge 3-5 days.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 6 Mar 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9711422/grapes-and-victorian-plums-pick-of-the-bunch-at-melbourne-wholesale-market/",
+        "says": "6 Mar 2025: Victorian peaches finishing within 1-2 weeks."
+      },
+      {
+        "name": "Melbourne Market report, 1 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9825496/autumn-shift-brings-new-produce-to-australian-market/",
+        "says": "1 Apr 2026: peaches almost finished, late yellow clingstones remain."
+      },
+      {
+        "name": "Brisbane Markets produce report, 1 Dec 2023",
+        "url": "https://brisbanemarkets.com.au/brisbane-produce-report-1-december/",
+        "says": "1 Dec 2023: Victorian peaches plentiful."
+      },
+      {
+        "name": "Sydney Markets weekly report 12-18-january-2026",
+        "url": "https://www.sydneymarkets.com.au/recipes-and-produce/market-report/12-18-january-2026",
+        "says": "Peaches and nectarines at their sweetest in January. (read via search summary; the site page would not load)"
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Late clingstones can reach early April."
+  },
+  {
+    "id": "apricot",
+    "peak": [
+      "Dec",
+      "Jan"
+    ],
+    "available": [
+      "Nov",
+      "Feb"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Orange all over with a sweet smell, slight give. Skip pale green or hard ones.",
+    "storage": "Bench to ripen, then fridge 2-3 days.",
+    "sources": [
+      {
+        "name": "Prima Fresh (Tatura, Vic) apricot brand via FreshPlaza",
+        "url": "https://www.freshplaza.com/oceania/article/9677885/australia-s-apricot-brand-that-helped-bring-life-to-the-category-is-back-for-a-bigger-season-this-summer/",
+        "says": "Season runs mid-November to late January (via search summary)."
+      },
+      {
+        "name": "Brisbane Markets produce report, 1 Dec 2023",
+        "url": "https://brisbanemarkets.com.au/brisbane-produce-report-1-december/",
+        "says": "1 Dec 2023: Victorian apricots plentiful."
+      },
+      {
+        "name": "Sydney Markets weekly report 1-7-december-2025",
+        "url": "https://www.sydneymarkets.com.au/recipes-and-produce/market-report/1-7-december-2025",
+        "says": "December described as the peak of the apricot season. (read via search summary; the site page would not load)"
+      }
+    ],
+    "confidence": "medium",
+    "changed": false,
+    "note": ""
+  },
+  {
+    "id": "plum",
+    "peak": [
+      "Jan",
+      "Feb",
+      "Mar"
+    ],
+    "available": [
+      "Dec",
+      "Apr"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Slight give at the tip, a dusty bloom on the skin, a sweet smell.",
+    "storage": "Bench to ripen, then fridge up to a week.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 6 Mar 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9711422/grapes-and-victorian-plums-pick-of-the-bunch-at-melbourne-wholesale-market/",
+        "says": "6 Mar 2025: Victorian plums plentiful (Swan Hill, Shepparton, Cobram)."
+      },
+      {
+        "name": "Melbourne Market report, 3 Mar 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/",
+        "says": "3 Mar 2026: plums and grapes in peak or strong supply."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: black plums ending."
+      },
+      {
+        "name": "Brisbane Markets produce report, 1 Dec 2023",
+        "url": "https://brisbanemarkets.com.au/brisbane-produce-report-1-december/",
+        "says": "1 Dec 2023: plums plentiful (Stanthorpe and Victoria)."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Peak widened to include March because Melbourne Market reports show plums strongest in March, not just Jan-Feb."
+  },
+  {
+    "id": "fig",
+    "peak": [
+      "Feb",
+      "Mar"
+    ],
+    "available": [
+      "Jan",
+      "Apr"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Soft, plump and a little droopy at the neck, a bit of sugar syrup at the base is fine. Skip hard or sour-smelling ones.",
+    "storage": "Very perishable: fridge, eat within 2 days.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 1 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9825496/autumn-shift-brings-new-produce-to-australian-market/",
+        "says": "1 Apr 2026: figs have two to three weeks left, usually until mid-April."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: figs ending."
+      },
+      {
+        "name": "ALDI Australia fresh figs",
+        "url": "https://aldi.com.au/groceries/fresh-produce/figs",
+        "says": "Aussie figs on shelves February to April (via search summary)."
+      }
+    ],
+    "confidence": "high",
+    "changed": false,
+    "note": ""
+  },
+  {
+    "id": "apple",
+    "peak": [
+      "Mar",
+      "Apr",
+      "May"
+    ],
+    "available": [
+      "Jan",
+      "Feb",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "yearRound": "stored",
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Firm and heavy, tight shiny skin, no soft spots. Skip any that feel spongy.",
+    "storage": "Fridge crisper, weeks. Keep away from other fruit as apples speed up ripening.",
+    "sources": [
+      {
+        "name": "Apple and Pear Australia via FreshPlaza: year-round supply depends on cold storage",
+        "url": "https://www.freshplaza.com/oceania/article/9804203/year-round-fruit-supply-in-australia-depends-on-cold-storage/",
+        "says": "Growers store apples in cold or controlled-atmosphere rooms for up to about 12 months, which is why they are sold year-round (via search summary)."
+      },
+      {
+        "name": "Queen Victoria Market, seasonal produce guide (Seasonal Fruits table)",
+        "url": "https://qvm.com.au/?p=72383",
+        "says": "Apples peak season March to May."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: apples and pears at peak harvest."
+      },
+      {
+        "name": "Melbourne Market report, 5 May 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9728918/melbourne-market-may-fresh-produce-report/",
+        "says": "5 May 2025: Pink Lady new-season fruit a top pick."
+      }
+    ],
+    "confidence": "high",
+    "changed": true,
+    "note": "All non-peak months are cold-stored fruit, still good. Early varieties (Gala) from about Feb."
+  },
+  {
+    "id": "pear",
+    "peak": [
+      "Mar",
+      "Apr",
+      "May"
+    ],
+    "available": [
+      "Jan",
+      "Feb",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "yearRound": "stored",
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Check the neck: if it gives slightly near the stem it is ripe. Buy firm ones and ripen at home.",
+    "storage": "Ripen on the bench, then fridge 3-5 days.",
+    "sources": [
+      {
+        "name": "Queen Victoria Market, seasonal produce guide (Seasonal Fruits table)",
+        "url": "https://qvm.com.au/?p=72383",
+        "says": "Pears peak season March to May."
+      },
+      {
+        "name": "Melbourne Market report, 1 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9825496/autumn-shift-brings-new-produce-to-australian-market/",
+        "says": "1 Apr 2026: new-season Victorian pears arriving."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: pears at peak harvest."
+      },
+      {
+        "name": "Environment Victoria, Guide to Seasonal Food (2009, season-level lists only)",
+        "url": "https://environmentvictoria.org.au/wp-content/uploads/2016/06/seasonal-food-calendar.pdf",
+        "says": "Pears listed as in season in summer, autumn and winter lists."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Cold-stored pears are in shops most of the year."
+  },
+  {
+    "id": "grape",
+    "peak": [
+      "Feb",
+      "Mar",
+      "Apr"
+    ],
+    "available": [
+      "Dec",
+      "Jan",
+      "May",
+      "Jun"
+    ],
+    "yearRound": "imported",
+    "variesByState": false,
+    "stateNote": "Qld and WA table grapes start in Nov; Vic (Mildura) peaks Feb-Apr.",
+    "pick": "Plump, firmly attached to a green flexible stem, with a frosty bloom. Skip wrinkled or sticky ones.",
+    "storage": "Fridge in a bag, up to a week. Wash before eating.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 6 Mar 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9711422/grapes-and-victorian-plums-pick-of-the-bunch-at-melbourne-wholesale-market/",
+        "says": "6 Mar 2025: Mildura grapes at peak, good supply until about June."
+      },
+      {
+        "name": "Melbourne Market report, 31 Mar 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9718974/grapes-pineapples-and-golden-sweet-potatoes-best-of-the-bunch-at-melbourne-market/",
+        "says": "31 Mar 2025: Australian grapes at peak."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: grapes eating well, volumes tightening, Adora last of the season."
+      },
+      {
+        "name": "Australian table grape industry report via FreshPlaza/FreshFruitPortal",
+        "url": "https://www.freshfruitportal.com/news/2026/08/11/australian-table-grape-26/",
+        "says": "Industry report: production starts in November, peaks in February and March, concludes in May (via search summary)."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Out of season (about Jul-Nov) grapes in shops are imported (e.g. Chilean grapes appear in trade reports)."
+  },
+  {
+    "id": "persimmon",
+    "peak": [
+      "Apr",
+      "May"
+    ],
+    "available": [
+      "Mar",
+      "Jun"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "Qld persimmons arrive first (early Mar), Vic/SA fruit later (Apr-May).",
+    "pick": "Sweet Fuyu types are eaten firm like an apple. Pointy astringent types must be completely soft and jelly-like.",
+    "storage": "Firm Fuyu on the bench or fridge, 1-2 weeks; soft ones fridge, 2-3 days.",
+    "sources": [
+      {
+        "name": "Australian persimmon season, harvest March to June (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9823269/australian-persimmon-season-starts-with-harvest-from-march-to-june/",
+        "says": "Fresh fruit expected in markets from March through late June."
+      },
+      {
+        "name": "Melbourne Market report, 3 Mar 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/",
+        "says": "3 Mar 2026: Qld persimmons arriving first; Victorian fruit later."
+      },
+      {
+        "name": "Melbourne Market report, 5 May 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9728918/melbourne-market-may-fresh-produce-report/",
+        "says": "5 May 2025: local persimmons still good but supply ending."
+      }
+    ],
+    "confidence": "high",
+    "changed": false,
+    "note": ""
+  },
+  {
+    "id": "quince",
+    "peak": [
+      "Apr",
+      "May",
+      "Jun"
+    ],
+    "available": [
+      "Mar",
+      "Jul"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Large, hard, golden-yellow with a strong perfume. Skip green or bruised ones.",
+    "storage": "Bench (they scent the room), then fridge a few weeks. Always cooked.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 1 Jun 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9842628/winter-citrus-and-queensland-vegetables-shift-melbourne-market-supply/",
+        "says": "1 Jun 2026: quinces (Victoria) listed in season/peak."
+      },
+      {
+        "name": "Sydney Markets March 2024 report (quince season is here)",
+        "url": "https://www.sydneymarkets.com.au/recipes-and-produce/market-report/11-17-march-2024",
+        "says": "Quince season here in March (via search summary)."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Only two market data points; peak extended into June on the 2026 Melbourne report."
+  },
+  {
+    "id": "pomegranate",
+    "peak": [
+      "Apr",
+      "May"
+    ],
+    "available": [
+      "Mar",
+      "Jun",
+      "Jul"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Heavy for its size with firm, slightly angular skin. Skip cracked or soft ones.",
+    "storage": "Bench or fridge, 1-2 weeks or more.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 5 May 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9728918/melbourne-market-may-fresh-produce-report/",
+        "says": "5 May 2025: pomegranates now in stores (WA, SA, Vic, NSW)."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: pomegranates first arrivals."
+      },
+      {
+        "name": "Melbourne Market report, 13 Jun 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9740919/winter-produce-peaks-at-melbourne-market/",
+        "says": "13 Jun 2025: Mildura pomegranates finishing."
+      },
+      {
+        "name": "Melbourne Market report, 1 Jun 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9842628/winter-citrus-and-queensland-vegetables-shift-melbourne-market-supply/",
+        "says": "1 Jun 2026: pomegranates in good supply."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Reports differ on timing by a few weeks; hospitality press gives Mar-May and others Mar-Aug."
+  },
+  {
+    "id": "feijoa",
+    "peak": [
+      "Apr",
+      "May"
+    ],
+    "available": [
+      "Mar",
+      "Jun"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Soft to a gentle squeeze, a sweet smell. Cut open and scoop with a spoon.",
+    "storage": "Fridge, 3-5 days.",
+    "sources": [
+      {
+        "name": "Feijoa sales in Australia, NZ season early March to end of May (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9315843/australians-get-a-taste-for-new-zealand-s-feijoa/",
+        "says": "NZ feijoa season runs early March to end of May/early June (via search summary)."
+      },
+      {
+        "name": "Adelaide Central Market, in season autumn",
+        "url": "https://adelaidecentralmarket.com.au/in-season-autumn/",
+        "says": "Feijoa listed among autumn fruit (via search summary)."
+      },
+      {
+        "name": "Queen Victoria Market, feijoa autumn article",
+        "url": "https://qvm.com.au/?p=76426",
+        "says": "What to cook with feijoa this autumn (via search summary)."
+      }
+    ],
+    "confidence": "medium",
+    "changed": false,
+    "note": "No Melbourne Market report names feijoa; months rest on NZ season and autumn lists."
+  },
+  {
+    "id": "orange",
+    "peak": [
+      "Jun",
+      "Jul",
+      "Aug"
+    ],
+    "available": [
+      "Apr",
+      "May",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+      "Jan",
+      "Feb",
+      "Mar"
+    ],
+    "yearRound": "grown",
+    "variesByState": false,
+    "stateNote": "Navels are Apr/May-Sep; Valencias Sep-Mar (different variety in the shop each half of the year).",
+    "pick": "Heavy for its size with a firm, fine-grained skin. Skip puffy, soft ones.",
+    "storage": "Bench a week, fridge 2-3 weeks.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 5 May 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9728918/melbourne-market-may-fresh-produce-report/",
+        "says": "5 May 2025: Victorian navels starting, prime quality mid-May."
+      },
+      {
+        "name": "Melbourne Market report, 1 Jun 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9842628/winter-citrus-and-queensland-vegetables-shift-melbourne-market-supply/",
+        "says": "1 Jun 2026: navels (Griffith, SA Riverland) in season/peak."
+      },
+      {
+        "name": "Melbourne Market report, 24 Sep 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9768596/strawberries-and-blueberries-from-queensland-victorian-asparagus-season-has-begun/",
+        "says": "24 Sep 2025: navels finishing, Valencias starting (Vic and SA)."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: Valencias last of the season; first Navelina and M7 arrivals."
+      },
+      {
+        "name": "Environment Victoria, Guide to Seasonal Food (2009, season-level lists only)",
+        "url": "https://environmentvictoria.org.au/wp-content/uploads/2016/06/seasonal-food-calendar.pdf",
+        "says": "Valencias listed in summer and autumn lists; navels in winter."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Navels peak Jun-Aug; Valencias fill Sep-Mar."
+  },
+  {
+    "id": "mandarin",
+    "peak": [
+      "Jun",
+      "Jul",
+      "Aug"
+    ],
+    "available": [
+      "Apr",
+      "May",
+      "Sep",
+      "Oct"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "Qld Imperials arrive Apr (Vic fruit about a month later); Mildura mandarins early winter.",
+    "pick": "Heavy for its size, bright loose skin that smells citrusy. Skip dull, puffy ones.",
+    "storage": "Bench a week, fridge 2-3 weeks.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 5 May 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9728918/melbourne-market-may-fresh-produce-report/",
+        "says": "5 May 2025: Imperial/Afourer mandarins peak, Qld abundant, NSW arriving."
+      },
+      {
+        "name": "Melbourne Market report, 1 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9825496/autumn-shift-brings-new-produce-to-australian-market/",
+        "says": "1 Apr 2026: new-season Imperial mandarins from Qld."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: Qld mandarins first arrivals; local Vic mandarins about a month away."
+      },
+      {
+        "name": "Melbourne Market report, 13 Jun 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9740919/winter-produce-peaks-at-melbourne-market/",
+        "says": "13 Jun 2025: Mildura mandarins an early winter standout."
+      },
+      {
+        "name": "Melbourne Market report, 24 Sep 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9768596/strawberries-and-blueberries-from-queensland-victorian-asparagus-season-has-begun/",
+        "says": "24 Sep 2025: Afourer mandarins winding down."
+      }
+    ],
+    "confidence": "high",
+    "changed": true,
+    "note": ""
+  },
+  {
+    "id": "grapefruit",
+    "peak": [
+      "Jun",
+      "Jul",
+      "Aug"
+    ],
+    "available": [
+      "Apr",
+      "May",
+      "Sep"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Heavy for its size with thin, smooth skin. Skip puffy, soft ones.",
+    "storage": "Fridge, 2-3 weeks.",
+    "sources": [
+      {
+        "name": "Queen Victoria Market, seasonal produce guide (Seasonal Fruits table)",
+        "url": "https://qvm.com.au/?p=72383",
+        "says": "Grapefruit peak season June to September."
+      },
+      {
+        "name": "Woolworths citrus guide",
+        "url": "https://www.woolworths.com.au/shop/explore/fruit-veg/guides/citrus",
+        "says": "Grapefruit June to August (via search summary; page blocked)."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: grapefruit in supply."
+      },
+      {
+        "name": "Environment Victoria, Guide to Seasonal Food (2009, season-level lists only)",
+        "url": "https://environmentvictoria.org.au/wp-content/uploads/2016/06/seasonal-food-calendar.pdf",
+        "says": "Grapefruit appears in all four seasonal lists."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Sources run a wide window; narrower peak taken."
+  },
+  {
+    "id": "lemon",
+    "peak": [
+      "Jun",
+      "Jul",
+      "Aug"
+    ],
+    "available": [
+      "Apr",
+      "May",
+      "Sep",
+      "Oct"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Heavy for its size, thin glossy skin. Skip hard, thick-skinned ones.",
+    "storage": "Fridge, 2-4 weeks.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 1 Jun 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9842628/winter-citrus-and-queensland-vegetables-shift-melbourne-market-supply/",
+        "says": "1 Jun 2026: Victorian lemons in season/peak."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: lemons first arrivals from Qld."
+      },
+      {
+        "name": "Melbourne Market report, 24 Sep 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9768596/strawberries-and-blueberries-from-queensland-victorian-asparagus-season-has-begun/",
+        "says": "24 Sep 2025: lemons good value."
+      },
+      {
+        "name": "Environment Victoria, Guide to Seasonal Food (2009, season-level lists only)",
+        "url": "https://environmentvictoria.org.au/wp-content/uploads/2016/06/seasonal-food-calendar.pdf",
+        "says": "Lemons listed in winter and spring lists."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Lemons are in shops all year, but sources only cover Apr-Oct. Not verified for Nov-Mar, so no yearRound flag."
+  },
+  {
+    "id": "lime",
+    "peak": [
+      "Jun",
+      "Jul",
+      "Aug"
+    ],
+    "available": [
+      "May",
+      "Sep"
+    ],
+    "yearRound": "grown",
+    "variesByState": true,
+    "stateNote": "Citrus Australia (second-hand) says best Aussie limes Jan-Apr; Melbourne reports show Qld limes finishing in June. Sources disagree.",
+    "pick": "Heavy, glossy, firm; yellowing is fine for flavour. Skip dry, hard ones.",
+    "storage": "Fridge, 2-3 weeks.",
+    "sources": [
+      {
+        "name": "Limes grown year-round in Australia, peaks and troughs (via Citrus Australia, search summary)",
+        "url": "https://citrusaustralia.com.au/uncategorised/season",
+        "says": "Domestic lime supply is 12 months with peaks and troughs; best limes January to April (via a bartender source quoting Citrus Australia; the page itself had only headings)."
+      },
+      {
+        "name": "Melbourne Market report, 13 Jun 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9740919/winter-produce-peaks-at-melbourne-market/",
+        "says": "13 Jun 2025: Qld limes finishing."
+      },
+      {
+        "name": "Environment Victoria, Guide to Seasonal Food (2009, season-level lists only)",
+        "url": "https://environmentvictoria.org.au/wp-content/uploads/2016/06/seasonal-food-calendar.pdf",
+        "says": "Limes in winter and spring lists."
+      }
+    ],
+    "confidence": "low",
+    "changed": true,
+    "note": "Sources disagree on peak; old peak months kept, yearRound set to grown. Needs a better source."
+  },
+  {
+    "id": "kiwifruit",
+    "peak": [
+      "May",
+      "Jun",
+      "Jul"
+    ],
+    "available": [
+      "Mar",
+      "Apr",
+      "Aug",
+      "Sep",
+      "Oct"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Gives slightly to a gentle squeeze like a ripe avocado. Skip very hard (ripen on bench) or mushy.",
+    "storage": "Bench to ripen, then fridge, 1-3 weeks.",
+    "sources": [
+      {
+        "name": "Seeka Australia (Shepparton, Vic)",
+        "url": "https://www.freshplaza.com/north-america/article/9634842/seeka-completes-2024-australian-harvest/",
+        "says": "Main Australian kiwifruit harvest February to June, supplies the market until August (via search summary)."
+      },
+      {
+        "name": "Melbourne Market report, 13 Jun 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9740919/winter-produce-peaks-at-melbourne-market/",
+        "says": "13 Jun 2025: Yarra Valley kiwifruit in peak condition."
+      },
+      {
+        "name": "Melbourne Market report, 30 Jun 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9852347/winter-produce-fills-melbourne-market-as-citrus-season-peaks/",
+        "says": "30 Jun 2026: kiwifruit in good supply, NZ and Goulburn Valley."
+      },
+      {
+        "name": "Queen Victoria Market, seasonal produce guide (Seasonal Fruits table)",
+        "url": "https://qvm.com.au/?p=72383",
+        "says": "Kiwifruit peak season May to October."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Peak narrowed to May-Jul; Aug-Oct supply is often NZ fruit."
+  },
+  {
+    "id": "avocado",
+    "peak": [
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep"
+    ],
+    "available": [
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Oct",
+      "Nov",
+      "Dec",
+      "Jan"
+    ],
+    "yearRound": "grown",
+    "variesByState": true,
+    "stateNote": "Shepard (Qld) Feb-Apr; Hass from Qld/NSW/Vic in winter, WA in summer. Seasons differ by state source.",
+    "pick": "Ripe when it gives slightly to a gentle squeeze at the stem end; flick the stem cap: green underneath means ripe. Buy hard and ripen at home.",
+    "storage": "Bench to ripen, then fridge 2-3 days once ripe.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 3 Mar 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/",
+        "says": "3 Mar 2026: Shepard avocados from FNQ arriving; Hass limited."
+      },
+      {
+        "name": "Melbourne Market report, 31 Mar 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9718974/grapes-pineapples-and-golden-sweet-potatoes-best-of-the-bunch-at-melbourne-market/",
+        "says": "31 Mar 2025: Shepards fill the gap between Hass seasons until about Anzac Day."
+      },
+      {
+        "name": "Good Fruit and Vegetables: Shepard fills the gap between Hass seasons",
+        "url": "https://www.goodfruitandvegetables.com.au/story/8956492/shepard-avocados-hyped-up-as-more-than-filling-a-gap-between-hass",
+        "says": "Shepard (Qld) covers roughly February to April; Hass is the main variety (via search summary, exporters quote Hass roughly May to January)."
+      },
+      {
+        "name": "Queen Victoria Market, seasonal produce guide (Seasonal Fruits table)",
+        "url": "https://qvm.com.au/?p=72383",
+        "says": "Avocados peak season September to March."
+      }
+    ],
+    "confidence": "low",
+    "changed": true,
+    "note": "Sources conflict on peak (QVM Sep-Mar; Hass winter peak). Old peak kept. Always in shops via Hass plus Shepard."
+  },
+  {
+    "id": "custard-apple",
+    "peak": [
+      "May",
+      "Jun",
+      "Jul"
+    ],
+    "available": [
+      "Mar",
+      "Apr",
+      "Aug",
+      "Sep"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Heavy, with skin that looks full and slightly wrinkling; yields to gentle pressure. Skip black or cracked.",
+    "storage": "Ripen on the bench, then fridge 2 days.",
+    "sources": [
+      {
+        "name": "Queensland Country Life: custard apple season Feb-Aug",
+        "url": "https://www.queenslandcountrylife.com.au/story/8390603/out-of-season-custard-apple-harvest-in-full-swing-at-sunshine-coast/",
+        "says": "Traditional season February to August (via search summary)."
+      },
+      {
+        "name": "food.com.au custard apple guide",
+        "url": "https://food.com.au/custard-apples",
+        "says": "Season March to October; first fruit from Yeppoon in March, Sunshine Coast most volume mid-season (via search summary)."
+      },
+      {
+        "name": "Melbourne Market report, 3 Mar 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/",
+        "says": "3 Mar 2026: custard apples arriving."
+      },
+      {
+        "name": "Melbourne Market report, 30 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/",
+        "says": "30 Apr 2026: custard apples from Qld."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "No source names a peak month; mid-season taken."
+  },
+  {
+    "id": "tangelo",
+    "peak": [
+      "Jul",
+      "Aug"
+    ],
+    "available": [
+      "Jun",
+      "Sep"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Heavy with loose-fitting skin and a citrus smell.",
+    "storage": "Fridge, 2-3 weeks.",
+    "sources": [
+      {
+        "name": "Melbourne Market report, 5 May 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9728918/melbourne-market-may-fresh-produce-report/",
+        "says": "5 May 2025: clementines and tangelos due in stores soon."
+      },
+      {
+        "name": "NSW Love Food Hate Waste, pocket guide to seasonal fruit (winter)",
+        "url": "https://www.lovefoodhatewaste.nsw.gov.au/sites/default/files/2020-09/0648%20DL%20Seasonal%20Food%202020%20V4%20230920.pdf",
+        "says": "Tangelos listed under winter fruit."
+      }
+    ],
+    "confidence": "low",
+    "changed": false,
+    "note": "Only two thin sources; old months kept."
+  },
+  {
+    "id": "strawberry",
+    "peak": [
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "available": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Jun",
+      "Jul",
+      "Aug"
+    ],
+    "yearRound": null,
+    "variesByState": true,
+    "stateNote": "QLD winter season May-Oct (peak Aug-Oct); VIC Oct-Apr (Oct 2026: peak Vic fruit); WA and TAS in summer. Shops have a gap about mid-May to early June.",
+    "pick": "Bright red to the top, shiny, with fresh green caps. Smell them. Skip any with white shoulders or leaking punnets.",
+    "storage": "Fridge unwashed, 2-3 days. Wash just before eating.",
+    "sources": [
+      {
+        "name": "Melbourne Market report (The Happy Apple), 28 Oct 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/asia/article/9886925/nothing-beats-stuff-that-s-grown-in-your-own-country/",
+        "says": "28 Oct 2026: Victorian strawberries (Yarra Valley, Mornington) at peak, WA earlier, Qld finished early."
+      },
+      {
+        "name": "Melbourne Market report, 5 May 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9728918/melbourne-market-may-fresh-produce-report/",
+        "says": "5 May 2025: strawberries limited: Vic finishing, Qld not yet started, recovery in 2-3 weeks."
+      },
+      {
+        "name": "Melbourne Market report, 31 Aug 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9867999/queensland-strawberries-peak-as-australian-spring-produce-arrives/",
+        "says": "31 Aug 2026: strawberries at peak from the Qld Sunshine Coast."
+      },
+      {
+        "name": "Melbourne Market report, 30 Jun 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9852347/winter-produce-fills-melbourne-market-as-citrus-season-peaks/",
+        "says": "30 Jun 2026: strawberries recovering, Victorian season finished, Qld underway."
+      },
+      {
+        "name": "ISHS abstract: Victoria strawberry production October to April (via search summary)",
+        "url": "https://ishs.org/ishs-article/265_123/",
+        "says": "Victoria production extends October through April."
+      },
+      {
+        "name": "Queen Victoria Market, seasonal produce guide (Seasonal Fruits table)",
+        "url": "https://qvm.com.au/?p=72383",
+        "says": "Strawberries peak season September to January."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Previously one national peak (Sep-Nov). Now Sep-Dec peak; Jan-Apr available (Vic summer fruit); Jun-Aug Qld. Available but mid-May gap."
+  },
+  {
+    "id": "raspberry",
+    "peak": [
+      "Dec",
+      "Jan",
+      "Feb",
+      "Mar"
+    ],
+    "available": [
+      "Nov",
+      "Apr",
+      "May"
+    ],
+    "yearRound": "grown",
+    "variesByState": true,
+    "stateNote": "Vic and Tas peak summer and autumn (Tas Nov-May); winter and spring supply comes from northern NSW and Qld.",
+    "pick": "Plump, dry and deeply coloured, with no mould or crushed ones in the punnet. Check the bottom.",
+    "storage": "Fridge, 1-2 days. Very short life.",
+    "sources": [
+      {
+        "name": "Tasmanian Government raspberry profile (2014)",
+        "url": "https://nre.tas.gov.au/Documents/Raspberry%20Profile%20updated%20March%202014.pdf",
+        "says": "Fresh raspberries all year; peak summer and autumn; Victoria 54 per cent of production; winter and spring from northern NSW and south-west Qld (via search summary)."
+      },
+      {
+        "name": "Tasmanian Fruit Growers: raspberries and blackberries hit shelves",
+        "url": "https://fruitgrowerstas.org.au/news/tasmanian-raspberries-blackberries-hit-local-shelves",
+        "says": "Tasmanian raspberry and blackberry season runs November to May (via search summary)."
+      },
+      {
+        "name": "Sydney Markets weekly report 23-29-february-2026",
+        "url": "https://www.sydneymarkets.com.au/recipes-and-produce/market-report/23-29-february-2026",
+        "says": "Tasmanian raspberries among berries in the report (via search summary). (read via search summary; the site page would not load)"
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Old Oct-Dec peak was too early for Victorian fruit. No Melbourne Market report names raspberries."
+  },
+  {
+    "id": "banana",
+    "peak": [],
+    "available": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "yearRound": "grown",
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Firm and yellow with a green tinge at the stem for keeping; brown speckles mean sweeter and softer. Skip split or black skin.",
+    "storage": "Bench, not the fridge. Peel and freeze when spotty.",
+    "sources": [
+      {
+        "name": "Australian Banana Growers Council, Our Industry",
+        "url": "https://abgc.org.au/our-industry/",
+        "says": "About 369,000 tonnes of fresh bananas in 2023/24, 94 per cent from Far North Qld (via search summary)."
+      },
+      {
+        "name": "Queen Victoria Market, seasonal produce guide (Seasonal Fruits table)",
+        "url": "https://qvm.com.au/?p=72383",
+        "says": "Bananas: all year."
+      },
+      {
+        "name": "Melbourne Market report, 31 Aug 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9867999/queensland-strawberries-peak-as-australian-spring-produce-arrives/",
+        "says": "31 Aug 2026: standard bananas steady after winter; ladyfinger tighter."
+      }
+    ],
+    "confidence": "high",
+    "changed": true,
+    "note": "Produced year-round. No peak month; tell the app not to call it \"peak\"."
+  },
+  {
+    "id": "pineapple",
+    "peak": [
+      "Nov",
+      "Dec",
+      "Jan"
+    ],
+    "available": [
+      "Sep",
+      "Oct",
+      "Feb",
+      "Mar",
+      "Apr"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Sweet smell at the base, heavy, green fresh-looking leaves that pull out a little. Skip fermented smell.",
+    "storage": "Bench 1-2 days, then fridge cut or whole, 3-5 days.",
+    "sources": [
+      {
+        "name": "Piñata Farms, Mareeba harvest and Christmas peak (via search summary)",
+        "url": "https://www.pinata.com.au/chatter/2024/10/28/sweet-season-ahead-for-mareeba",
+        "says": "Mareeba harvests until March with peak production in November and December."
+      },
+      {
+        "name": "Melbourne Market report, 31 Mar 2025 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9718974/grapes-pineapples-and-golden-sweet-potatoes-best-of-the-bunch-at-melbourne-market/",
+        "says": "31 Mar 2025: Qld pineapples in prime condition."
+      },
+      {
+        "name": "Melbourne Market report, 1 Apr 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/north-america/article/9825496/autumn-shift-brings-new-produce-to-australian-market/",
+        "says": "1 Apr 2026: Carnival pineapples from Qld arriving."
+      },
+      {
+        "name": "Winter pineapple shortage in Mareeba (2026) via FreshPlaza",
+        "url": "https://www.freshplaza.com/asia/article/9885940/australian-pineapple-harvest-resumes-in-mareeba-after-winter-shortage/",
+        "says": "Winter 2026 shortage, harvest resumed in Mareeba (via search summary)."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Pineapples are in shops most of the year (SE Qld winter fruit), but best value Nov-Jan."
+  },
+  {
+    "id": "papaya",
+    "peak": [
+      "Mar",
+      "Apr",
+      "May",
+      "Sep",
+      "Oct",
+      "Nov"
+    ],
+    "available": [
+      "Jan",
+      "Feb",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Dec"
+    ],
+    "yearRound": "grown",
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Skin yellowing about half way, slight give; ripen on the bench. Skip very green, bruised or leaking ones.",
+    "storage": "Bench to ripen, then fridge 3-5 days.",
+    "sources": [
+      {
+        "name": "Papaya Australia, Year-round deliciousness",
+        "url": "https://www.australianpapaya.com.au/?p=33",
+        "says": "Available all year with increased supply in autumn and spring."
+      },
+      {
+        "name": "Melbourne Market report, 3 Mar 2026 (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/",
+        "says": "3 Mar 2026: papaya performing well at Melbourne Market."
+      },
+      {
+        "name": "Australian papaya growers set for bumper crop (FreshPlaza)",
+        "url": "https://www.freshplaza.com/oceania/article/9023713/australian-papaya-growers-set-for-bumper-crop/",
+        "says": "Spring is the traditional peak with an autumn flush (via search summary)."
+      }
+    ],
+    "confidence": "high",
+    "changed": true,
+    "note": ""
+  },
+  {
+    "id": "rhubarb",
+    "peak": [
+      "Sep",
+      "Oct",
+      "Nov"
+    ],
+    "available": [
+      "Aug",
+      "Dec"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Crisp, firm stalks with glossy colour. Skip floppy or stringy ones. Never eat the leaves.",
+    "storage": "Fridge wrapped in a damp cloth, up to a week.",
+    "sources": [
+      {
+        "name": "Queen Victoria Market, seasonal produce guide (Seasonal Fruits table)",
+        "url": "https://qvm.com.au/?p=72383",
+        "says": "Rhubarb peak season April to September."
+      },
+      {
+        "name": "Environment Victoria, Guide to Seasonal Food (2009, season-level lists only)",
+        "url": "https://environmentvictoria.org.au/wp-content/uploads/2016/06/seasonal-food-calendar.pdf",
+        "says": "Rhubarb in summer, autumn, winter and spring lists (season-level only)."
+      },
+      {
+        "name": "SBS The Seasonal Cook: rhubarb",
+        "url": "https://www.sbs.com.au/food/article/the-seasonal-cook-rhubarb/qndltulqp",
+        "says": "Best eating late summer and autumn (via search summary)."
+      }
+    ],
+    "confidence": "low",
+    "changed": false,
+    "note": "Sources contradict each other: QVM says Apr-Sep, SBS late summer-autumn, a Tasmanian grower says 9-month harvest, demand autumn-winter. Old months kept; needs Nathan or a better source. (Rhubarb is botanically a vegetable.)"
+  },
+  {
+    "id": "mulberry",
+    "peak": [
+      "Dec",
+      "Jan"
+    ],
+    "available": [
+      "Nov",
+      "Feb"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Plump, deep black-purple and dry. They bruise easily, so buy only if they look fresh.",
+    "storage": "Fridge, eat within 1-2 days, or freeze.",
+    "sources": [
+      {
+        "name": "Victorian pick-your-own listing (Geelong area)",
+        "url": "https://pickyourown.org/mulberry-orchards/AUstralia-Victoria-mulberries.php",
+        "says": "Mulberry picking December to early January (via search summary)."
+      },
+      {
+        "name": "Rare Fruit Council of Australia archive, mulberry",
+        "url": "https://growables.org/information/TropicalFruit/MulberryArcRFC.htm",
+        "says": "Backyard mulberry; fruit spoils within days (via search summary)."
+      }
+    ],
+    "confidence": "low",
+    "changed": true,
+    "note": "Rarely sold in shops: mostly backyards, pick-your-own and farmers markets. No market reports name mulberries. Old months (Oct-Nov peak) were too early."
+  },
+  {
+    "id": "coconut",
+    "peak": [],
+    "available": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "yearRound": "imported",
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Heavy with lots of liquid sloshing when shaken; eyes (the three dots) dry, not mouldy.",
+    "storage": "Whole on the bench a few weeks; opened, fridge 4-5 days.",
+    "sources": [
+      {
+        "name": "IndexBox, Australia coconut market",
+        "url": "https://www.indexbox.io/store/australia-coconut-market-analysis-forecast-size-trends-and-insights/",
+        "says": "Domestic coconut production is negligible, under 1 per cent of consumption (via search summary)."
+      },
+      {
+        "name": "Vietnamese wax coconuts enter Australian market (FreshPlaza)",
+        "url": "https://www.freshplaza.com/latin-america/article/9369262/vietnamese-wax-coconuts-enter-australian-market/",
+        "says": "Fresh coconuts reach Australia as imports (via search summary)."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Imported all year; no seasonality. App should not show peak months."
+  },
+  {
+    "id": "dragon-fruit",
+    "peak": [
+      "Jan",
+      "Feb"
+    ],
+    "available": [
+      "Oct",
+      "Nov",
+      "Dec",
+      "Mar",
+      "Apr"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Vivid skin with fresh-looking green wing tips, slight give. Skip dry, shrivelled skin.",
+    "storage": "Fridge, up to a week.",
+    "sources": [
+      {
+        "name": "Northern Territory Government: Pitaya (dragon fruit)",
+        "url": "https://nt.gov.au/environment/home-gardens/growing-vegetables-at-home/pitaya-dragon-fruit",
+        "says": "NT fruits September to March; Darwin season October to April (via search summary)."
+      },
+      {
+        "name": "ABC Rural via ITFnet: NT dragon fruit season",
+        "url": "https://www.itfnet.org/v1/2015/01/australia-dragon-fruit-season-fires-up-in-the-northern-territory/",
+        "says": "NT harvest ramps up after Australia Day, runs to April (via search summary)."
+      }
+    ],
+    "confidence": "medium",
+    "changed": true,
+    "note": "Qld season roughly Dec-May. No Melbourne Market report names dragon fruit; peak inferred as mid-summer. Old Nov-Feb peak narrowed."
+  },
+  {
+    "id": "starfruit",
+    "peak": [
+      "Nov",
+      "Dec",
+      "Jan",
+      "Feb"
+    ],
+    "available": [
+      "Oct",
+      "Mar"
+    ],
+    "yearRound": null,
+    "variesByState": false,
+    "stateNote": "",
+    "pick": "Firm, yellow with slight brown on the ridge edges (that is ripe). Skip green or soft.",
+    "storage": "Bench to ripen, then fridge about a week.",
+    "sources": [
+      {
+        "name": "Rare Fruit Council of Australia archive, carambola",
+        "url": "https://growables.org/information/TropicalFruit/CaramArcRFC5.htm",
+        "says": "North Qld peaks Dec-Feb and Jun-Aug; southern Qld/northern NSW Feb-Mar (via search summary)."
+      },
+      {
+        "name": "Daleys Fruit, carambola",
+        "url": "https://daleysfruit.com.au/buy/carambola-kary-seedling-tree.htm",
+        "says": "Harvest March to September (via search summary)."
+      }
+    ],
+    "confidence": "low",
+    "changed": false,
+    "note": "Sources contradict; not seen in any Melbourne Market report. Old months kept."
+  }
+]
