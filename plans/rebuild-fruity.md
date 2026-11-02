@@ -37,7 +37,7 @@ Fruity becomes a calm, warm, shop-first app that answers "what should we buy rig
 
 - **Shopping list is a bag button, not a tab** (designer over shopper): one tap from every screen beats a fourth tab.
 - **Passport ships in v1, in Phase 4** (player wanted MUST, others SHOULD): it is the one feature that grows over time, and it answers a shop question ("did we like persimmon?").
-- **No state picker**: you're both in Victoria (`Q1`), so the months are Victorian (Melbourne Market as the lead source), with a "varies by state" badge where other states differ a lot.
+- **State selector, Victoria by default** (Nathan, 2 Nov 2026: "in case we are in a different state at any point, or if we want to see what fruits are in season in a different state"): Victorian months are the default; other states carry overrides only where a source shows their shop season differs. Replaces the earlier "no state picker" call.
 - **Season Wheel waits** until the data is verified (skeptic): a pretty wrong answer is worse than a plain right one.
 - **Duel quiz is a stretch goal** at the end of Phase 4, not a core item.
 
@@ -65,6 +65,7 @@ Fruity becomes a calm, warm, shop-first app that answers "what should we buy rig
 - Design tokens, self-hosted fonts, bottom tab bar with safe areas.
 - Now home, Fruit browse (search, filter chips, a 12-segment season bar per row instead of the 3x4 month grid), fruit detail with a shared-element transition.
 - Bag button and list sheet.
+- State selector (a small chip on Now, e.g. "VIC", opening a sheet of the 8 states and territories), remembered on the phone.
 - Calendar becomes a "Year" view inside Fruit.
 - Done when: checked at iPhone width in a real browser, reduced-motion on and off, the home answers with no scrolling.
 
@@ -86,7 +87,7 @@ Fruity becomes a calm, warm, shop-first app that answers "what should we buy rig
 
 ### Later (not in this rebuild)
 
-Season Wheel, per-state month overrides, native bush fruits (finger lime, quandong, Davidson plum and more), illustrated art set, origin map, passport export and QR sharing between phones, salad harmony score.
+Season Wheel, native bush fruits (finger lime, quandong, Davidson plum and more), illustrated art set, origin map, passport export and QR sharing between phones, salad harmony score.
 
 ## How it gets built
 
@@ -95,7 +96,7 @@ Each phase goes to a worker agent in its own git worktree with a written target,
 ## Decisions (Nathan, 2 Nov 2026: "Yes to all")
 
 - `D1`: plan approved, Phase 0 started.
-- `Q1`: both in Victoria, one state, no picker.
+- `Q1`: both in Victoria. Later the same day Nathan asked for a state selector anyway, Victoria as default.
 - `Q2`: both iPhones. Passport import is paste or QR inside the installed app (an iPhone home-screen app can't see Safari's storage). View Transitions need iOS 18+, with a fade fallback.
 - `D2`: salad maker upgrade is in Phase 4.
 - `D3`: fruit art is a generated matching set, which also replaces the emoji icons.
