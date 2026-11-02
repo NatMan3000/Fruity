@@ -37,7 +37,7 @@ Fruity becomes a calm, warm, shop-first app that answers "what should we buy rig
 
 - **Shopping list is a bag button, not a tab** (designer over shopper): one tap from every screen beats a fourth tab.
 - **Passport ships in v1, in Phase 4** (player wanted MUST, others SHOULD): it is the one feature that grows over time, and it answers a shop question ("did we like persimmon?").
-- **State picker waits** for your answer to `Q-2️⃣` below; the badge ships either way.
+- **State picker waits** for your answer to `Q1` below; the badge ships either way.
 - **Season Wheel waits** until the data is verified (skeptic): a pretty wrong answer is worse than a plain right one.
 - **Duel quiz is a stretch goal** at the end of Phase 4, not a core item.
 
@@ -92,6 +92,6 @@ Each phase goes to a worker agent in its own git worktree with a written target,
 
 ## Open questions
 
-- `D-1️⃣`: approve this plan and start Phase 0?
-- `Q-2️⃣`: which state are you in, and are you both in the same one? (Decides whether a state picker is worth building.)
-- `Q-3️⃣`: are both your phones iPhones? (Decides passport sharing and which animations everyone sees.)
+- `D1`: approve this plan and start Phase 0?
+- `Q1`: which state are you in, and are you both in the same one? (Decides whether a state picker is worth building.)
+- `Q2`: are both your phones iPhones? (Decides passport sharing and which animations everyone sees.)
