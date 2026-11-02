@@ -61,6 +61,7 @@ Fruity becomes a calm, warm, shop-first app that answers "what should we buy rig
 
 ### Phase 2: New shell and look
 
+- Fruit art (`D3`, Nathan 2 Nov: generate one matching set with Ai, test 6 first): about 40 generated studio shots on the warm paper tile, one style. The same images, cropped round, replace the emoji as the fruit icons on cards, rows and the bag (Nathan: "some don't have an emoji"; dragon fruit is a pink heart, starfruit a star). Emoji only as a fallback while an image loads.
 - Design tokens, self-hosted fonts, bottom tab bar with safe areas.
 - Now home, Fruit browse (search, filter chips, a 12-segment season bar per row instead of the 3x4 month grid), fruit detail with a shared-element transition.
 - Bag button and list sheet.
@@ -97,3 +98,4 @@ Each phase goes to a worker agent in its own git worktree with a written target,
 - `Q1`: both in Victoria, one state, no picker.
 - `Q2`: both iPhones. Passport import is paste or QR inside the installed app (an iPhone home-screen app can't see Safari's storage). View Transitions need iOS 18+, with a fade fallback.
 - `D2`: salad maker upgrade is in Phase 4.
+- `D3`: fruit art is a generated matching set, which also replaces the emoji icons.
