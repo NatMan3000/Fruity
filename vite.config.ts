@@ -2,12 +2,30 @@ import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import { readFileSync } from 'node:fs'
+import type { Plugin } from 'vite'
+
+// iOS home-screen icon (2 Nov 2026): Safari's Add to Home Screen sheet has its own icon loader that
+// can fail on a network URL, and then iOS shows a letter tile on the theme colour. The bookmark and
+// app switcher still showed our icon, so the files were fine. Embedding the 180px PNG as a data: URI
+// in the page head takes the network out of it (jwpriem/ecoflow PR #15). SVG touch icons are not used
+// for the Home Screen at all (firt.dev/notes/pwa-ios), so this is a PNG.
+function inlineTouchIcon(): Plugin {
+  return {
+    name: 'fruity-inline-touch-icon',
+    transformIndexHtml(html) {
+      const png = readFileSync(new URL('./public/icons/apple-touch-icon.png', import.meta.url)).toString('base64')
+      return html.replace('<!--TOUCH-ICON-->', `<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,${png}" />`)
+    }
+  }
+}
 
 export default defineConfig({
   base: '/Fruity/',
   plugins: [
     react(),
     tailwindcss(),
+    inlineTouchIcon(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/favicon.svg', 'icons/apple-touch-icon.svg', 'icons/apple-touch-icon.png'],
@@ -22,13 +40,12 @@ export default defineConfig({
         display: 'standalone',
         start_url: '/Fruity/',
         scope: '/Fruity/',
-        // Mirrors Bready's manifest, which gets its home-screen icon on Nathan's iPhone: no `id`,
-        // relative SVG icons only (192, 512, 512 maskable). PNG icons and an `id` coincided with iOS
-        // showing a letter placeholder instead (2 Nov 2026).
+        // PNG first, cache-busted: iOS ranks icons by size and cannot use SVG for the Home Screen before
+        // iOS 26 (firt.dev/notes/pwa-ios); `?v=4` skips any failed fetch iOS remembered.
         icons: [
-          { src: 'icons/icon-192.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
-          { src: 'icons/icon-512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any' },
-          { src: 'icons/icon-512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'maskable' }
+          { src: 'icons/icon-192.png?v=4', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icons/icon-512.png?v=4', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'icons/icon-maskable-512.png?v=4', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ]
       },
       workbox: {
