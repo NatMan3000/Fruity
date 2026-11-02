@@ -488,7 +488,9 @@ function lemonLike(colour: string, tip: number): Builder {
 }
 
 function strawberry(id: string): THREE.Object3D {
-  const red = C('#E01E35'), deep = C('#A50E25'), shoulder = C('#F7C98A')
+  // The shoulders under the calyx go a deeper red, never orange (the old pale-gold shoulder showed as an
+  // orange underside on the half without the calyx; Nathan, 2 Nov 2026).
+  const red = C('#E01E35'), deep = C('#A50E25'), shoulder = C('#B8142C')
   // Broad shoulders at the top, tapering to a soft point at the bottom.
   const shape: Shape = phi => {
     const u = phi / Math.PI

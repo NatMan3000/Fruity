@@ -12,7 +12,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { useThree } from '@react-three/fiber'
 import { planCut, stepCut, useJuice, type Cut } from './cutting'
-import { fleshOf } from './flesh'
+import { juiceOf } from './flesh'
 import { buildFruit, cutParts } from './models'
 import { reducedMotion, useAnimation, type FruitLike } from './motion'
 import { ShadowFloor, Stage } from './stage'
@@ -151,7 +151,7 @@ function FruitScene({ fruit, look, outcome, progress, shade }: Omit<QuizStagePro
       } else if (!still) {
         st.hopV = 3.6
       }
-      if (!still) juice.splash(o, fleshOf(fruit.id, fruit.colour).flesh)
+      if (!still) juice.splash(o, juiceOf(fruit.id, fruit.colour))
     } else {
       st.wobble = still ? 0 : 1
     }

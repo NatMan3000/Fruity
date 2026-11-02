@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { useThree } from '@react-three/fiber'
 import { planCut, screenPoint, stepCut, useJuice, useSliceGesture, type Cut, type CutNews } from './cutting'
-import { fleshOf } from './flesh'
+import { juiceOf } from './flesh'
 import { buildFruit, cutParts } from './models'
 import { reducedMotion, useAnimation, useSpin, type FruitLike } from './motion'
 import { ShadowFloor, Stage } from './stage'
@@ -54,7 +54,7 @@ function Scene({ fruit, shade, slice, onCut }: Omit<SpinFruitProps, 'className'>
     if ((open ? 1 : 0) === c.target) return
     c.target = open ? 1 : 0
     if (still) c.p = c.target
-    if (open && !still) juice.splash(o, fleshOf(fruit.id, fruit.colour).flesh)
+    if (open && !still) juice.splash(o, juiceOf(fruit.id, fruit.colour))
     onCut({ name: fruit.name, open, angle, ...screenPoint(o, camera, size) })
     invalidate()
   }
