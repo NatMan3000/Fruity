@@ -108,6 +108,33 @@ function body({ rings = 40, segs = 48, thetaFrom = 0, thetaTo = TAU, phiFrom = 0
       n.setXYZ(b, v.x, v.y, v.z)
     }
   }
+  // Where this body meets the next piece of the same fruit (a slice's top and bottom rings, a half's
+  // two long edges), the normals came from this side's faces only, so each piece shaded on its own and
+  // the seams showed on a whole fruit. Take them from the shape itself instead: both pieces then agree.
+  const at = (phi: number, theta: number) => {
+    const { r, y } = shape ? shape(phi, theta) : { r: Math.sin(phi), y: -Math.cos(phi) }
+    return new THREE.Vector3(r * Math.cos(theta), y, r * Math.sin(theta))
+  }
+  const e = 1e-3
+  const exact = (k: number, phi: number, theta: number) => {
+    const p0 = Math.max(1e-4, Math.min(Math.PI - 1e-4, phi))
+    const dPhi = at(p0 + e, theta).sub(at(p0 - e, theta))
+    const dTheta = at(p0, theta + e).sub(at(p0, theta - e))
+    const m = new THREE.Vector3().crossVectors(dPhi, dTheta)
+    if (m.lengthSq() < 1e-14) return
+    m.normalize()
+    if (m.x * n.getX(k) + m.y * n.getY(k) + m.z * n.getZ(k) < 0) m.negate()
+    n.setXYZ(k, m.x, m.y, m.z)
+  }
+  for (let i = 0; i <= rings; i++) {
+    const phi = phiFrom + (i / rings) * (phiTo - phiFrom)
+    const pole = (i === 0 && phiFrom === 0) || (i === rings && phiTo === Math.PI)
+    if (pole) continue
+    const edgeRing = (i === 0 && phiFrom > 0) || (i === rings && phiTo < Math.PI)
+    for (let j = 0; j <= segs; j++) {
+      if (edgeRing || (!whole && (j === 0 || j === segs))) exact(i * row + j, phi, thetaFrom + (j / segs) * (thetaTo - thetaFrom))
+    }
+  }
   return g
 }
 
@@ -141,6 +168,15 @@ function mesh(geo: THREE.BufferGeometry, mat: THREE.Material): THREE.Mesh {
   const m = new THREE.Mesh(geo, mat)
   m.castShadow = true
   m.receiveShadow = true
+  return m
+}
+
+// A cut face (painted flesh). Hidden while the fruit is whole: its edge meets the skin exactly, so it
+// showed as a thin line round a whole sliced fruit (the lemon's seams). `stepCut` shows it as soon as
+// the pieces start to part.
+function cutFace(m: THREE.Mesh): THREE.Mesh {
+  m.userData.face = true
+  m.visible = false
   return m
 }
 
@@ -245,7 +281,7 @@ function cutBody(opts: BodyOpts, mat: THREE.Material, fruitId: string, mode: Cut
   if (mode.kind === 'length') {
     const { geo, box } = faceGeometry(lengthOutline(shape))
     const flesh = fleshMaterial(fruitId, lengthOutline(shape), box, buildColour, 'length')
-    const faceA = mesh(geo, flesh), faceB = mesh(geo, flesh)
+    const faceA = cutFace(mesh(geo, flesh)), faceB = cutFace(mesh(geo, flesh))
     const stone = stoneMesh(fruitId, box)
     const A = piece([mesh(body({ ...opts, thetaFrom: 0, thetaTo: Math.PI }), mat), faceA, ...(stone ? [stone] : [])], [0, 0, -1])
     const B = piece([mesh(body({ ...opts, thetaFrom: Math.PI, thetaTo: TAU }), mat), faceB], [0, 0, 1])
@@ -264,7 +300,7 @@ function cutBody(opts: BodyOpts, mat: THREE.Material, fruitId: string, mode: Cut
       flesh ??= fleshMaterial(fruitId, pts, box, buildColour, 'across')
       geo.rotateX(-Math.PI / 2)
       geo.translate(0, y, 0)
-      return mesh(geo, flesh) // double-sided: the same face serves the piece above and below
+      return cutFace(mesh(geo, flesh)) // double-sided: the same face serves the piece above and below
     }
     let top: THREE.Group | null = null
     for (let k = 0; k < n; k++) {
@@ -629,6 +665,12 @@ function cherries(): THREE.Object3D {
 // A hand of four bananas: separate curved fingers that meet only at the crown, fanned so they never
 // pass through each other. Each finger is a ridged tube (five soft ridges, like the real thing). The
 // front finger is built in coins, so cutting a banana slices it into rounds with pale flesh.
+// Round enough that a coin's edge reads as a smooth ridged circle, never a polygon (the coins sit
+// face up and close to the camera), and the same count for the skin and the cut face so they meet.
+const RADIAL = 45
+// The five soft ridges of a banana's skin: enough to see on the whole fruit, gentle enough that a coin
+// reads round with a hint of its corners, as a real slice does.
+const RIDGE = 0.035
 function banana(id: string): THREE.Object3D {
   const g = new THREE.Group()
   const yellow = C('#F6D23C'), green = C('#9DB83A'), brown = C('#4A3218')
@@ -646,16 +688,17 @@ function banana(id: string): THREE.Object3D {
     const curve = new THREE.CatmullRomCurve3(pts)
     const frames = curve.computeFrenetFrames(200, false)
     if (k !== 1) {
-      g.add(mesh(tube(curve, frames, 0, 1, R, colour, 48), mat))
+      g.add(mesh(tube(curve, frames, 0, 1, R, colour, 48, RADIAL), mat))
       continue
     }
     // The front finger: a stalk end, three coins, and its tip, which stands at the end of the row.
-    g.add(mesh(tube(curve, frames, 0, 0.4, R, colour, 16), mat))
+    // (More, thinner coins no longer fit the flat row and get shingled up into the air.)
+    g.add(mesh(tube(curve, frames, 0, 0.4, R, colour, 16, RADIAL), mat))
     const cuts = [0.4, 0.55, 0.7, 0.85, 1]
     for (let c = 0; c < cuts.length - 1; c++) {
       const t0 = cuts[c], t1 = cuts[c + 1]
       const tip = t1 === 1
-      const meshes: THREE.Object3D[] = [mesh(tube(curve, frames, t0, t1, R, colour, 10), mat), coinFace(id, curve, frames, t0, R)]
+      const meshes: THREE.Object3D[] = [mesh(tube(curve, frames, t0, t1, R, colour, 10, RADIAL), mat), coinFace(id, curve, frames, t0, R)]
       if (!tip) meshes.push(coinFace(id, curve, frames, t1, R))
       const tan = curve.getTangentAt(t1)
       const p = piece(meshes, [tan.x, tan.y, tan.z])
@@ -683,7 +726,7 @@ function tube(curve: THREE.Curve<THREE.Vector3>, frames: { normals: THREE.Vector
     colour(t, tmp)
     for (let j = 0; j <= radial; j++) {
       const a = (j / radial) * TAU
-      const r = R(t) * (1 + 0.06 * Math.cos(a * 5))
+      const r = R(t) * (1 + RIDGE * Math.cos(a * 5))
       pos.push(P.x + (N.x * Math.cos(a) + B.x * Math.sin(a)) * r, P.y + (N.y * Math.cos(a) + B.y * Math.sin(a)) * r, P.z + (N.z * Math.cos(a) + B.z * Math.sin(a)) * r)
       col.push(tmp.r, tmp.g, tmp.b)
     }
@@ -706,16 +749,16 @@ function tube(curve: THREE.Curve<THREE.Vector3>, frames: { normals: THREE.Vector
 // A banana coin's cut face at t: the ridged ring filled with the flesh texture.
 function coinFace(id: string, curve: THREE.Curve<THREE.Vector3>, frames: { normals: THREE.Vector3[]; binormals: THREE.Vector3[]; tangents: THREE.Vector3[] }, t: number, R: (t: number) => number): THREE.Mesh {
   const pts: THREE.Vector2[] = []
-  for (let j = 0; j < 30; j++) {
-    const a = (j / 30) * TAU
-    const r = R(t) * (1 + 0.06 * Math.cos(a * 5))
+  for (let j = 0; j < RADIAL; j++) {
+    const a = (j / RADIAL) * TAU
+    const r = R(t) * (1 + RIDGE * Math.cos(a * 5))
     pts.push(new THREE.Vector2(Math.cos(a) * r, Math.sin(a) * r))
   }
   const { geo, box } = faceGeometry(pts)
   const f = Math.round(t * (frames.normals.length - 1))
   const m = new THREE.Matrix4().makeBasis(frames.normals[f], frames.binormals[f], frames.tangents[f]).setPosition(curve.getPointAt(t))
   geo.applyMatrix4(m)
-  return mesh(geo, fleshMaterial(id, pts, box, buildColour, 'across'))
+  return cutFace(mesh(geo, fleshMaterial(id, pts, box, buildColour, 'across')))
 }
 
 function cluster(colour: string, count: number, size: number, opts: { bloom?: boolean; elongate?: number } = {}): Builder {

@@ -15,9 +15,10 @@ const STYLE: Record<FruitStatus, { Icon: LucideIcon; tone: string }> = {
   off: { Icon: CircleDashed, tone: 'bg-off text-off-ink' },
 }
 
+// The word is never under 13px (the 12px floor, with room for the caps' tracking).
 const SIZE = {
-  sm: 'h-6 gap-1 px-2 text-[11px] [&_svg]:size-3',
-  md: 'h-7 gap-1 px-2.5 text-[12.5px] [&_svg]:size-3.5',
+  sm: 'h-7 gap-1 px-2.5 text-[13px] [&_svg]:size-3.5',
+  md: 'h-8 gap-1.5 px-3 text-[14px] [&_svg]:size-4',
   lg: 'h-9 gap-1.5 px-3.5 text-[15px] [&_svg]:size-4',
 } as const
 

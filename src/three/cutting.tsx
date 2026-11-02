@@ -16,7 +16,7 @@ export interface CutNews {
 }
 
 interface PartMotion { obj: THREE.Object3D; from: THREE.Vector3; to: THREE.Vector3; fromQ: THREE.Quaternion; toQ: THREE.Quaternion; fromScale: THREE.Vector3; toScale: THREE.Vector3; up: THREE.Vector3 }
-export interface Cut { target: 0 | 1; p: number; v: number; parts: PartMotion[] }
+export interface Cut { target: 0 | 1; p: number; v: number; parts: PartMotion[]; faces: THREE.Object3D[] }
 
 
 // ---------------------------------------------------------------------------
@@ -85,6 +85,12 @@ function inside(a: THREE.Vector3[], b: THREE.Vector3[]): boolean {
   return a.some(p => hull.containsPoint(p.clone().sub(c).multiplyScalar(0.98).add(c)))
 }
 const meet = (a: THREE.Vector3[], b: THREE.Vector3[]) => inside(a, b) || inside(b, a)
+// Two point clouds (each a convex solid) meet: the exact test above, after a cheap bounding-sphere skip.
+export function solidsMeet(a: THREE.Vector3[], b: THREE.Vector3[]): boolean {
+  if (a.length < 4 || b.length < 4) return false
+  if (!new THREE.Sphere().setFromPoints(a).intersectsSphere(new THREE.Sphere().setFromPoints(b))) return false
+  return meet(a, b)
+}
 
 // What is left of the fruit is not convex (a curved banana finger), so it is checked in short runs of
 // consecutive vertices (a few rings of a tube at a time), each close enough to convex.
@@ -300,7 +306,10 @@ export function planCut(fruit: THREE.Object3D, parts: CutPart[], camera: THREE.C
     part.scale.copy(keep[k].s)
     part.updateWorldMatrix(false, true)
   })
-  return { target: 0, p: 0, v: 0, parts: motions }
+  // The cut faces (models.ts `cutFace`), hidden while whole, shown while the pieces are apart.
+  const faces: THREE.Object3D[] = []
+  parts.forEach(({ part }) => part.traverse(o => { if (o.userData.face) faces.push(o) }))
+  return { target: 0, p: 0, v: 0, parts: motions, faces }
 }
 
 // One frame of the pieces' bouncy spring towards open or shut, with a little hop on the way.
@@ -316,6 +325,8 @@ export function stepCut(c: Cut, dt: number): boolean {
   const t = Math.max(0, Math.min(1.12, c.p))
   const arc = Math.sin(Math.PI * Math.min(1, Math.max(0, c.p))) * 0.32
   const s = Math.min(1, t) // never overshoot the thinning: pieces must not grow past themselves
+  const open = c.p > 0.001 || c.target === 1
+  for (const f of c.faces) f.visible = open
   for (const h of c.parts) {
     h.obj.position.lerpVectors(h.from, h.to, t).addScaledVector(h.up, arc)
     h.obj.quaternion.slerpQuaternions(h.fromQ, h.toQ, t)

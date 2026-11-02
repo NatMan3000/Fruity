@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { FRUITS } from '../src/assets/fruits'
 import { SEASONS, type Season } from '../src/types/fruit'
-import { contrast } from '../src/utils/colour'
-import { seasonTones, tonesOf, type Tones } from '../src/utils/tones'
+import { colourDistance, contrast } from '../src/utils/colour'
+import { RECIPES } from '../src/assets/recipes'
+import { BLOCK_SEPARATION, blockTone, seasonTones, tonesOf, type Tones } from '../src/utils/tones'
 
 // Every text pair the Sorbet look draws, checked for every fruit and every season (DESIGN.md "Colour").
 // Static tokens are read from src/index.css, so a re-tuned hex there is what gets checked.
@@ -74,5 +75,43 @@ describe('status stickers', () => {
   const pairs = ['peak', 'season', 'ending', 'off', 'always']
   it.each(pairs)('%s word reads on its own fill (4.5:1)', name => {
     expect(contrast(token(`${name}-ink`), token(name))).toBeGreaterThanOrEqual(4.5)
+  })
+})
+
+// A recipe card on a fruit's page (RecipeCard `page`) must read as its own block, not melt into a
+// page of nearly its own colour (audit fruit-F4: the rhubarb crumble on the strawberry page).
+describe('recipe cards on a fruit page', () => {
+  const cards = FRUITS.flatMap(page => RECIPES.filter(r => r.fruitIds.includes(page.id)).map(r => {
+    const main = FRUITS.find(f => f.id === r.fruitIds[0])!
+    const prefer = main.id === page.id ? 'bright' as const : 'pop' as const
+    const pageColour = tonesOf(page.colour).pop
+    return { page: page.id, recipe: r.id, main, pageColour, ...blockTone(main.colour, pageColour, prefer) }
+  }))
+
+  it('stand clear of the page, or wear the white edge', () => {
+    const bad = cards.filter(c => !c.edge && colourDistance(tonesOf(c.main.colour)[c.surface], c.pageColour) < BLOCK_SEPARATION)
+    expect(bad.map(c => `${c.recipe} on ${c.page}`)).toEqual([])
+  })
+
+  it('the rhubarb crumble on the strawberry page takes its bright tone', () => {
+    const c = cards.find(x => x.page === 'strawberry' && x.recipe === 'rhubarb-strawberry-ginger-crumble')!
+    expect(c).toMatchObject({ surface: 'bright', edge: false })
+  })
+
+  it('keep their text readable whichever tone they take (4.5:1)', () => {
+    const bad = cards.filter(c => contrast(tonesOf(c.main.colour).ink, tonesOf(c.main.colour)[c.surface]) < 4.5)
+    expect(bad.map(c => c.recipe)).toEqual([])
+  })
+})
+
+// The Fruit Salad Cafe has its own look (src/cafe/cafe.css); its meters sit on white pills and must
+// read as meters even when empty (audit play-F2): the track's outline at 3:1 or better on white.
+describe('cafe meters', () => {
+  const cafe = readFileSync(new URL('../src/cafe/cafe.css', import.meta.url), 'utf8')
+  it.each(['cafe-level__bar', 'cafe-goals__meter'])('%s track outline reads on white (3:1)', cls => {
+    const block = cafe.match(new RegExp(`\\.${cls} \\{([^}]*)\\}`))?.[1] ?? ''
+    const border = block.match(/border:\s*[\d.]+px solid (#[0-9A-Fa-f]{6})/)?.[1]
+    expect(border, `${cls} has an outlined track`).toBeDefined()
+    expect(contrast(border!, '#FFFFFF')).toBeGreaterThanOrEqual(3)
   })
 })

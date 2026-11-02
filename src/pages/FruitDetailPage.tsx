@@ -10,6 +10,7 @@ import { recipesForFruit } from '../utils/recipes'
 import { photoUrl } from '../utils/images'
 import { fruitStatus } from '../utils/seasonality'
 import { statusSentence } from '../utils/status'
+import { tonesOf } from '../utils/tones'
 import { FruitHero } from '../components/FruitHero'
 import { FruitSticker } from '../components/FruitSticker'
 import { RecipeCard } from '../components/RecipeCard'
@@ -64,7 +65,7 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
           <section aria-labelledby="recipes" className="flex flex-col gap-3 pt-2">
             <h2 id="recipes" className="px-1 font-display text-title">Recipes</h2>
             <ul className="flex flex-col gap-4">
-              {cooks.map(r => <li key={r.id}><RecipeCard recipe={r} month={month} surface={r.fruitIds[0] === fruit.id ? 'bright' : 'pop'} /></li>)}
+              {cooks.map(r => <li key={r.id}><RecipeCard recipe={r} month={month} surface={r.fruitIds[0] === fruit.id ? 'bright' : 'pop'} page={tonesOf(fruit.colour).pop} /></li>)}
             </ul>
           </section>
         )}
@@ -187,7 +188,7 @@ function AddToBag({ fruit, inBag }: { fruit: Fruit; inBag: boolean }) {
           <Plus aria-hidden="true" className="size-6" strokeWidth={3} />
         )}
         {inBag ? 'In your bag' : 'Add to bag'}
-        {inBag && <span className="text-[14px] font-bold">(tap to remove)</span>}
+        {inBag && <span className="text-[15px] font-extrabold">(tap to remove)</span>}
       </button>
       {fly && createPortal(
         <span

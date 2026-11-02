@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { Season } from '../types/fruit'
-import { hexToRgb, oklchOf, tone } from './colour'
+import { colourDistance, hexToRgb, oklchOf, tone } from './colour'
 
 // Sorbet tones (DESIGN.md "Colour"). Every surface is a fruit or a season colour. One `colour` becomes a
 // family of tones at FIXED OKLCH lightness, so a dark fruit (mulberry) and a pale one (lemon) give blocks
@@ -76,4 +76,18 @@ export function tiltOf(id: string): number {
   let h = 0
   for (const c of id) h = (h * 31 + c.charCodeAt(0)) | 0
   return (((h % 11) + 11) % 11) - 5
+}
+
+// A block in one fruit's colours sitting on another colour (a recipe card on a fruit's page) must
+// still read as its own block: its preferred tone if that stands clear of the page, otherwise its other
+// tone, and if neither does (a yellow card on a yellow page), the preferred one with the white die-cut
+// edge round it. 0.08 in OKLab clears every card the app draws except the ones it is there to catch
+// (rhubarb pop on the strawberry page is 0.023).
+export const BLOCK_SEPARATION = 0.08
+export function blockTone(colour: string, page: string, prefer: 'pop' | 'bright'): { surface: 'pop' | 'bright'; edge: boolean } {
+  const t = tonesOf(colour)
+  const other = prefer === 'pop' ? 'bright' : 'pop'
+  if (colourDistance(t[prefer], page) >= BLOCK_SEPARATION) return { surface: prefer, edge: false }
+  if (colourDistance(t[other], page) >= BLOCK_SEPARATION) return { surface: other, edge: false }
+  return { surface: prefer, edge: true }
 }

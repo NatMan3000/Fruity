@@ -132,7 +132,7 @@ function BagRow({ item }: { item: BagItem }) {
         aria-label={`Remove ${item.name}`}
         className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-(--ink-soft) active:bg-(--pop)"
       >
-        <X aria-hidden="true" className="size-4" />
+        <X aria-hidden="true" className="size-5" strokeWidth={2.75} />
       </button>
     </li>
   )

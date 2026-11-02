@@ -163,7 +163,8 @@ export default function CookMode({ recipe }: { recipe: Recipe }) {
           </button>
           <div className="flex min-w-0 flex-1 flex-col">
             <span className="text-caption font-extrabold tracking-[0.06em] text-(--ink-soft) uppercase">Cooking</span>
-            <span className="font-display text-[1.25rem] leading-tight break-words">{recipe.name}</span>
+            {/* Small enough that the longest name fits two lines beside the close disc and the dish */}
+            <span className="font-display text-[1.0625rem] leading-[1.15] break-words">{recipe.name}</span>
           </div>
           {/* The finished dish as a thumbnail, its fruit stuck on the corner */}
           <span className="relative shrink-0" aria-hidden="true">
@@ -250,15 +251,17 @@ export default function CookMode({ recipe }: { recipe: Recipe }) {
         </div>
 
         <nav className="flex gap-3 pt-4" aria-label="Step">
-          <button
-            type="button"
-            onClick={() => go(step - 1)}
-            disabled={step === 0}
-            className="press block-shadow inline-flex h-16 flex-1 items-center justify-center gap-1 rounded-full bg-(--bright) text-[18px] font-extrabold disabled:opacity-40"
-          >
-            <ChevronLeft aria-hidden="true" className="size-6" strokeWidth={2.75} />
-            Back
-          </button>
+          {/* No Back on the first step (a dimmed one read as broken); Next takes the row */}
+          {step > 0 && (
+            <button
+              type="button"
+              onClick={() => go(step - 1)}
+              className="press block-shadow inline-flex h-16 flex-1 items-center justify-center gap-1 rounded-full bg-(--bright) text-[18px] font-extrabold"
+            >
+              <ChevronLeft aria-hidden="true" className="size-6" strokeWidth={2.75} />
+              Back
+            </button>
+          )}
           {step < last ? (
             <button type="button" onClick={() => go(step + 1)} className="press block-shadow inline-flex h-16 flex-[1.4] items-center justify-center gap-1 rounded-full bg-(--ink) text-[18px] font-extrabold text-(--light)">
               Next
@@ -271,8 +274,8 @@ export default function CookMode({ recipe }: { recipe: Recipe }) {
             </button>
           )}
         </nav>
-        <p className="flex items-center justify-center gap-1.5 pt-3 text-caption font-bold text-(--ink-soft)">
-          <Sun aria-hidden="true" className="size-3.5" strokeWidth={2.5} />
+        <p className="flex items-center justify-center gap-1.5 pt-3 text-small font-bold text-(--ink-soft)">
+          <Sun aria-hidden="true" className="size-4 shrink-0" strokeWidth={2.5} />
           {canWakeLock ? 'Your screen stays on while you cook.' : 'Swipe or tap Next to move on.'}
         </p>
         <p aria-live="assertive" className="sr-only">{said}</p>

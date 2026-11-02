@@ -124,12 +124,6 @@
   display: none;
 }
 
-/* A sideways chip row fades at its right edge while more chips are hidden past it (BrowsePage). */
-.chip-fade {
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent);
-  mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent);
-}
-
 /* ============================================
    SURFACES (DESIGN.md "Shape")
    ============================================ */
@@ -147,6 +141,14 @@
 }
 .press.block-shadow:active {
   box-shadow: 0 1px 0 0 var(--shadow, rgb(30 8 20 / 0.4));
+}
+/* A block that would melt into a page of nearly its own colour wears the sticker's white die-cut edge
+   (RecipeCard via blockTone in src/utils/tones.ts). */
+.card-edge.block-shadow {
+  box-shadow: 0 0 0 3px var(--color-sticker), 0 5px 0 3px var(--shadow, rgb(30 8 20 / 0.4));
+}
+.press.card-edge.block-shadow:active {
+  box-shadow: 0 0 0 3px var(--color-sticker), 0 1px 0 3px var(--shadow, rgb(30 8 20 / 0.4));
 }
 
 /* Fruit art as a die-cut sticker. New art carries its white edge baked in (scripts/build-stickers.ts);

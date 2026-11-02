@@ -13,7 +13,9 @@ let introPlayed = false
 // The year at a glance: every fruit's season strip on the season's page, this month's column marked.
 export function YearPage({ month }: { month: Month }) {
   const fruits = [...FRUITS].sort((a, b) => a.name.localeCompare(b.name))
-  const nameCol = 'w-[8.5rem] shrink-0 sm:w-44'
+  // Wide enough for the longest name (Custard Apple) on one line with a clear gap before the bar,
+  // which takes the rest.
+  const nameCol = 'w-[9.75rem] shrink-0 sm:w-44'
   const [intro] = useState(() => !introPlayed)
   useEffect(() => { introPlayed = true }, [])
 

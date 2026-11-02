@@ -23,7 +23,7 @@ export interface NutritionalInfo {
   calories: number        // per 100g
   vitaminC?: number      // mg per 100g
   fiber?: number         // g per 100g
-  highlights: string[]   // e.g., ['High in Vitamin C', 'Good fiber source']
+  highlights: string[]   // e.g., ['High in Vitamin C', 'Good fibre source']
 }
 
 export interface RecipeSuggestion {

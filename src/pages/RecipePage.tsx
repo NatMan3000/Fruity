@@ -78,7 +78,8 @@ export default function RecipePage({ recipe, month }: { recipe: Recipe; month: M
         </ul>
         {status === 'off' && main && recipe.swaps?.length ? (
           <a href="#swaps" onClick={e => { e.preventDefault(); document.getElementById('swaps')?.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth' }) }} className="inline-flex min-h-11 items-center text-body font-extrabold underline">
-            {main.name} is out of season. See the swaps.
+            <ArrowRightLeft aria-hidden="true" className="mr-2 size-5 shrink-0" strokeWidth={2.5} />
+            See the swaps
           </a>
         ) : null}
       </header>
@@ -163,7 +164,7 @@ export default function RecipePage({ recipe, month }: { recipe: Recipe; month: M
           <section id="swaps" aria-labelledby="swaps-title" className="flex scroll-mt-4 flex-col gap-3 pt-2">
             <h2 id="swaps-title" className="flex items-center gap-2.5 px-1 font-display text-title">
               <ArrowRightLeft aria-hidden="true" className="size-6" strokeWidth={2.5} />
-              Out of season? Try:
+              {status === 'off' ? 'Out of season? Try:' : 'Swap it for'}
             </h2>
             <ul className="flex flex-col gap-2">
               {recipe.swaps.map(s => (

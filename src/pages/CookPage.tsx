@@ -67,7 +67,7 @@ export function CookPage({ month }: { month: Month }) {
           </div>
         </div>
 
-        <ChipRow label="Recipe type">
+        <ChipRow label="Recipe type" wrap>
           {RECIPE_TYPES.map(type => (
             <Chip key={type} on={filter.type === type} onClick={() => setFilter(f => ({ ...f, type: f.type === type ? null : type }))}>
               {TYPE_LABEL[type]}
@@ -118,7 +118,7 @@ function Chip({ on, onClick, children, Icon }: { on: boolean; onClick: () => voi
       aria-pressed={on}
       onClick={onClick}
       className={clsx(
-        'chip inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-small font-bold whitespace-nowrap',
+        'chip inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-[var(--chip-px,16px)] text-small font-bold whitespace-nowrap',
         on ? 'bg-(--pop) text-(--ink)' : 'bg-(--deep) text-(--light)',
       )}
     >

@@ -58,7 +58,7 @@ export function SeasonStrip({ fruit, month, size = 'sm', initials = false, anima
               key={m}
               className={clsx(
                 'flex-1 rounded-full text-center tabular-nums',
-                lg ? 'text-[13px] leading-5' : 'text-[10px]',
+                lg ? 'text-[13px] leading-5' : 'text-[12px]',
                 m === month ? 'bg-(--light) font-extrabold text-(--deep)' : 'font-semibold',
               )}
             >

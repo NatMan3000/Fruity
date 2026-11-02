@@ -97,7 +97,9 @@ export function BrowsePage({ month, query, onQuery, filter, onFilter }: BrowsePa
   )
 }
 
-// One fruit: a block in its own colour, the sticker inside on the left, name and status, the year below.
+// One fruit: a block in its own colour, the sticker inside on the left, then the name, its status
+// sticker on a line of its own (so a long name never pushes it down a line and every row is one
+// height), and the year below.
 function Row({ fruit, month }: { fruit: Fruit; month: Month }) {
   const status = fruitStatus(fruit, month)
   return (
@@ -108,10 +110,8 @@ function Row({ fruit, month }: { fruit: Fruit; month: Month }) {
     >
       <FruitSticker fruit={fruit} size={68} />
       <span className="flex min-w-0 flex-1 flex-col gap-2">
-        <span className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-          <span className="font-display text-name">{fruit.name}</span>
-          <StatusSticker status={status} size="sm" tilt={status === 'peak' ? -5 : -3} />
-        </span>
+        <span className="font-display text-name">{fruit.name}</span>
+        <StatusSticker status={status} size="sm" tilt={status === 'peak' ? -5 : -3} className="self-start" />
         <SeasonStrip fruit={fruit} month={month} />
       </span>
     </Link>
@@ -138,7 +138,7 @@ function FilterChips({ filter, onFilter }: { filter: BrowseFilter | null; onFilt
             aria-pressed={on}
             onClick={() => onFilter(on ? null : id)}
             className={clsx(
-              'chip inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-small font-bold whitespace-nowrap',
+              'chip inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-[var(--chip-px,16px)] text-small font-bold whitespace-nowrap',
               on ? 'bg-(--pop) text-(--ink)' : 'bg-(--deep) text-(--light)',
             )}
           >

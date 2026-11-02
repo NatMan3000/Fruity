@@ -62,3 +62,14 @@ export function contrast(a: string, b: string): number {
   const [x, y] = [lum(a), lum(b)]
   return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05)
 }
+
+// How different two colours look: the distance between them in OKLab (about 0.02 is the smallest step
+// most people can see; two blocks need much more than that to read as two blocks).
+export function colourDistance(a: string, b: string): number {
+  const lab = (hex: string) => {
+    const [L, C, h] = oklchOf(hex)
+    return [L, C * Math.cos(h), C * Math.sin(h)]
+  }
+  const [x, y] = [lab(a), lab(b)]
+  return Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2])
+}

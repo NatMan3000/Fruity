@@ -5,7 +5,11 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { FRUITS } from '../assets/fruits'
 import { cutParts, buildFruit } from '../three/models'
 import { cutOverlaps, planCut, stepCut } from '../three/cutting'
-import { tonesOf } from '../utils/tones'
+import { seasonOf } from '../utils/seasonality'
+import { seasonTones, tonesOf } from '../utils/tones'
+import { dishFruits } from '../utils/dishFruits'
+import { dishGeometry, dishProblems, planDish, restPoses, RIM } from '../three/dish'
+import type { Month } from '../types/fruit'
 
 const canvas = document.getElementById('c') as HTMLCanvasElement
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true })
@@ -46,7 +50,7 @@ camera.updateMatrixWorld()
 const SIZE = 1.9
 
 declare global {
-  interface Window { renderFruit: (id: string, cut: boolean, turn?: number, after?: number) => { url: string; overlaps: string[] }; fruitIds: string[] }
+  interface Window { renderDish: (month: Month, spin: number, cut?: boolean) => { url: string; problems: string[]; names: string[]; ms: number }; renderDishOf: (ids: string[], spin: number, cut?: boolean) => { url: string; problems: string[]; names: string[]; ms: number }; renderFruit: (id: string, cut: boolean, turn?: number, after?: number) => { url: string; overlaps: string[] }; fruitIds: string[] }
 }
 
 // Leaves that lie on the skin (a strawberry's sepals and stem, tagged `hug` in models.ts) must sit just
@@ -128,5 +132,58 @@ window.renderFruit = (id, cut, turn = -0.5, after = 0) => {
   const ov = cutOverlaps(group, parts.map(p => p.part))
   scene.remove(group)
   return { out, ov, ms }
+}
+
+// The Now dish for a month, every fruit cut open by the Slice button (./dish.ts planDish), from the Now
+// hero's camera with the dish turned to `spin`: what is wrong with it (pieces meeting, the rim, the
+// bowl) and a picture.
+const dishCamera = new THREE.PerspectiveCamera(33, 361 / 290, 0.1, 50) // the Now hero's camera and shape
+dishCamera.position.set(0, 2.75, 4.6)
+dishCamera.lookAt(0, 0.78, 0)
+dishCamera.updateMatrixWorld()
+const dishGeo = dishGeometry()
+window.renderDish = (month, spin, cut = true) => renderDishFruits(dishFruits(FRUITS, month), seasonTones(seasonOf(month)), spin, cut)
+// Any five fruit (five of one hop-type fruit, say), on that fruit's own colours.
+window.renderDishOf = (ids, spin, cut = true) => renderDishFruits(ids.map(id => FRUITS.find(f => f.id === id)!), tonesOf(FRUITS.find(f => f.id === ids[0])!.colour), spin, cut)
+function renderDishFruits(fruits: typeof FRUITS, tones: ReturnType<typeof tonesOf>, spin: number, cut: boolean) {
+  renderer.setClearColor(tones.page)
+  ;(floor.material as THREE.ShadowMaterial).color.set(tones.ink)
+  const spinGroup = new THREE.Group()
+  const dish = new THREE.Group()
+  spinGroup.add(dish)
+  spinGroup.rotation.y = spin
+  const glaze = new THREE.Mesh(dishGeo, new THREE.MeshPhysicalMaterial({ color: tones.pop, roughness: 0.22, clearcoat: 1, side: THREE.DoubleSide }))
+  glaze.castShadow = glaze.receiveShadow = true
+  const lip = new THREE.Mesh(new THREE.TorusGeometry(RIM - 0.035, 0.05, 12, 72), new THREE.MeshPhysicalMaterial({ color: tones.light, roughness: 0.3 }))
+  lip.position.y = 1.005
+  lip.rotation.x = Math.PI / 2
+  dish.add(glaze, lip)
+  const models = fruits.map(f => buildFruit(f.id, f.colour))
+  const poses = restPoses(models)
+  const slots = fruits.map((_f, i) => {
+    const r = poses[i]
+    const slot = new THREE.Group()
+    slot.add(models[i])
+    slot.position.set(r.x, r.y, r.z)
+    slot.quaternion.setFromEuler(r.rest)
+    slot.scale.setScalar(r.scale)
+    dish.add(slot)
+    return slot
+  })
+  scene.add(spinGroup)
+  spinGroup.updateMatrixWorld(true)
+  // Whole, at rest (before any cut): every fruit inside the bowl, clear of the rim.
+  const names = fruits.map(f => f.id)
+  const atRest = dishProblems(slots, slots.map(() => null), names).map(p => `at rest: ${p}`)
+  const t0 = performance.now()
+  const cuts = cut ? planDish(slots, slots.map(o => cutParts(o)), dishCamera) : slots.map(() => null)
+  const ms = Math.round(performance.now() - t0)
+  cuts.forEach(c => { if (c) { c.target = 1; c.p = 1; stepCut(c, 0) } })
+  spinGroup.updateMatrixWorld(true)
+  const problems = [...atRest, ...dishProblems(slots, cuts, names)]
+  renderer.render(scene, dishCamera)
+  const url = canvas.toDataURL('image/png')
+  scene.remove(spinGroup)
+  return { url, problems, names, ms }
 }
 document.title = 'ready'

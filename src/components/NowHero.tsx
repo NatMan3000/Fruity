@@ -2,7 +2,8 @@
 // (src/three/HeroDish.tsx). The 3D chunk (three.js) is lazy and only asked for once the Buy now list
 // has painted, so the list never waits for it; until it lands, or where WebGL is missing or fails, a
 // still of the same fruit in a flat dish shows instead. No hint text (Nathan, 2 Nov 2026): the Slice
-// button is the cue, and the way in for keyboard and screen-reader users.
+// button is the cue, and the way in for keyboard and screen-reader users: it cuts every fruit in the
+// dish open at once, then reads Put back.
 import { lazy, Suspense, useMemo, useState } from 'react'
 import type { Fruit } from '../types/fruit'
 import type { Tones } from '../utils/tones'
@@ -19,6 +20,7 @@ export function NowHero({ fruits, tones }: { fruits: Fruit[]; tones: Tones }) {
   const [slice, setSlice] = useState(0)
   const [slash, showSlash] = useSlash()
   const [said, setSaid] = useState('')
+  const [open, setOpen] = useState(0) // how many fruit are cut open
   const likes = useMemo(() => fruits.map(f => ({ id: f.id, name: f.name, colour: f.colour })), [fruits])
 
   const onCut = (n: CutNews) => {
@@ -45,12 +47,12 @@ export function NowHero({ fruits, tones }: { fruits: Fruit[]; tones: Tones }) {
       {webgl && ready ? (
         <Fallback poster={poster}>
           <Suspense fallback={poster}>
-            <HeroDish fruits={likes} dish={tones.pop} rim={tones.light} shade={tones.ink} slice={slice} onCut={onCut} className="absolute inset-0" />
+            <HeroDish fruits={likes} dish={tones.pop} rim={tones.light} shade={tones.ink} slice={slice} onCut={onCut} onOpen={setOpen} className="absolute inset-0" />
           </Suspense>
         </Fallback>
       ) : poster}
       <Slash at={slash} />
-      {webgl && <SliceButton onSlice={() => setSlice(s => s + 1)} className="absolute right-4 bottom-0" />}
+      {webgl && <SliceButton onSlice={() => setSlice(s => s + 1)} label={open ? 'Put back' : 'Slice'} className="absolute right-4 bottom-0" />}
       <p aria-live="polite" className="sr-only">{said}</p>
     </div>
   )

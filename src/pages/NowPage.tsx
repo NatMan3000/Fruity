@@ -4,9 +4,10 @@ import { ChevronRight, CookingPot, Flower2, Hourglass, Leaf, Citrus, Sparkles, S
 import type { Fruit, Month, Season } from '../types/fruit'
 import { FRUITS } from '../assets/fruits'
 import { useRecipes } from '../hooks/useRecipes'
-import { isArriving, isEnding, isInSeason, monthOffset, nowSections, seasonOf, sortBySeason } from '../utils/seasonality'
+import { isArriving, isEnding, isInSeason, monthOffset, nowSections, seasonOf } from '../utils/seasonality'
 import { MONTH_NAMES, weekOfYear } from '../utils/months'
 import { cookThisWeek } from '../utils/recipes'
+import { dishFruits } from '../utils/dishFruits'
 import { glanceTip } from '../utils/tips'
 import { seasonTones, toneVars, tonesOf } from '../utils/tones'
 import { FruitSticker } from '../components/FruitSticker'
@@ -42,8 +43,7 @@ export function NowPage({ month, onSeeAllPeak, onSeeInSeason }: { month: Month; 
   useEffect(() => { introPlayed = true }, [])
   // The dish holds the month's peak fruit; in a month with none at peak, what is in season. Keyed on
   // the ids so the scene is not rebuilt (and the fruit dropped again) every time the page re-renders.
-  const pool = buyNow.length ? buyNow : sortBySeason(FRUITS.filter(f => isInSeason(f, month)), month)
-  const heroIds = [...pool].sort((x, y) => showpiece(x) - showpiece(y)).slice(0, 5).map(f => f.id).join()
+  const heroIds = dishFruits(FRUITS, month).map(f => f.id).join()
   const heroFruits = heroList(heroIds)
 
   return (
@@ -163,12 +163,15 @@ function SectionTitle({ id, Icon, title, note, action }: { id: string; Icon: Luc
   )
 }
 
-// Round scoops on a sideways rail, each fruit stuck on inside its own colour.
+// Round scoops on a sideways rail, each fruit stuck on inside its own colour. The gap between scoops
+// stretches with the screen so that, with more than three, the fourth scoop always shows about 28px
+// of itself at the edge (a clear "more this way", never a name cut mid-word at a random point):
+// full width is 100cqw + 32px; three 96px cells, the 4th scoop's 5px inset and 28px of it make 337px.
 function Rail({ id, Icon, title, note, fruits, intro, ending = false }: { id: string; Icon: LucideIcon; title: string; note: string; fruits: Fruit[]; intro: boolean; ending?: boolean }) {
   return (
-    <section aria-labelledby={id} className="flex flex-col gap-3">
+    <section aria-labelledby={id} className="@container flex flex-col gap-3">
       <SectionTitle id={id} Icon={Icon} title={title} note={note} />
-      <ul className="-mx-4 flex snap-x gap-2 overflow-x-auto scroll-px-4 px-4 pt-1 pb-2 scrollbar-hide">
+      <ul className="-mx-4 flex snap-x gap-[clamp(8px,calc((100cqw_-_305px)/3),40px)] overflow-x-auto scroll-px-4 px-4 pt-1 pb-2 scrollbar-hide">
         {fruits.map((f, i) => (
           <li key={f.id} className={clsx('w-[96px] shrink-0 snap-start', intro && 'pop-in')} style={{ '--i': i + 3 } as CSSProperties}>
             <Link to={{ name: 'fruit', id: f.id }} className="press flex flex-col items-center gap-2 text-center">
@@ -186,14 +189,6 @@ function Rail({ id, Icon, title, note, fruits, intro, ending = false }: { id: st
       </ul>
     </section>
   )
-}
-
-// The dish shows off the fruit with the best insides first (a watermelon in summer, kiwi and citrus in
-// winter), then the rest of the month's peak fruit in Buy now order (the sort is stable).
-const SHOWPIECES = ['watermelon', 'dragon-fruit', 'kiwifruit', 'passionfruit', 'avocado', 'pomegranate', 'papaya', 'rockmelon', 'grapefruit', 'orange', 'peach', 'fig', 'mango', 'strawberry', 'pineapple']
-const showpiece = (f: Fruit) => {
-  const i = SHOWPIECES.indexOf(f.id)
-  return i < 0 ? SHOWPIECES.length : i
 }
 
 // One array per set of ids, so the hero sees the same list (and keeps its scene) across re-renders.

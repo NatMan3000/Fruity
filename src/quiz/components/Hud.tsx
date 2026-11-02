@@ -46,7 +46,7 @@ export function Hearts({ lives, strawberry }: { lives: number; strawberry: Fruit
 export function Score({ score }: { score: number }) {
   return (
     <span className="flex flex-col items-end leading-none">
-      <span className="text-[11px] font-extrabold tracking-[0.12em] uppercase opacity-80">Score</span>
+      <span className="text-[13px] font-extrabold tracking-[0.12em] uppercase">Score</span>
       <span key={score} className={clsx('font-display text-[2rem] tabular-nums', score > 0 && 'badge-pop')}>{score.toLocaleString('en-AU')}</span>
     </span>
   )

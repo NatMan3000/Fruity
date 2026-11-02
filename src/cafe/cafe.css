@@ -186,7 +186,7 @@
   grid-template-columns: 44px 1fr 44px 44px;
   align-items: center;
   gap: 8px;
-  padding: 6px 10px 4px;
+  padding: 6px 16px 4px; /* the page's 16px gutter, same as the cards below */
 }
 .cafe-top--menu {
   grid-template-columns: 44px 1fr 44px;
@@ -216,12 +216,15 @@
   font-size: 14px;
   font-weight: 800;
 }
+/* The track is outlined in grape (3.9:1 on the white pill), so an empty bar still reads as a meter. */
 .cafe-level__bar {
   flex: 1;
-  height: 10px;
+  box-sizing: border-box;
+  height: 12px;
   min-width: 30px;
+  border: 2px solid #8C72D0;
   border-radius: 999px;
-  background: #EEE6FF;
+  background: #F4EFFF;
   overflow: hidden;
 }
 .cafe-level__bar > span {
@@ -233,7 +236,7 @@
 .cafe-level__bar--wide {
   width: 100%;
   flex: none;
-  height: 12px;
+  height: 14px;
 }
 .cafe-level__stars {
   flex: none;
@@ -714,10 +717,12 @@
 }
 .cafe-goals__meter {
   display: inline-block;
+  box-sizing: border-box;
   width: 34px;
-  height: 7px;
+  height: 9px;
+  border: 1.5px solid #9C8F7A; /* 3.2:1 on the white goal pill */
   border-radius: 999px;
-  background: #ECE5D8;
+  background: #F6F1E8;
   overflow: hidden;
 }
 .cafe-goals__meter > span {
@@ -861,7 +866,7 @@
   border-radius: 999px;
   background: var(--leaf);
   color: #fff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   white-space: nowrap;
   transform: translateX(-50%) rotate(-3deg);

@@ -36,10 +36,10 @@ export const FRUITS: Fruit[] = [
       fiber: 1.6,
       highlights: ['High in Vitamin A', 'Good source of Vitamin C', 'Contains antioxidants']
     },
-    pairings: ['lime', 'coconut', 'chili', 'mint', 'sticky rice'],
+    pairings: ['lime', 'coconut', 'chilli', 'mint', 'sticky rice'],
     recipes: [
-      { name: 'Mango Lassi', type: 'smoothie', description: 'Blend mango with yogurt, honey, and cardamom' },
-      { name: 'Mango Salsa', type: 'salad', description: 'Diced mango with red onion, cilantro, lime and jalapeño' },
+      { name: 'Mango Lassi', type: 'smoothie', description: 'Blend mango with yoghurt, honey, and cardamom' },
+      { name: 'Mango Salsa', type: 'salad', description: 'Diced mango with red onion, coriander, lime and jalapeño' },
       { name: 'Mango Sticky Rice', type: 'dessert', description: 'Thai-style coconut sticky rice topped with fresh mango' }
     ]
   },
@@ -103,10 +103,10 @@ export const FRUITS: Fruit[] = [
       fiber: 0.9,
       highlights: ['Excellent source of Vitamin A', 'High in Vitamin C', 'Contains beta-carotene']
     },
-    pairings: ['prosciutto', 'lime', 'ginger', 'mint', 'yogurt'],
+    pairings: ['prosciutto', 'lime', 'ginger', 'mint', 'yoghurt'],
     recipes: [
       { name: 'Rockmelon Prosciutto', type: 'snack', description: 'Wrap rockmelon slices with prosciutto for classic combo' },
-      { name: 'Rockmelon Smoothie', type: 'smoothie', description: 'Blend with yogurt, lime, and mint for breakfast' },
+      { name: 'Rockmelon Smoothie', type: 'smoothie', description: 'Blend with yoghurt, lime, and mint for breakfast' },
       { name: 'Rockmelon Sorbet', type: 'dessert', description: 'Freeze blended rockmelon with lime for summer treat' }
     ]
   },
@@ -129,7 +129,7 @@ export const FRUITS: Fruit[] = [
       { name: 'Melons Australia via FreshPlaza: 12-month melon production', url: 'https://www.freshplaza.com/africa/article/9613040/this-wide-reaching-approach-to-production-allows-for-12-months-of-the-year-production/', says: 'Melon production spans every month.' },
     ],
     origin: 'Middle East / Southern France',
-    history: 'The honeydew melon was prized in ancient Egypt and featured in Renaissance European gardens. Its name comes from its sweet, honey-like flavor. The smooth, pale green variety we know today was developed in Algerian oases before spreading to France and beyond.',
+    history: 'The honeydew melon was prized in ancient Egypt and featured in Renaissance European gardens. Its name comes from its sweet, honey-like flavour. The smooth, pale green variety we know today was developed in Algerian oases before spreading to France and beyond.',
     nutrition: {
       calories: 36,
       vitaminC: 18,
@@ -200,7 +200,7 @@ export const FRUITS: Fruit[] = [
       calories: 97,
       vitaminC: 30,
       fiber: 10.4,
-      highlights: ['Excellent source of fiber', 'High in Vitamin C', 'Contains antioxidants']
+      highlights: ['Excellent source of fibre', 'High in Vitamin C', 'Contains antioxidants']
     },
     pairings: ['coconut', 'mango', 'vanilla', 'white chocolate', 'cream'],
     recipes: [
@@ -238,7 +238,7 @@ export const FRUITS: Fruit[] = [
       calories: 50,
       vitaminC: 7,
       fiber: 1.6,
-      highlights: ['Rich in antioxidants', 'Contains melatonin', 'Anti-inflammatory properties']
+      highlights: ['Rich in antioxidants', 'Contains melatonin', 'Contains potassium']
     },
     pairings: ['chocolate', 'almond', 'vanilla', 'cream', 'kirsch'],
     recipes: [
@@ -274,9 +274,9 @@ export const FRUITS: Fruit[] = [
       calories: 57,
       vitaminC: 10,
       fiber: 2.4,
-      highlights: ['Very high in antioxidants', 'Good source of fiber', 'Supports brain health']
+      highlights: ['Very high in antioxidants', 'Good source of fibre', 'Contains Vitamin K']
     },
-    pairings: ['lemon', 'almond', 'yogurt', 'honey', 'cinnamon'],
+    pairings: ['lemon', 'almond', 'yoghurt', 'honey', 'cinnamon'],
     recipes: [
       { name: 'Blueberry Muffins', type: 'breakfast', description: 'Fold fresh blueberries into buttermilk muffin batter' },
       { name: 'Blueberry Smoothie Bowl', type: 'smoothie', description: 'Blend frozen blueberries with banana and top with granola' },
@@ -344,7 +344,7 @@ export const FRUITS: Fruit[] = [
       calories: 39,
       vitaminC: 6.6,
       fiber: 1.5,
-      highlights: ['Good source of Vitamins A and C', 'Contains potassium', 'Supports skin health']
+      highlights: ['Good source of Vitamins A and C', 'Contains potassium', 'Low in calories']
     },
     pairings: ['cream', 'vanilla', 'cinnamon', 'raspberry', 'almond'],
     recipes: [
@@ -377,7 +377,7 @@ export const FRUITS: Fruit[] = [
       calories: 48,
       vitaminC: 10,
       fiber: 2,
-      highlights: ['Excellent source of Vitamin A', 'Good source of fiber', 'Contains beta-carotene']
+      highlights: ['Excellent source of Vitamin A', 'Good source of fibre', 'Contains beta-carotene']
     },
     pairings: ['almond', 'honey', 'cardamom', 'pistachios', 'vanilla'],
     recipes: [
@@ -412,7 +412,7 @@ export const FRUITS: Fruit[] = [
       calories: 46,
       vitaminC: 9.5,
       fiber: 1.4,
-      highlights: ['Good source of fiber', 'Contains antioxidants', 'Supports digestive health']
+      highlights: ['Good source of fibre', 'Contains antioxidants', 'Low in calories']
     },
     pairings: ['cinnamon', 'ginger', 'port', 'star anise', 'vanilla'],
     recipes: [
@@ -445,7 +445,7 @@ export const FRUITS: Fruit[] = [
     nutrition: {
       calories: 74,
       fiber: 2.9,
-      highlights: ['Excellent source of fiber', 'High in minerals', 'Contains antioxidants']
+      highlights: ['Excellent source of fibre', 'Contains calcium', 'Contains antioxidants']
     },
     pairings: ['honey', 'goat cheese', 'prosciutto', 'balsamic', 'walnuts'],
     recipes: [
@@ -483,7 +483,7 @@ export const FRUITS: Fruit[] = [
       calories: 52,
       vitaminC: 4.6,
       fiber: 2.4,
-      highlights: ['Excellent source of fiber', 'Contains antioxidants', 'Supports heart health']
+      highlights: ['Excellent source of fibre', 'Contains antioxidants', 'Rich in pectin']
     },
     pairings: ['cinnamon', 'caramel', 'cheese', 'pork', 'walnuts'],
     recipes: [
@@ -519,7 +519,7 @@ export const FRUITS: Fruit[] = [
       calories: 57,
       vitaminC: 4.3,
       fiber: 3.1,
-      highlights: ['Excellent source of fiber', 'Low in calories', 'Contains antioxidants']
+      highlights: ['Excellent source of fibre', 'Low in calories', 'Contains antioxidants']
     },
     pairings: ['blue cheese', 'honey', 'walnut', 'chocolate', 'vanilla'],
     recipes: [
@@ -555,7 +555,7 @@ export const FRUITS: Fruit[] = [
     nutrition: {
       calories: 69,
       vitaminC: 3.2,
-      highlights: ['Rich in antioxidants', 'Contains resveratrol', 'Supports heart health']
+      highlights: ['Rich in antioxidants', 'Contains resveratrol', 'Contains Vitamin K']
     },
     pairings: ['cheese', 'walnut', 'chicken', 'fennel', 'rosemary'],
     recipes: [
@@ -590,13 +590,13 @@ export const FRUITS: Fruit[] = [
       calories: 70,
       vitaminC: 7.5,
       fiber: 3.6,
-      highlights: ['High in Vitamin A', 'Excellent source of fiber', 'Contains antioxidants']
+      highlights: ['High in Vitamin A', 'Excellent source of fibre', 'Contains antioxidants']
     },
-    pairings: ['cinnamon', 'honey', 'yogurt', 'nuts', 'vanilla'],
+    pairings: ['cinnamon', 'honey', 'yoghurt', 'nuts', 'vanilla'],
     recipes: [
       { name: 'Persimmon Pudding', type: 'dessert', description: 'Bake persimmon pulp into moist spiced pudding' },
       { name: 'Persimmon Salad', type: 'salad', description: 'Slice persimmon with rocket, pomegranate, and walnuts' },
-      { name: 'Persimmon Smoothie', type: 'smoothie', description: 'Blend ripe persimmon with yogurt, honey, and cinnamon' }
+      { name: 'Persimmon Smoothie', type: 'smoothie', description: 'Blend ripe persimmon with yoghurt, honey, and cinnamon' }
     ]
   },
   {
@@ -623,7 +623,7 @@ export const FRUITS: Fruit[] = [
       calories: 57,
       vitaminC: 15,
       fiber: 1.9,
-      highlights: ['Good source of fiber', 'High in Vitamin C', 'Contains antioxidants']
+      highlights: ['Good source of fibre', 'High in Vitamin C', 'Contains antioxidants']
     },
     pairings: ['vanilla', 'cinnamon', 'cheese', 'lamb', 'honey'],
     recipes: [
@@ -657,7 +657,7 @@ export const FRUITS: Fruit[] = [
       calories: 83,
       vitaminC: 10.2,
       fiber: 4,
-      highlights: ['Very high in antioxidants', 'Excellent source of fiber', 'Anti-inflammatory properties']
+      highlights: ['Very high in antioxidants', 'Excellent source of fibre', 'Contains folate']
     },
     pairings: ['mint', 'orange', 'lamb', 'walnuts', 'feta'],
     recipes: [
@@ -684,18 +684,18 @@ export const FRUITS: Fruit[] = [
       { name: 'Adelaide Central Market, in season autumn', url: 'https://adelaidecentralmarket.com.au/in-season-autumn/', says: 'Feijoa listed among autumn fruit (via search summary).' },
       { name: 'Queen Victoria Market, feijoa autumn article', url: 'https://qvm.com.au/?p=76426', says: 'What to cook with feijoa this autumn (via search summary).' },
     ],
-    notes: 'Aromatic, tropical-like flavor',
+    notes: 'Aromatic, tropical-like flavour',
     origin: 'South America (Brazil, Uruguay, Argentina)',
-    history: 'Named after Portuguese botanist João da Silva Feijó, this fruit is beloved in New Zealand where it\'s almost a national icon. It arrived in Australia and New Zealand in the late 1800s. Its flavor is often described as a combination of pineapple, guava, and mint.',
+    history: 'Named after Portuguese botanist João da Silva Feijó, this fruit is beloved in New Zealand where it\'s almost a national icon. It arrived in Australia and New Zealand in the late 1800s. Its flavour is often described as a combination of pineapple, guava, and mint.',
     nutrition: {
       calories: 55,
       vitaminC: 33,
       fiber: 6.4,
-      highlights: ['Excellent source of Vitamin C', 'Very high in fiber', 'Contains antioxidants']
+      highlights: ['Excellent source of Vitamin C', 'Very high in fibre', 'Contains antioxidants']
     },
     pairings: ['apple', 'lime', 'ginger', 'vanilla', 'coconut'],
     recipes: [
-      { name: 'Feijoa Smoothie', type: 'smoothie', description: 'Blend feijoas with apple, yogurt, and honey' },
+      { name: 'Feijoa Smoothie', type: 'smoothie', description: 'Blend feijoas with apple, yoghurt, and honey' },
       { name: 'Feijoa Crumble', type: 'dessert', description: 'Bake scooped feijoas with oat crumble topping' },
       { name: 'Feijoa Chutney', type: 'preserve', description: 'Cook feijoas with ginger, vinegar, and sugar' }
     ]
@@ -731,7 +731,7 @@ export const FRUITS: Fruit[] = [
       calories: 47,
       vitaminC: 53,
       fiber: 2.4,
-      highlights: ['Excellent source of Vitamin C', 'Good source of fiber', 'Contains flavonoids']
+      highlights: ['Excellent source of Vitamin C', 'Good source of fibre', 'Contains flavonoids']
     },
     pairings: ['chocolate', 'cranberry', 'rosemary', 'almond', 'duck'],
     recipes: [
@@ -768,7 +768,7 @@ export const FRUITS: Fruit[] = [
       calories: 53,
       vitaminC: 27,
       fiber: 1.8,
-      highlights: ['Excellent source of Vitamin C', 'Good source of fiber', 'Easy to digest']
+      highlights: ['Excellent source of Vitamin C', 'Good source of fibre', 'Contains Vitamin A']
     },
     pairings: ['ginger', 'honey', 'almond', 'chicken', 'soy'],
     recipes: [
@@ -809,7 +809,7 @@ export const FRUITS: Fruit[] = [
     recipes: [
       { name: 'Grapefruit Salad', type: 'salad', description: 'Segment grapefruit with avocado, mint, and olive oil' },
       { name: 'Grapefruit Marmalade', type: 'preserve', description: 'Cook grapefruit with sugar for tangy preserve' },
-      { name: 'Grapefruit Brûlée', type: 'dessert', description: 'Top halved grapefruit with sugar and torch until caramelized' }
+      { name: 'Grapefruit Brûlée', type: 'dessert', description: 'Top halved grapefruit with sugar and torch until caramelised' }
     ]
   },
   {
@@ -837,7 +837,7 @@ export const FRUITS: Fruit[] = [
     nutrition: {
       calories: 29,
       vitaminC: 53,
-      highlights: ['Excellent source of Vitamin C', 'Alkalizing properties', 'Supports immune system']
+      highlights: ['Excellent source of Vitamin C', 'Contains citric acid', 'Low in calories']
     },
     pairings: ['garlic', 'thyme', 'seafood', 'chicken', 'olive oil'],
     recipes: [
@@ -873,13 +873,13 @@ export const FRUITS: Fruit[] = [
     nutrition: {
       calories: 30,
       vitaminC: 29,
-      highlights: ['Excellent source of Vitamin C', 'Contains antioxidants', 'Alkalizing properties']
+      highlights: ['Excellent source of Vitamin C', 'Contains antioxidants', 'Low in calories']
     },
-    pairings: ['chili', 'coconut', 'cilantro', 'mint', 'fish'],
+    pairings: ['chilli', 'coconut', 'coriander', 'mint', 'fish'],
     recipes: [
       { name: 'Lime Pickle', type: 'preserve', description: 'Cure lime wedges in salt and spices for Indian condiment' },
       { name: 'Lime Cheesecake', type: 'dessert', description: 'Make no-bake cheesecake with lime zest and juice' },
-      { name: 'Lime Marinade', type: 'salad', description: 'Mix lime juice with fish sauce, chili, and garlic for seafood' }
+      { name: 'Lime Marinade', type: 'salad', description: 'Mix lime juice with fish sauce, chilli, and garlic for seafood' }
     ]
   },
   {
@@ -908,7 +908,7 @@ export const FRUITS: Fruit[] = [
       calories: 61,
       vitaminC: 93,
       fiber: 3,
-      highlights: ['Very high in Vitamin C', 'Excellent source of fiber', 'Contains digestive enzymes']
+      highlights: ['Very high in Vitamin C', 'Excellent source of fibre', 'Contains actinidin enzyme']
     },
     pairings: ['strawberry', 'banana', 'coconut', 'lime', 'mint'],
     recipes: [
@@ -945,12 +945,12 @@ export const FRUITS: Fruit[] = [
     nutrition: {
       calories: 160,
       fiber: 6.7,
-      highlights: ['High in healthy fats', 'Excellent source of fiber', 'Contains potassium']
+      highlights: ['High in monounsaturated fat', 'Excellent source of fibre', 'Contains potassium']
     },
-    pairings: ['lime', 'tomato', 'chili', 'cilantro', 'eggs'],
+    pairings: ['lime', 'tomato', 'chilli', 'coriander', 'eggs'],
     recipes: [
-      { name: 'Avocado Toast', type: 'breakfast', description: 'Mash avocado on toast with lemon, salt, and chili' },
-      { name: 'Guacamole', type: 'salad', description: 'Mash avocado with lime, tomato, onion, and cilantro' },
+      { name: 'Avocado Toast', type: 'breakfast', description: 'Mash avocado on toast with lemon, salt, and chilli' },
+      { name: 'Guacamole', type: 'salad', description: 'Mash avocado with lime, tomato, onion, and coriander' },
       { name: 'Avocado Smoothie', type: 'smoothie', description: 'Blend avocado with banana, honey, and almond milk' }
     ]
   },
@@ -973,7 +973,7 @@ export const FRUITS: Fruit[] = [
       { name: 'Melbourne Market report, 3 Mar 2026 (FreshPlaza)', url: 'https://www.freshplaza.com/oceania/article/9816014/persimmons-and-shepard-avocados-arrive-at-melbourne-market/', says: '3 Mar 2026: custard apples arriving.' },
       { name: 'Melbourne Market report, 30 Apr 2026 (FreshPlaza)', url: 'https://www.freshplaza.com/latin-america/article/9833986/autumn-shift-brings-apples-citrus-and-winter-vegetables-to-melbourne/', says: '30 Apr 2026: custard apples from Qld.' },
     ],
-    notes: 'Creamy, sweet tropical flavor',
+    notes: 'Creamy, sweet tropical flavour',
     origin: 'Central America and Caribbean',
     history: 'Despite its name, custard apples are tropical fruits native to the Americas, brought to Asia by Spanish and Portuguese traders. Mark Twain called the related cherimoya "the most delicious fruit known to men." Australia grows several varieties including the Pinks Mammoth.',
     nutrition: {
@@ -1008,12 +1008,12 @@ export const FRUITS: Fruit[] = [
     ],
     notes: 'Cross between tangerine and pomelo',
     origin: 'United States (Florida)',
-    history: 'Tangelos are a 20th-century hybrid of tangerines and pomelos (or grapefruits), first bred in Florida in 1911. The Minneola tangelo is recognizable by its distinctive "bell" shape. They combine the best of both parents: easy peeling with a sweet-tart flavor.',
+    history: 'Tangelos are a 20th-century hybrid of tangerines and pomelos (or grapefruits), first bred in Florida in 1911. The Minneola tangelo is recognizable by its distinctive "bell" shape. They combine the best of both parents: easy peeling with a sweet-tart flavour.',
     nutrition: {
       calories: 47,
       vitaminC: 53,
       fiber: 1.9,
-      highlights: ['Excellent source of Vitamin C', 'Good source of fiber', 'Contains folate']
+      highlights: ['Excellent source of Vitamin C', 'Good source of fibre', 'Contains folate']
     },
     pairings: ['honey', 'ginger', 'seafood', 'fennel', 'vanilla'],
     recipes: [
@@ -1057,13 +1057,13 @@ export const FRUITS: Fruit[] = [
       calories: 32,
       vitaminC: 59,
       fiber: 2,
-      highlights: ['Excellent source of Vitamin C', 'Good source of fiber', 'High in antioxidants']
+      highlights: ['Excellent source of Vitamin C', 'Good source of fibre', 'High in antioxidants']
     },
     pairings: ['cream', 'balsamic', 'chocolate', 'basil', 'black pepper'],
     recipes: [
       { name: 'Strawberry Pavlova', type: 'dessert', description: 'Top meringue with cream and fresh strawberries' },
       { name: 'Strawberry Jam', type: 'preserve', description: 'Cook strawberries with sugar and lemon for classic jam' },
-      { name: 'Strawberry Smoothie', type: 'smoothie', description: 'Blend strawberries with yogurt, honey, and vanilla' }
+      { name: 'Strawberry Smoothie', type: 'smoothie', description: 'Blend strawberries with yoghurt, honey, and vanilla' }
     ]
   },
   {
@@ -1093,7 +1093,7 @@ export const FRUITS: Fruit[] = [
       calories: 52,
       vitaminC: 26,
       fiber: 6.5,
-      highlights: ['Excellent source of fiber', 'High in Vitamin C', 'Rich in antioxidants']
+      highlights: ['Excellent source of fibre', 'High in Vitamin C', 'Rich in antioxidants']
     },
     pairings: ['chocolate', 'lemon', 'cream', 'vanilla', 'almond'],
     recipes: [
@@ -1128,7 +1128,7 @@ export const FRUITS: Fruit[] = [
       calories: 89,
       vitaminC: 8.7,
       fiber: 2.6,
-      highlights: ['Excellent source of potassium', 'Good source of fiber', 'Quick energy source']
+      highlights: ['Excellent source of potassium', 'Good source of fibre', 'Contains Vitamin B6']
     },
     pairings: ['chocolate', 'peanut butter', 'cinnamon', 'caramel', 'coconut'],
     recipes: [
@@ -1163,11 +1163,11 @@ export const FRUITS: Fruit[] = [
       calories: 50,
       vitaminC: 48,
       fiber: 1.4,
-      highlights: ['Excellent source of Vitamin C', 'Contains bromelain enzyme', 'Aids digestion']
+      highlights: ['Excellent source of Vitamin C', 'Contains bromelain enzyme', 'High in manganese']
     },
-    pairings: ['coconut', 'chili', 'ham', 'rum', 'mint'],
+    pairings: ['coconut', 'chilli', 'ham', 'rum', 'mint'],
     recipes: [
-      { name: 'Pineapple Salsa', type: 'salad', description: 'Dice pineapple with red onion, cilantro, and jalapeño' },
+      { name: 'Pineapple Salsa', type: 'salad', description: 'Dice pineapple with red onion, coriander, and jalapeño' },
       { name: 'Pineapple Upside-Down Cake', type: 'dessert', description: 'Bake pineapple rings in caramel under cake batter' },
       { name: 'Grilled Pineapple', type: 'dessert', description: 'Grill pineapple slices and serve with rum caramel' }
     ]
@@ -1200,11 +1200,11 @@ export const FRUITS: Fruit[] = [
       fiber: 1.7,
       highlights: ['Excellent source of Vitamin C', 'High in Vitamin A', 'Contains papain enzyme']
     },
-    pairings: ['lime', 'chili', 'ginger', 'mint', 'coconut'],
+    pairings: ['lime', 'chilli', 'ginger', 'mint', 'coconut'],
     recipes: [
       { name: 'Papaya Smoothie', type: 'smoothie', description: 'Blend papaya with lime, coconut water, and ginger' },
-      { name: 'Green Papaya Salad', type: 'salad', description: 'Shred unripe papaya with chili, lime, and fish sauce' },
-      { name: 'Papaya Salsa', type: 'salad', description: 'Dice papaya with red onion, cilantro, and lime' }
+      { name: 'Green Papaya Salad', type: 'salad', description: 'Shred unripe papaya with chilli, lime, and fish sauce' },
+      { name: 'Papaya Salsa', type: 'salad', description: 'Dice papaya with red onion, coriander, and lime' }
     ]
   },
   {
@@ -1232,7 +1232,7 @@ export const FRUITS: Fruit[] = [
       calories: 21,
       vitaminC: 8,
       fiber: 1.8,
-      highlights: ['Good source of fiber', 'Low in calories', 'Contains calcium']
+      highlights: ['Good source of fibre', 'Low in calories', 'Contains calcium']
     },
     pairings: ['strawberry', 'ginger', 'vanilla', 'orange', 'custard'],
     recipes: [
@@ -1260,18 +1260,18 @@ export const FRUITS: Fruit[] = [
     ],
     notes: 'Very short season - grow your own!',
     origin: 'China (white mulberry) and Persia (black mulberry)',
-    history: 'Mulberries have been cultivated for over 4,000 years, originally to feed silkworms. The Silk Road is named for the silk trade that mulberries enabled. Black mulberries stain everything they touch, which is why commercial production is limited despite their delicious flavor.',
+    history: 'Mulberries have been cultivated for over 4,000 years, originally to feed silkworms. The Silk Road is named for the silk trade that mulberries enabled. Black mulberries stain everything they touch, which is why commercial production is limited despite their delicious flavour.',
     nutrition: {
       calories: 43,
       vitaminC: 36,
       fiber: 1.7,
       highlights: ['High in Vitamin C', 'Rich in antioxidants', 'Contains iron']
     },
-    pairings: ['lemon', 'vanilla', 'yogurt', 'almond', 'apple'],
+    pairings: ['lemon', 'vanilla', 'yoghurt', 'almond', 'apple'],
     recipes: [
       { name: 'Mulberry Jam', type: 'preserve', description: 'Cook mulberries with sugar and lemon for rich jam' },
       { name: 'Mulberry Sorbet', type: 'dessert', description: 'Freeze blended mulberries with sugar for vibrant dessert' },
-      { name: 'Mulberry Smoothie', type: 'smoothie', description: 'Blend mulberries with yogurt, banana, and honey' }
+      { name: 'Mulberry Smoothie', type: 'smoothie', description: 'Blend mulberries with yoghurt, banana, and honey' }
     ]
   },
 
@@ -1300,7 +1300,7 @@ export const FRUITS: Fruit[] = [
     nutrition: {
       calories: 354,
       fiber: 9,
-      highlights: ['High in healthy fats', 'Excellent source of fiber', 'Contains medium-chain triglycerides']
+      highlights: ['High in fat, mostly saturated', 'Excellent source of fibre', 'Contains medium-chain triglycerides']
     },
     pairings: ['lime', 'curry', 'mango', 'pineapple', 'chocolate'],
     recipes: [
@@ -1333,7 +1333,7 @@ export const FRUITS: Fruit[] = [
       calories: 60,
       vitaminC: 3,
       fiber: 3,
-      highlights: ['Excellent source of fiber', 'Contains antioxidants', 'Low in calories']
+      highlights: ['Excellent source of fibre', 'Contains antioxidants', 'Low in calories']
     },
     pairings: ['lime', 'coconut', 'mango', 'kiwi', 'mint'],
     recipes: [
@@ -1368,7 +1368,7 @@ export const FRUITS: Fruit[] = [
       fiber: 2.8,
       highlights: ['Good source of Vitamin C', 'Low in calories', 'Contains antioxidants']
     },
-    pairings: ['lime', 'ginger', 'seafood', 'chili', 'mint'],
+    pairings: ['lime', 'ginger', 'seafood', 'chilli', 'mint'],
     recipes: [
       { name: 'Starfruit Salad', type: 'salad', description: 'Slice starfruit into Asian-style salad with lime dressing' },
       { name: 'Starfruit Garnish', type: 'snack', description: 'Slice thinly for beautiful star-shaped cocktail garnish' },

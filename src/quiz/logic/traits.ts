@@ -74,19 +74,19 @@ export function pairsEligible(fruit: Fruit): boolean {
 
 const INGREDIENT_EMOJI: Record<string, string> = {
   mint: '🌿', lime: '🍋', vanilla: '🍦', coconut: '🥥', ginger: '🫚', honey: '🍯', almond: '🌰', chocolate: '🍫',
-  cinnamon: '🍂', chili: '🌶️', cream: '🥛', basil: '🌿', yogurt: '🥣', mango: '🥭', seafood: '🦐', lemon: '🍋',
+  cinnamon: '🍂', chilli: '🌶️', cream: '🥛', basil: '🌿', yoghurt: '🥣', mango: '🥭', seafood: '🦐', lemon: '🍋',
   walnuts: '🌰', walnut: '🌰', cheese: '🧀', chicken: '🍗', cucumber: '🥒', caramel: '🍮', lamb: '🍖', orange: '🍊',
   apple: '🍎', strawberry: '🍓', 'sticky rice': '🍚', 'feta cheese': '🧀', 'rose water': '🌹', 'white chocolate': '🍫',
   raspberry: '🍓', pistachios: '🥜', 'star anise': '⭐', 'goat cheese': '🧀', pork: '🥓', 'blue cheese': '🧀', nuts: '🥜',
   feta: '🧀', duck: '🦆', soy: '🥢', avocado: '🥑', garlic: '🧄', thyme: '🌱', 'olive oil': '🫒', fish: '🐟', banana: '🍌',
   tomato: '🍅', eggs: '🥚', 'peanut butter': '🥜', ham: '🍖', custard: '🍮', curry: '🍛', pineapple: '🍍', kiwi: '🥝',
   rum: '🍹', port: '🍷', kirsch: '🍒', cardamom: '🫛', balsamic: '🍶', prosciutto: '🥓', burrata: '🧀', cranberry: '🔴',
-  'black pepper': '🧂', fennel: '🌿', rosemary: '🌿', cilantro: '🌿',
+  'black pepper': '🧂', fennel: '🌿', rosemary: '🌿', coriander: '🌿',
 }
 export const ingredientEmoji = (name: string) => INGREDIENT_EMOJI[name] ?? '🍴'
 
 // The data keeps its own spelling (it is the id); the quiz shows the Australian word.
-const INGREDIENT_LABEL: Record<string, string> = { chili: 'chilli', cilantro: 'coriander', 'feta cheese': 'feta' }
+const INGREDIENT_LABEL: Record<string, string> = { 'feta cheese': 'feta' }
 export const ingredientLabel = (name: string) => INGREDIENT_LABEL[name] ?? name
 
 // A fruit's fun fact for the reveal: the first sentence of its history when that is a short line,

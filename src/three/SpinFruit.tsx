@@ -37,8 +37,13 @@ export default function SpinFruit({ className, style, ...props }: SpinFruitProps
   )
 }
 
+// While the fruit drops in from above the canvas, the canvas's top fades in over this many CSS px, so the
+// fruit appears through a soft edge instead of a hard line just under the top bar; the fade comes off
+// once it has landed, so nothing at rest or turned is ever faded.
+const DROP_FADE = 56
+
 function Scene({ fruit, shade, slice, onCut }: Omit<SpinFruitProps, 'className' | 'style'>) {
-  const { camera, size, invalidate } = useThree()
+  const { camera, size, invalidate, gl } = useThree()
   const obj = useRef<THREE.Group>(null)
   const held = useRef(false)
   const still = reducedMotion()
@@ -46,6 +51,13 @@ function Scene({ fruit, shade, slice, onCut }: Omit<SpinFruitProps, 'className' 
   const pivot = useRef<THREE.Group>(null)
   const juice = useJuice()
   const fall = useRef({ y: still ? 0 : 2.4, vy: 0, squash: 0, hop: 0, hopV: 0 })
+  const fading = useRef(!still)
+  useEffect(() => {
+    const el = gl.domElement
+    const set = (v: string) => { el.style.setProperty('mask-image', v); el.style.setProperty('-webkit-mask-image', v) }
+    if (fading.current) set(`linear-gradient(to bottom, transparent 0, #000 ${DROP_FADE}px)`)
+    return () => set('')
+  }, [gl])
   const model = useMemo(() => buildFruit(fruit.id, fruit.colour), [fruit.id, fruit.colour])
   const halves = useMemo(() => cutParts(model), [model])
   const cut = useRef<Cut | null>(null)
@@ -137,6 +149,11 @@ function Scene({ fruit, shade, slice, onCut }: Omit<SpinFruitProps, 'className' 
         if (f.vy < 1) f.vy = 0
       }
       moving = true
+    } else if (fading.current) {
+      // Landed and settled: the top fade comes off.
+      fading.current = false
+      gl.domElement.style.setProperty('mask-image', '')
+      gl.domElement.style.setProperty('-webkit-mask-image', '')
     }
     if (f.hopV !== 0 || f.hop > 0) {
       f.hopV -= 20 * dt

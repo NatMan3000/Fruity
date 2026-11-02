@@ -25,7 +25,7 @@ const DRESSING: Record<string, DressingPart> = {
   cinnamon: { line: 'a pinch of cinnamon', word: 'cinnamon', role: 'fresh' },
   cardamom: { line: 'a pinch of ground cardamom', word: 'cardamom', role: 'fresh' },
   coconut: { line: '2 tablespoons toasted coconut flakes, to serve', word: 'toasted coconut', role: 'top' },
-  yogurt: { line: 'natural yoghurt, to serve', word: 'yoghurt', role: 'top' },
+  yoghurt: { line: 'natural yoghurt, to serve', word: 'yoghurt', role: 'top' },
   cream: { line: 'whipped cream, to serve', word: 'cream', role: 'top' },
   almond: { line: 'a handful of toasted flaked almonds, to serve', word: 'almonds', role: 'top' },
   pistachios: { line: 'a handful of chopped pistachios, to serve', word: 'pistachios', role: 'top' },
