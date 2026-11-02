@@ -3,7 +3,7 @@ type: plan
 title: Fruity rebuild - council consensus and build plan
 description: What a 4-seat agent council (shopper, player, designer, skeptic) agreed Fruity should become, and the phased plan to build it.
 created: 2026-11-02
-status: proposed
+status: approved
 ---
 
 # Fruity rebuild
@@ -37,7 +37,7 @@ Fruity becomes a calm, warm, shop-first app that answers "what should we buy rig
 
 - **Shopping list is a bag button, not a tab** (designer over shopper): one tap from every screen beats a fourth tab.
 - **Passport ships in v1, in Phase 4** (player wanted MUST, others SHOULD): it is the one feature that grows over time, and it answers a shop question ("did we like persimmon?").
-- **State picker waits** for your answer to `Q1` below; the badge ships either way.
+- **No state picker**: you're both in Victoria (`Q1`), so the months are Victorian (Melbourne Market as the lead source), with a "varies by state" badge where other states differ a lot.
 - **Season Wheel waits** until the data is verified (skeptic): a pretty wrong answer is worse than a plain right one.
 - **Duel quiz is a stretch goal** at the end of Phase 4, not a core item.
 
@@ -54,7 +54,7 @@ Fruity becomes a calm, warm, shop-first app that answers "what should we buy rig
 
 ### Phase 1: Data truth
 
-- For each fruit, two sources (candidates, all to be checked: Hort Innovation seasonal guides, Sydney / Melbourne / Brisbane market guides, industry bodies such as Australian Mangoes and Apple and Pear Australia). Record `sources[]` and `checkedOn`.
+- For each fruit, two sources, Victorian months first (candidates, all to be checked: Melbourne Market seasonal guide, Hort Innovation seasonal guides, Sydney / Brisbane market guides, industry bodies such as Australian Mangoes and Apple and Pear Australia). Record `sources[]` and `checkedOn`.
 - Add `yearRound: 'stored' | 'imported'`, the "varies by state" flag, and a one-line pick tip and storage line per fruit.
 - Output: one diff table (old months vs new, with source) for Nathan to approve in one go.
 - Done when: Nathan has approved the table and the validator fails on any unsourced fruit.
@@ -78,7 +78,8 @@ Fruity becomes a calm, warm, shop-first app that answers "what should we buy rig
 
 - Fruit Passport: tried, a rating from each of you, date, note; stamps on cards; collection view in Play. Stored in IndexedDB with `navigator.storage.persist()`.
 - Daily Fruit, picked from the date so both phones show the same one.
-- Quiz rework: "which month is it at peak?", "which is NOT in season now?", proper shuffle. Salad maker keeps its bowl, gains a Save button.
+- Quiz rework: "which month is it at peak?", "which is NOT in season now?", proper shuffle.
+- Salad maker becomes a real fruit salad (`D2`): the bowl you build turns into a recipe with a dressing drawn from the fruits' pairings, an in-season check that offers swaps ("swap the cherries for mango"), one tap to add it all to the bag, shake to toss (one "allow motion" tap on iPhone, button fallback), a picture card to share, and each fruit stamped in the passport. No made-up "harmony score".
 - Stretch: pass-the-phone Duel.
 - Done when: a passport entry survives a reload and an app update.
 
@@ -90,8 +91,9 @@ Season Wheel, per-state month overrides, native bush fruits (finger lime, quando
 
 Each phase goes to a worker agent in its own git worktree with a written target, then a separate checker drives the app at phone width before I commit. One phase at a time; you see each phase on your phone (GitHub Pages) before the next starts.
 
-## Open questions
+## Decisions (Nathan, 2 Nov 2026: "Yes to all")
 
-- `D1`: approve this plan and start Phase 0?
-- `Q1`: which state are you in, and are you both in the same one? (Decides whether a state picker is worth building.)
-- `Q2`: are both your phones iPhones? (Decides passport sharing and which animations everyone sees.)
+- `D1`: plan approved, Phase 0 started.
+- `Q1`: both in Victoria, one state, no picker.
+- `Q2`: both iPhones. Passport import is paste or QR inside the installed app (an iPhone home-screen app can't see Safari's storage). View Transitions need iOS 18+, with a fade fallback.
+- `D2`: salad maker upgrade is in Phase 4.
