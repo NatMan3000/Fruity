@@ -1,15 +1,18 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import clsx from 'clsx'
 import { ChevronRight, CookingPot, Flower2, Hourglass, Leaf, Citrus, Sparkles, Star, Sun, type LucideIcon } from 'lucide-react'
-import type { Fruit, Month, RecipeSuggestion, Season } from '../types/fruit'
+import type { Fruit, Month, Season } from '../types/fruit'
 import { FRUITS } from '../assets/fruits'
+import { useRecipes } from '../hooks/useRecipes'
 import { isArriving, isEnding, isInSeason, monthOffset, nowSections, seasonOf, sortBySeason } from '../utils/seasonality'
 import { MONTH_NAMES, weekOfYear } from '../utils/months'
+import { cookThisWeek } from '../utils/recipes'
 import { glanceTip } from '../utils/tips'
 import { seasonTones, toneVars, tonesOf } from '../utils/tones'
 import { FruitSticker } from '../components/FruitSticker'
 import { Link } from '../components/Link'
 import { NowHero } from '../components/NowHero'
+import { RecipeCard } from '../components/RecipeCard'
 import { StatusSticker } from '../components/StatusSticker'
 import { TopBar } from '../components/TopBar'
 
@@ -30,7 +33,8 @@ export function NowPage({ month, onSeeAllPeak, onSeeInSeason }: { month: Month; 
   const overflow = buyNow.length > BUY_NOW_ROWS
   const bothRails = justLanded.length > 0 && endingSoon.length > 0
   const rows = overflow ? buyNow.slice(0, bothRails ? BUY_NOW_ROWS - 2 : BUY_NOW_ROWS - 1) : buyNow
-  const ideas = cookThisWeek(buyNow)
+  const recipes = useRecipes()
+  const ideas = recipes ? cookThisWeek(recipes, FRUITS, month, new Date().getFullYear(), weekOfYear()) : []
   const season = seasonOf(month)
   const s = seasonTones(season)
   const SeasonIcon = SEASON_ICON[season]
@@ -98,10 +102,14 @@ export function NowPage({ month, onSeeAllPeak, onSeeInSeason }: { month: Month; 
               id="cook-week"
               Icon={CookingPot}
               title="Cook this week"
-              action={<Link to={{ name: 'cook' }} className="inline-flex min-h-11 items-center text-small font-extrabold underline">All ideas</Link>}
+              action={<Link to={{ name: 'cook' }} className="inline-flex min-h-11 items-center text-small font-extrabold underline">All recipes</Link>}
             />
-            <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto scroll-px-4 px-4 pb-2 scrollbar-hide">
-              {ideas.map(({ fruit, recipe }, i) => <RecipeCard key={`${fruit.id}-${recipe.name}`} fruit={fruit} recipe={recipe} i={i} intro={intro} />)}
+            <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto scroll-px-4 px-4 pt-1 pb-3 scrollbar-hide">
+              {ideas.map((r, i) => (
+                <li key={r.id} className={clsx('flex w-[272px] shrink-0 snap-start', intro && 'pop-in')} style={{ '--i': i + 5 } as CSSProperties}>
+                  <RecipeCard recipe={r} month={month} stack className="w-full" />
+                </li>
+              ))}
             </ul>
           </section>
         )}
@@ -180,25 +188,6 @@ function Rail({ id, Icon, title, note, fruits, intro, ending = false }: { id: st
   )
 }
 
-function RecipeCard({ fruit, recipe, i, intro }: { fruit: Fruit; recipe: RecipeSuggestion; i: number; intro: boolean }) {
-  return (
-    <li className={clsx('flex w-64 shrink-0 snap-start', intro && 'pop-in')} style={{ '--i': i + 5 } as CSSProperties}>
-      <Link
-        to={{ name: 'fruit', id: fruit.id }}
-        className="press block-shadow flex w-full items-start gap-3 rounded-block bg-(--bright) p-4 text-(--ink)"
-        style={toneVars(tonesOf(fruit.colour))}
-      >
-        <span className="flex min-w-0 flex-1 flex-col gap-1">
-          <span className="text-caption font-extrabold tracking-[0.06em] text-(--ink-soft) uppercase">{fruit.name}</span>
-          <span className="text-body leading-snug font-extrabold">{recipe.name}</span>
-          <span className="text-small font-medium text-(--ink-soft)">{recipe.description}</span>
-        </span>
-        <FruitSticker fruit={fruit} size={56} />
-      </Link>
-    </li>
-  )
-}
-
 // The dish shows off the fruit with the best insides first (a watermelon in summer, kiwi and citrus in
 // winter), then the rest of the month's peak fruit in Buy now order (the sort is stable).
 const SHOWPIECES = ['watermelon', 'dragon-fruit', 'kiwifruit', 'passionfruit', 'avocado', 'pomegranate', 'papaya', 'rockmelon', 'grapefruit', 'orange', 'peach', 'fig', 'mango', 'strawberry', 'pineapple']
@@ -216,13 +205,4 @@ function heroList(ids: string): Fruit[] {
     heroCache.set(ids, list)
   }
   return list
-}
-
-// Up to 3 recipe ideas from fruit at peak, rotating weekly.
-function cookThisWeek(peak: Fruit[]): { fruit: Fruit; recipe: RecipeSuggestion }[] {
-  const week = weekOfYear()
-  return peak
-    .filter(f => f.recipes?.length)
-    .slice(0, 3)
-    .map(f => ({ fruit: f, recipe: f.recipes![week % f.recipes!.length] }))
 }

@@ -133,6 +133,16 @@ Every text pair above is checked for all 39 fruit and all four seasons at 4.5:1,
 - **Sheet** (`Sheet`): native `<dialog>`, the screen's `bright` with `ink` text, a `pop` close disc.
 - **Filter chips**: `deep` with a colour dot, `pop` with a check when on; they squish when pressed.
 
+## Cook (src/pages/CookPage.tsx, RecipePage.tsx, CookMode.tsx)
+
+Fruity's own recipes (`src/assets/recipes.ts`, 35, Phase 3), in the same blocks as the fruit.
+
+- **Cook tab:** a segmented `ink` pill (In season, All, Saved; the current one in the season's `pop`), filter chips for type and Kid-friendly, and each recipe as a `RecipeCard`: a block in its main fruit's `pop` (`bright` on that fruit's own page) with the sticker, the type, the name in Shrikhand, time and serves or makes, and an "In season" peak sticker when the main fruit is at its peak. In season means the main fruit is in the shops, peak first.
+- **A recipe's page** wears its main fruit like a fruit page (App sets the screen tones): the fruit drops onto a `bright` blob with any other fruit slapped on beside it, facts as `deep` pills, Start cooking as the fat `ink` pill, a serves stepper (1 to 12; `src/utils/scale.ts` rescales only numbers, to friendly fractions and amounts a scale shows), ingredients as a tickable `bright` list, Add fruit to bag and Add all to bag (the bag groups Fruit and Other), the method as big numbered `bright` cards, Tip, Keeping it (preserves: always "Store in the fridge; this is not a shelf-stable preserve"), Out of season? Try:, and We made this in a `deep` block.
+- **Cook mode** covers the tab bar in the main fruit's `pop`: one step at a time on a `bright` card, progress dots, the step's ingredients as `pop` pills at your serves, tap-to-start timers (`ink` pill, `peak` when done, a Web Audio chime), Back and Next or a sideways swipe, and the Screen Wake Lock while it is open.
+- **Motion:** the next step slides in from the side you went; the bag buttons swell, turn `peak` and send the recipe's fruit hopping one after another into the bag; We made this throws a one-shot burst of the recipe's fruit and sprinkles. All off under reduced motion.
+- The recipes are their own chunk (`useRecipes`), as are the recipe page and cook mode, so Now and the fruit pages paint without them. A recipe is `reviewed: false` until a person has cooked or read it; the page says so in a line at the bottom.
+
 ## Guess the fruit (src/quiz/)
 
 A game, not a flash-card set (Nathan, 2 Nov 2026: "not very fun! ... do better!"). Full screen over the tab bar like the cafe, on the season's page colour; the question card is `bright`, answers `deep`, right `peak`, wrong `off`.

@@ -363,3 +363,40 @@ dialog.sheet::backdrop {
     animation: none !important;
   }
 }
+
+/* ============================================
+   COOK (src/pages/RecipePage.tsx, CookMode.tsx): one-shot motion, off under reduced motion like the rest.
+   ============================================ */
+
+/* "We made this": the recipe's fruit and a few sprinkles burst out of the button, spin and fall away. */
+@keyframes confetti {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  15% { opacity: 1; }
+  70% { opacity: 1; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)) scale(1); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 40px)) rotate(var(--rot)) scale(0.9); }
+}
+.confetti {
+  animation: confetti 1100ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/* Cook mode: the next step slides in from the side you swiped towards, with a little twist. */
+@keyframes step-in-next {
+  from { opacity: 0; transform: translateX(70px) rotate(3deg) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes step-in-back {
+  from { opacity: 0; transform: translateX(-70px) rotate(-3deg) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.step-in-next { animation: step-in-next 420ms var(--ease-spring) backwards; }
+.step-in-back { animation: step-in-back 420ms var(--ease-spring) backwards; }
+
+/* A timer reaching zero gives one wobble (with the chime). */
+@keyframes ring {
+  0%, 100% { transform: none; }
+  20% { transform: rotate(-6deg) scale(1.06); }
+  40% { transform: rotate(5deg) scale(1.06); }
+  60% { transform: rotate(-3deg) scale(1.03); }
+  80% { transform: rotate(2deg); }
+}
+.timer-ring { animation: ring 700ms ease-in-out; }

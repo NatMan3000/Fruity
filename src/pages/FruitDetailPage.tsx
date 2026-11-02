@@ -4,11 +4,14 @@ import clsx from 'clsx'
 import { Check, ChevronDown, Hand, Plus, Refrigerator } from 'lucide-react'
 import type { Fruit, Month } from '../types/fruit'
 import { updateBag, useBag } from '../hooks/useBag'
+import { useRecipes } from '../hooks/useRecipes'
 import { addFruit, fruitItemId, hasFruit, removeItem } from '../utils/bag'
+import { recipesForFruit } from '../utils/recipes'
 import { fruitStatus } from '../utils/seasonality'
 import { statusSentence } from '../utils/status'
 import { FruitHero } from '../components/FruitHero'
 import { FruitSticker } from '../components/FruitSticker'
+import { RecipeCard } from '../components/RecipeCard'
 import { RecipeIdeas } from '../components/RecipeIdeas'
 import { SeasonLegend, SeasonStrip } from '../components/SeasonStrip'
 import { StatusSticker } from '../components/StatusSticker'
@@ -22,6 +25,8 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
   const inBag = hasFruit(bag, fruit.id)
   const status = fruitStatus(fruit, month)
   const pairTilt = [-2, 1.5, -1, 2, 0]
+  const recipes = useRecipes()
+  const cooks = recipes ? recipesForFruit(recipes, fruit.id) : []
 
   return (
     <article className="flex flex-col pb-8 text-(--ink)">
@@ -54,9 +59,18 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
           </div>
         )}
 
+        {cooks.length > 0 && (
+          <section aria-labelledby="recipes" className="flex flex-col gap-3 pt-2">
+            <h2 id="recipes" className="px-1 font-display text-title">Recipes</h2>
+            <ul className="flex flex-col gap-4">
+              {cooks.map(r => <li key={r.id}><RecipeCard recipe={r} month={month} surface={r.fruitIds[0] === fruit.id ? 'bright' : 'pop'} /></li>)}
+            </ul>
+          </section>
+        )}
+
         {fruit.recipes && fruit.recipes.length > 0 && (
           <section aria-labelledby="ideas" className="flex flex-col gap-3 pt-2">
-            <h2 id="ideas" className="px-1 font-display text-title">Recipe ideas</h2>
+            <h2 id="ideas" className="px-1 font-display text-title">Quick ideas</h2>
             <RecipeIdeas recipes={fruit.recipes} />
           </section>
         )}

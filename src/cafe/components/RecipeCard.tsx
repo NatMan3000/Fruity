@@ -2,7 +2,10 @@ import { useMemo } from 'react'
 import type { Fruit, Month } from '../../types/fruit'
 import { FruitIcon } from '../../components/FruitIcon'
 import { updateBag, useBag } from '../../hooks/useBag'
+import { useRecipes } from '../../hooks/useRecipes'
 import { addFruit, hasFruit } from '../../utils/bag'
+import { realRecipeFor } from '../../utils/recipes'
+import { Link } from '../../components/Link'
 import { buildRecipe } from '../logic/recipe'
 
 interface RecipeCardProps {
@@ -20,6 +23,8 @@ export function RecipeCard({ fruits, allFruits, month, onClose, closeLabel }: Re
   const bag = useBag()
   const missing = fruits.filter(f => !hasFruit(bag, f.id))
   const addAll = () => updateBag(b => fruits.reduce((acc, f) => addFruit(acc, f), b))
+  const recipes = useRecipes()
+  const real = recipes ? realRecipeFor(recipes, fruits.map(f => f.id)) : undefined
 
   return (
     <div className="cafe-overlay cafe-recipe" role="dialog" aria-modal="true" aria-labelledby="cafe-recipe-title">
@@ -58,6 +63,11 @@ export function RecipeCard({ fruits, allFruits, month, onClose, closeLabel }: Re
         <button type="button" className="cafe-btn cafe-btn--go" onClick={addAll} disabled={missing.length === 0}>
           {missing.length === 0 ? 'All in the bag ✓' : `Add ${missing.length === fruits.length ? 'fruit' : `${missing.length} more`} to bag`}
         </button>
+        {real && (
+          <Link to={{ name: 'recipe', id: real.id }} className="cafe-btn cafe-btn--plain cafe-recipe__real">
+            Try our {real.name.toLowerCase()} recipe
+          </Link>
+        )}
         <button type="button" className="cafe-btn cafe-btn--plain" onClick={onClose}>{closeLabel}</button>
       </div>
     </div>

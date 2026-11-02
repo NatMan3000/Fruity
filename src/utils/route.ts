@@ -4,6 +4,8 @@ export type Route =
   | { name: 'fruit'; id: string }
   | { name: 'year' }
   | { name: 'cook' }
+  | { name: 'recipe'; id: string }
+  | { name: 'cookmode'; id: string }
   | { name: 'play' }
   | { name: 'quiz' }
   | { name: 'salad' }
@@ -19,7 +21,9 @@ export function parseRoute(hash: string): Route {
       if (parts[1] === 'year') return { name: 'year' }
       return { name: 'fruit', id: decodeURIComponent(parts[1]) }
     case 'cook':
-      return { name: 'cook' }
+      if (!parts[1]) return { name: 'cook' }
+      if (parts[2] === 'steps') return { name: 'cookmode', id: decodeURIComponent(parts[1]) }
+      return { name: 'recipe', id: decodeURIComponent(parts[1]) }
     case 'play':
       if (parts[1] === 'quiz') return { name: 'quiz' }
       if (parts[1] === 'salad') return { name: 'salad' }
@@ -43,6 +47,8 @@ export function routeHash(route: Route): string {
     case 'fruit': return `#/fruit/${encodeURIComponent(route.id)}`
     case 'year': return '#/fruit/year'
     case 'cook': return '#/cook'
+    case 'recipe': return `#/cook/${encodeURIComponent(route.id)}`
+    case 'cookmode': return `#/cook/${encodeURIComponent(route.id)}/steps`
     case 'play': return '#/play'
     case 'quiz': return '#/play/quiz'
     case 'salad': return '#/play/salad'
@@ -55,7 +61,9 @@ export function tabFor(route: Route): Tab {
     case 'browse':
     case 'fruit':
     case 'year': return 'fruit'
-    case 'cook': return 'cook'
+    case 'cook':
+    case 'recipe':
+    case 'cookmode': return 'cook'
     case 'play':
     case 'quiz':
     case 'salad': return 'play'

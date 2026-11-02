@@ -10,6 +10,8 @@ describe('route', () => {
     expect(parseRoute('#/fruit/mango')).toEqual({ name: 'fruit', id: 'mango' })
     expect(parseRoute('#/fruit/year')).toEqual({ name: 'year' })
     expect(parseRoute('#/cook')).toEqual({ name: 'cook' })
+    expect(parseRoute('#/cook/cherry-clafoutis')).toEqual({ name: 'recipe', id: 'cherry-clafoutis' })
+    expect(parseRoute('#/cook/cherry-clafoutis/steps')).toEqual({ name: 'cookmode', id: 'cherry-clafoutis' })
     expect(parseRoute('#/play')).toEqual({ name: 'play' })
     expect(parseRoute('#/play/quiz')).toEqual({ name: 'quiz' })
     expect(parseRoute('#/play/salad')).toEqual({ name: 'salad' })
@@ -27,6 +29,7 @@ describe('route', () => {
     const routes: Route[] = [
       { name: 'now' }, { name: 'browse' }, { name: 'year' }, { name: 'cook' },
       { name: 'play' }, { name: 'quiz' }, { name: 'salad' }, { name: 'fruit', id: 'dragon-fruit' },
+      { name: 'recipe', id: 'banana-bread' }, { name: 'cookmode', id: 'banana-bread' },
     ]
     for (const r of routes) expect(parseRoute(routeHash(r))).toEqual(r)
   })

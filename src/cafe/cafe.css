@@ -1345,3 +1345,12 @@
   .cafe-want__pic { width: 44px; height: 44px; }
   .cafe-btn { min-height: 48px; }
 }
+
+/* "Make it for real" links to a matching recipe from the Cook tab, when there is one. */
+.cafe-recipe__real {
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  line-height: 1.2;
+  padding-block: 8px;
+}

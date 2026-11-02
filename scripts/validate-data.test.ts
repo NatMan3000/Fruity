@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { validateFruits } from './validate-data'
+import { validateFruits, validateRecipes } from './validate-data'
 import { FRUITS } from '../src/assets/fruits'
+import { RECIPES } from '../src/assets/recipes'
 
 const good = {
   id: 'x', name: 'X', emoji: 'x', colour: '#FF9F1C', image: 'images/fruits/x',
@@ -51,3 +52,36 @@ describe('validateFruits', () => {
     expect(validateFruits([good], () => false, now).join()).toContain('missing image file')
   })
 })
+
+describe('validateRecipes', () => {
+  const recipe = RECIPES.find(r => r.id === 'cherry-clafoutis')!
+
+  it('accepts the real recipes', () => {
+    expect(validateRecipes(RECIPES, FRUITS)).toEqual([])
+  })
+
+  it('fails on every kind of broken recipe', () => {
+    const broken = [
+      { ...recipe, id: 'badfruit', fruitIds: ['cherry', 'durian'] },
+      { ...recipe, id: 'badingfruit', ingredients: [...recipe.ingredients, { item: 'x', qty: '1', fruitId: 'durian' }] },
+      { ...recipe, id: 'twosteps', steps: recipe.steps.slice(0, 2) },
+      { ...recipe, id: 'ninesteps', steps: [...recipe.steps, ...recipe.steps].slice(0, 9) },
+      { ...recipe, id: 'noserves', serves: undefined, makes: undefined },
+      { ...recipe, id: 'endash', blurb: 'Soft, eggy and sweet \u2013 a French classic.' },
+      { ...recipe, id: 'emdash', steps: [...recipe.steps.slice(0, 3), 'Bake \u2014 then cool.'] },
+      { ...recipe, id: 'nofan', steps: [...recipe.steps.slice(0, 3), 'Heat the oven to 180°C.'] },
+    ]
+    const errors = validateRecipes([...RECIPES, ...broken], FRUITS).join('\n')
+    for (const [id, msg] of [['badfruit', 'unknown fruitId "durian"'], ['badingfruit', 'unknown fruitId'], ['twosteps', '3 to 8 steps'],
+      ['ninesteps', '3 to 8 steps'], ['noserves', 'serves'], ['endash', 'Unicode dash'], ['emdash', 'Unicode dash'], ['nofan', 'fan-forced']]) {
+      expect(errors).toMatch(new RegExp(`${id}: .*${msg.replace(/[()]/g, '.')}`))
+    }
+  })
+
+  it('fails a month with fewer than 3 recipes whose main fruit is at peak', () => {
+    const noSpring = RECIPES.filter(r => !['strawberry', 'rhubarb'].includes(r.fruitIds[0]))
+    const errors = validateRecipes(noSpring, FRUITS)
+    expect(errors).toContain('Oct: only 2 recipe(s) whose main fruit is at its Victorian peak (need 3)')
+  })
+})
+

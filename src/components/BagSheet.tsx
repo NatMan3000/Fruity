@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { Check, Copy, Share, X } from 'lucide-react'
 import { FRUITS } from '../assets/fruits'
 import { updateBag, useBag } from '../hooks/useBag'
-import { bagText, clearDone, removeItem, toggleDone } from '../utils/bag'
+import { bagText, clearDone, groupBag, removeItem, toggleDone, type BagItem } from '../utils/bag'
 import { FruitSticker } from './FruitSticker'
 import { Sheet } from './Sheet'
 
@@ -14,6 +14,9 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
   const [copyState, setCopyState] = useState<CopyState>('idle')
   const canShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function'
   const anyDone = bag.some(i => i.done)
+  const { fruit, other } = groupBag(bag)
+  const groups = [{ title: 'Fruit', items: fruit }, { title: 'Other', items: other }]
+  const showHeadings = fruit.length > 0 && other.length > 0
 
   useEffect(() => {
     if (copyState === 'idle') return
@@ -75,45 +78,62 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
           <span aria-hidden="true" className="slap inline-flex size-20 items-center justify-center rounded-full bg-(--pop) text-[44px] leading-none" style={{ '--tilt': '-6deg', transform: 'rotate(var(--tilt))' } as CSSProperties}>
             <span className="sticker-emoji">🧺</span>
           </span>
-          <p className="text-body font-semibold">Your bag is empty. Open a fruit and tap Add to bag.</p>
+          <p className="text-body font-semibold">Your bag is empty. Open a fruit or a recipe and tap Add to bag.</p>
         </div>
       ) : (
-        <ul className="flex flex-col gap-0.5">
-          {bag.map(item => {
-            const fruit = item.fruitId ? FRUITS.find(f => f.id === item.fruitId) : undefined
-            return (
-              <li key={item.id} className="flex items-center gap-1">
-                <button
-                  type="button"
-                  role="checkbox"
-                  aria-checked={item.done}
-                  onClick={() => updateBag(b => toggleDone(b, item.id))}
-                  className="flex min-h-14 flex-1 items-center gap-3 rounded-full px-1 text-left active:bg-(--pop)"
-                >
-                  <span
-                    className={clsx(
-                      'inline-flex size-6 shrink-0 items-center justify-center rounded-full',
-                      item.done ? 'bg-peak text-peak-ink' : 'ring-[2.5px] ring-(--ink-soft) ring-inset',
-                    )}
-                  >
-                    {item.done && <Check aria-hidden="true" className="tick-in size-4" strokeWidth={3} />}
-                  </span>
-                  {fruit && <FruitSticker fruit={fruit} size={40} />}
-                  <span className={clsx('text-body font-bold', item.done ? 'text-(--ink-soft) line-through' : 'text-(--ink)')}>{item.name}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => updateBag(b => removeItem(b, item.id))}
-                  aria-label={`Remove ${item.name}`}
-                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-(--ink-soft) active:bg-(--pop)"
-                >
-                  <X aria-hidden="true" className="size-4" />
-                </button>
-              </li>
-            )
-          })}
-        </ul>
+        <div className="flex flex-col gap-4">
+          {groups.map(g => g.items.length > 0 && (
+            <section key={g.title} aria-labelledby={`bag-${g.title}`} className="flex flex-col gap-0.5">
+              {showHeadings && (
+                <h3 id={`bag-${g.title}`} className="flex items-center gap-2 px-1 pb-1 text-caption font-extrabold tracking-[0.06em] text-(--ink-soft) uppercase">
+                  {g.title}
+                  <span className="tabular-nums">{g.items.filter(i => !i.done).length || ''}</span>
+                </h3>
+              )}
+              <ul className="flex flex-col gap-0.5">
+                {g.items.map(item => <BagRow key={item.id} item={item} />)}
+              </ul>
+            </section>
+          ))}
+        </div>
       )}
     </Sheet>
+  )
+}
+
+function BagRow({ item }: { item: BagItem }) {
+  const fruit = item.fruitId ? FRUITS.find(f => f.id === item.fruitId) : undefined
+  return (
+    <li className="flex items-center gap-1">
+      <button
+        type="button"
+        role="checkbox"
+        aria-checked={item.done}
+        onClick={() => updateBag(b => toggleDone(b, item.id))}
+        className="flex min-h-14 flex-1 items-center gap-3 rounded-[24px] px-1 py-1 text-left active:bg-(--pop)"
+      >
+        <span
+          className={clsx(
+            'inline-flex size-6 shrink-0 items-center justify-center rounded-full',
+            item.done ? 'bg-peak text-peak-ink' : 'ring-[2.5px] ring-(--ink-soft) ring-inset',
+          )}
+        >
+          {item.done && <Check aria-hidden="true" className="tick-in size-4" strokeWidth={3} />}
+        </span>
+        {fruit && <FruitSticker fruit={fruit} size={40} />}
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className={clsx('text-body font-bold', item.done ? 'text-(--ink-soft) line-through' : 'text-(--ink)')}>{item.name}</span>
+          {item.note && <span className="text-small font-semibold text-(--ink-soft)">{item.note}</span>}
+        </span>
+      </button>
+      <button
+        type="button"
+        onClick={() => updateBag(b => removeItem(b, item.id))}
+        aria-label={`Remove ${item.name}`}
+        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-(--ink-soft) active:bg-(--pop)"
+      >
+        <X aria-hidden="true" className="size-4" />
+      </button>
+    </li>
   )
 }

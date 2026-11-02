@@ -1,11 +1,13 @@
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react'
 import { FRUITS } from './assets/fruits'
 import { useCurrentMonth } from './hooks/useCurrentMonth'
+import { useRecipes } from './hooks/useRecipes'
 import { navigate, useRoute } from './hooks/useRoute'
 import { useScreen } from './hooks/useScreen'
 import { useStoredState } from './hooks/useStoredState'
 import { UiContext } from './hooks/useUi'
 import { isBrowseFilterOrNull, type BrowseFilter } from './utils/browse'
+import type { Recipe } from './types/recipe'
 import { tabFor, type Route } from './utils/route'
 import { seasonOf } from './utils/seasonality'
 import { seasonTones, tonesOf } from './utils/tones'
@@ -25,6 +27,9 @@ import { YearPage } from './pages/YearPage'
 const CafeGame = lazy(() => import('./cafe/CafeGame'))
 // "Guess the fruit" is its own chunk too (its 3D stage is a further lazy chunk inside it).
 const QuizPage = lazy(() => import('./quiz/QuizPage'))
+// A recipe's page and cook mode are chunks of their own, as is the recipe data (useRecipes).
+const RecipePage = lazy(() => import('./pages/RecipePage'))
+const CookMode = lazy(() => import('./pages/CookMode'))
 
 const isString = (v: unknown): v is string => typeof v === 'string'
 
@@ -35,8 +40,13 @@ function App() {
   const [filter, setFilter] = useStoredState<BrowseFilter | null>('fruity.filter', null, isBrowseFilterOrNull)
   const [bagOpen, setBagOpen] = useState(false)
 
-  // Season screens wear the season's sorbet; a fruit's page wears the fruit (DESIGN.md "Colour").
-  const fruitHere = route.name === 'fruit' ? FRUITS.find(f => f.id === route.id) : undefined
+  // Season screens wear the season's sorbet; a fruit's page, and a recipe's, wear the (main) fruit
+  // (DESIGN.md "Colour").
+  const onRecipe = route.name === 'recipe' || route.name === 'cookmode'
+  const recipes = useRecipes(onRecipe)
+  const recipe = onRecipe ? recipes?.find(r => r.id === route.id) : undefined
+  const fruitId = route.name === 'fruit' ? route.id : recipe?.fruitIds[0]
+  const fruitHere = fruitId ? FRUITS.find(f => f.id === fruitId) : undefined
   const tones = useMemo(() => (fruitHere ? tonesOf(fruitHere.colour) : seasonTones(seasonOf(month))), [fruitHere, month])
   useScreen(tones, fruitHere ? 'fruit' : 'season')
 
@@ -51,7 +61,7 @@ function App() {
     <UiContext.Provider value={ui}>
       <div className="min-h-[100dvh] pb-[calc(env(safe-area-inset-bottom)+6.5rem)]">
         <main className="mx-auto w-full max-w-2xl">
-          <Screen route={route} month={month} query={query} setQuery={setQuery} filter={filter} setFilter={setFilter} browseWith={browseWith} />
+          <Screen route={route} recipes={recipes} month={month} query={query} setQuery={setQuery} filter={filter} setFilter={setFilter} browseWith={browseWith} />
         </main>
       </div>
       <TabBar active={tabFor(route)} />
@@ -62,6 +72,7 @@ function App() {
 
 interface ScreenProps {
   route: Route
+  recipes: Recipe[] | null
   month: ReturnType<typeof useCurrentMonth>
   query: string
   setQuery: (q: string) => void
@@ -70,7 +81,7 @@ interface ScreenProps {
   browseWith: (f: BrowseFilter) => void
 }
 
-function Screen({ route, month, query, setQuery, filter, setFilter, browseWith }: ScreenProps) {
+function Screen({ route, recipes, month, query, setQuery, filter, setFilter, browseWith }: ScreenProps) {
   switch (route.name) {
     case 'now':
       return <NowPage month={month} onSeeAllPeak={() => browseWith('peak')} onSeeInSeason={() => browseWith('inSeason')} />
@@ -80,11 +91,24 @@ function Screen({ route, month, query, setQuery, filter, setFilter, browseWith }
       return <YearPage month={month} />
     case 'fruit': {
       const fruit = FRUITS.find(f => f.id === route.id)
-      if (!fruit) return <NotFound />
+      if (!fruit) return <NotFound what="fruit" />
       return <FruitDetailPage key={fruit.id} fruit={fruit} month={month} />
     }
     case 'cook':
       return <CookPage month={month} />
+    case 'recipe':
+    case 'cookmode': {
+      if (!recipes) return <RecipeLoading />
+      const recipe = recipes.find(r => r.id === route.id)
+      if (!recipe) return <NotFound what="recipe" />
+      return (
+        <Suspense fallback={<RecipeLoading />}>
+          {route.name === 'recipe'
+            ? <RecipePage key={recipe.id} recipe={recipe} month={month} />
+            : <CookMode key={recipe.id} recipe={recipe} />}
+        </Suspense>
+      )
+    }
     case 'play':
       return <PlayPage />
     case 'quiz':
@@ -111,16 +135,26 @@ function QuizLoading() {
   )
 }
 
-function NotFound() {
+function RecipeLoading() {
+  return (
+    <div className="flex flex-col pb-6" role="status">
+      <TopBar back={{ name: 'cook' }} />
+      <span className="sr-only">Loading the recipe</span>
+    </div>
+  )
+}
+
+function NotFound({ what }: { what: 'fruit' | 'recipe' }) {
+  const fruit = what === 'fruit'
   return (
     <div className="flex flex-col pb-6">
-      <TopBar back={{ name: 'browse' }} />
+      <TopBar back={fruit ? { name: 'browse' } : { name: 'cook' }} />
       <div className="flex flex-col items-start gap-4 px-5 pt-4">
         <span aria-hidden="true" className="slap sticker-emoji text-[72px] leading-none" style={{ transform: 'rotate(-8deg)' }}>🤔</span>
-        <h1 className="font-display text-[2.5rem] leading-tight">We don't know that fruit</h1>
-        <p className="text-body font-semibold">The link may be old. Every fruit we cover is in the list.</p>
-        <Link to={{ name: 'browse' }} className="press block-shadow inline-flex h-12 items-center rounded-full bg-(--bright) px-5 font-extrabold text-(--ink)">
-          See all fruit
+        <h1 className="font-display text-[2.5rem] leading-tight">We don't know that {what}</h1>
+        <p className="text-body font-semibold">The link may be old. {fruit ? 'Every fruit we cover is in the list.' : 'Every recipe we have is on the Cook tab.'}</p>
+        <Link to={fruit ? { name: 'browse' } : { name: 'cook' }} className="press block-shadow inline-flex h-12 items-center rounded-full bg-(--bright) px-5 font-extrabold text-(--ink)">
+          {fruit ? 'See all fruit' : 'See all recipes'}
         </Link>
       </div>
     </div>
