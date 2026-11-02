@@ -80,15 +80,14 @@ export function FruitDetail({ fruit, currentMonth, onBack }: FruitDetailProps) {
                 <div className="flex flex-wrap gap-1">
                   {MONTHS
                     .filter((month) =>
-                      fruit.seasonality.peak.includes(month) ||
-                      fruit.seasonality.available.includes(month)
+                      isInSeason(fruit, month)
                     )
                     .map((month) => (
                       <MonthBadge
                         key={month}
                         month={month}
-                        isPeak={fruit.seasonality.peak.includes(month)}
-                        isAvailable={fruit.seasonality.available.includes(month)}
+                        isPeak={isPeakSeason(fruit, month)}
+                        isAvailable={isInSeason(fruit, month) && !isPeakSeason(fruit, month)}
                         isCurrent={month === currentMonth}
                       />
                     ))}

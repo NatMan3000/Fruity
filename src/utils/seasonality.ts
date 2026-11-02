@@ -1,4 +1,4 @@
-import type { Fruit, Month, Season } from '../types/fruit'
+import type { AusState, Fruit, FruitSeasonality, Month, Season } from '../types/fruit'
 import { SEASONS, MONTHS } from '../types/fruit'
 
 export function getCurrentMonth(): Month {
@@ -14,29 +14,36 @@ export function getCurrentSeason(): Season {
   return (entry?.[0] as Season) || 'Summer'
 }
 
-export function isInSeason(fruit: Fruit, month: Month): boolean {
-  return fruit.seasonality.peak.includes(month) ||
-         fruit.seasonality.available.includes(month)
+export function getSeasonality(fruit: Fruit, state: AusState = 'VIC'): FruitSeasonality {
+  return fruit.stateOverrides?.[state] ?? fruit.seasonality
 }
 
-export function isPeakSeason(fruit: Fruit, month: Month): boolean {
-  return fruit.seasonality.peak.includes(month)
+// A fruit with no peak months (banana, coconut) is year-round: never peak, always available.
+function isAlwaysAvailable(fruit: Fruit, state: AusState): boolean {
+  return getSeasonality(fruit, state).peak.length === 0 && fruit.yearRound !== undefined
+}
+
+export function isInSeason(fruit: Fruit, month: Month, state: AusState = 'VIC'): boolean {
+  if (isAlwaysAvailable(fruit, state)) return true
+  const { peak, available } = getSeasonality(fruit, state)
+  return peak.includes(month) || available.includes(month)
+}
+
+export function isPeakSeason(fruit: Fruit, month: Month, state: AusState = 'VIC'): boolean {
+  return getSeasonality(fruit, state).peak.includes(month)
 }
 
 export function getMonthsForSeason(season: Season): Month[] {
   return SEASONS[season]
 }
 
-export function filterFruitsBySeason(fruits: Fruit[], season: Season): Fruit[] {
+export function filterFruitsBySeason(fruits: Fruit[], season: Season, state: AusState = 'VIC'): Fruit[] {
   const seasonMonths = SEASONS[season]
-  return fruits.filter(fruit =>
-    fruit.seasonality.peak.some(m => seasonMonths.includes(m)) ||
-    fruit.seasonality.available.some(m => seasonMonths.includes(m))
-  )
+  return fruits.filter(fruit => seasonMonths.some(m => isInSeason(fruit, m, state)))
 }
 
-export function filterFruitsInSeason(fruits: Fruit[], month: Month): Fruit[] {
-  return fruits.filter(fruit => isInSeason(fruit, month))
+export function filterFruitsInSeason(fruits: Fruit[], month: Month, state: AusState = 'VIC'): Fruit[] {
+  return fruits.filter(fruit => isInSeason(fruit, month, state))
 }
 
 export function searchFruits(fruits: Fruit[], query: string): Fruit[] {

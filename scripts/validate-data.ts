@@ -2,15 +2,24 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { FRUITS } from '../src/assets/fruits'
-import { MONTHS } from '../src/types/fruit'
+import { AUS_STATES, MONTHS } from '../src/types/fruit'
 
 const RECIPE_TYPES = ['smoothie', 'dessert', 'salad', 'preserve', 'snack', 'breakfast']
 
 type Loose = Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
 
+const MAX_AGE_MONTHS = 18
+
+function monthsOld(iso: string, now: Date): number {
+  const d = new Date(iso)
+  return (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth()) +
+    (now.getDate() < d.getDate() ? -1 : 0)
+}
+
 export function validateFruits(
   fruits: readonly unknown[],
   imageExists: (relPath: string) => boolean,
+  now: Date = new Date(),
 ): string[] {
   const errors: string[] = []
   const seen = new Set<string>()
@@ -36,6 +45,32 @@ export function validateFruits(
         if (available.includes(m)) err(`month ${String(m)} is in both peak and available`)
       }
       if (peak.length === 0 && available.length === 0) err('no peak or available months')
+    }
+
+    if (!Array.isArray(f?.sources) || f.sources.length < 2) err('needs at least 2 sources')
+    if (typeof f?.checkedOn !== 'string' || Number.isNaN(Date.parse(f.checkedOn))) {
+      err('checkedOn must be an ISO date')
+    } else if (monthsOld(f.checkedOn, now) > MAX_AGE_MONTHS) {
+      err(`checkedOn ${f.checkedOn} is older than ${MAX_AGE_MONTHS} months`)
+    }
+    if (!['high', 'medium', 'low'].includes(f?.confidence)) err('confidence must be high, medium or low')
+
+    if (f?.stateOverrides !== undefined) {
+      for (const [state, o] of Object.entries((f.stateOverrides ?? {}) as Loose)) {
+        if (!AUS_STATES.includes(state as never)) err(`stateOverrides has unknown state "${state}"`)
+        const op: unknown = (o as Loose)?.peak
+        const oa: unknown = (o as Loose)?.available
+        if (!Array.isArray(op) || !Array.isArray(oa)) {
+          err(`stateOverrides.${state} needs peak and available arrays`)
+          continue
+        }
+        for (const m of [...op, ...oa]) {
+          if (!MONTHS.includes(m as never)) err(`stateOverrides.${state} unknown month "${String(m)}"`)
+        }
+        for (const m of op) {
+          if (oa.includes(m)) err(`stateOverrides.${state} month ${String(m)} is in both peak and available`)
+        }
+      }
     }
 
     if (typeof f?.image !== 'string' || !f.image) {

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import type { Fruit, Month, Season } from '../types/fruit'
 import { FRUITS } from '../assets/fruits'
-import { filterFruitsBySeason, filterFruitsInSeason, searchFruits, isPeakSeason } from '../utils/seasonality'
+import { filterFruitsBySeason, filterFruitsInSeason, searchFruits, isPeakSeason, isInSeason } from '../utils/seasonality'
 
 interface UseFruitsOptions {
   searchQuery?: string
@@ -52,14 +52,8 @@ export function useFruits({
     })
 
     // Calculate counts
-    const inSeasonCount = filtered.filter(f =>
-      f.seasonality.peak.includes(currentMonth) ||
-      f.seasonality.available.includes(currentMonth)
-    ).length
-
-    const peakSeasonCount = filtered.filter(f =>
-      f.seasonality.peak.includes(currentMonth)
-    ).length
+    const inSeasonCount = filtered.filter(f => isInSeason(f, currentMonth)).length
+    const peakSeasonCount = filtered.filter(f => isPeakSeason(f, currentMonth)).length
 
     return {
       fruits: filtered,

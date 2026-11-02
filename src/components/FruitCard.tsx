@@ -59,8 +59,8 @@ export function FruitCard({ fruit, currentMonth, onClick }: FruitCardProps) {
         {/* Month badges - 3x4 grid on right */}
         <div className="grid grid-cols-3 gap-0.5 flex-shrink-0">
           {MONTHS.map((month) => {
-            const isPeak = fruit.seasonality.peak.includes(month)
-            const isAvailable = fruit.seasonality.available.includes(month)
+            const isPeak = isPeakSeason(fruit, month)
+            const isAvailable = isInSeason(fruit, month) && !isPeak
             return (
               <MonthBadge
                 key={month}

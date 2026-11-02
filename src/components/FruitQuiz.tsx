@@ -2,6 +2,7 @@ import { useState } from 'react'
 import clsx from 'clsx'
 import { RotateCcw } from 'lucide-react'
 import type { Fruit } from '../types/fruit'
+import { getSeasonality } from '../utils/seasonality'
 
 interface FruitQuizProps {
   fruits: Fruit[]
@@ -145,7 +146,7 @@ export function FruitQuiz({ fruits }: FruitQuizProps) {
         {currentQuestion.cluesRevealed >= 1 && (
           <div className="p-3 rounded-lg bg-blue-50 text-sm text-blue-900">
             <span className="font-medium">Peak season:</span>{' '}
-            {currentQuestion.correctFruit.seasonality.peak.join(', ')}
+            {getSeasonality(currentQuestion.correctFruit).peak.join(', ') || 'Year-round'}
           </div>
         )}
         {currentQuestion.cluesRevealed >= 2 && currentQuestion.correctFruit.pairings && (
