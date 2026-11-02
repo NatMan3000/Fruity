@@ -49,7 +49,7 @@ bun run preview   # Preview production build
 ```
 src/
 ├── assets/
-│   └── fruits.ts          # 40 Australian fruits with seasonality data
+│   └── fruits.ts          # 39 Australian fruits (validator prints the count)
 ├── components/
 │   ├── FruitCard.tsx      # Individual fruit display
 │   ├── FruitList.tsx      # Responsive grid of fruits

@@ -7,7 +7,7 @@ export const FRUITS: Fruit[] = [
     id: 'mango',
     name: 'Mango',
     emoji: '🥭',
-    image: '/images/fruits/mango.jpg',
+    image: 'images/fruits/mango',
     seasonality: {
       peak: ['Dec', 'Jan', 'Feb'],
       available: ['Nov', 'Mar']
@@ -32,7 +32,7 @@ export const FRUITS: Fruit[] = [
     id: 'watermelon',
     name: 'Watermelon',
     emoji: '🍉',
-    image: '/images/fruits/watermelon.jpg',
+    image: 'images/fruits/watermelon',
     seasonality: {
       peak: ['Dec', 'Jan', 'Feb'],
       available: ['Nov', 'Mar']
@@ -55,7 +55,7 @@ export const FRUITS: Fruit[] = [
     id: 'rockmelon',
     name: 'Rockmelon',
     emoji: '🍈',
-    image: '/images/fruits/rockmelon.jpg',
+    image: 'images/fruits/rockmelon',
     seasonality: {
       peak: ['Dec', 'Jan', 'Feb'],
       available: ['Nov', 'Mar']
@@ -80,7 +80,7 @@ export const FRUITS: Fruit[] = [
     id: 'honeydew',
     name: 'Honeydew',
     emoji: '🍈',
-    image: '/images/fruits/honeydew.jpg',
+    image: 'images/fruits/honeydew',
     seasonality: {
       peak: ['Dec', 'Jan', 'Feb'],
       available: ['Nov', 'Mar']
@@ -103,7 +103,7 @@ export const FRUITS: Fruit[] = [
     id: 'lychee',
     name: 'Lychee',
     emoji: '🔴',
-    image: '/images/fruits/lychee.jpg',
+    image: 'images/fruits/lychee',
     seasonality: {
       peak: ['Dec', 'Jan'],
       available: ['Nov', 'Feb']
@@ -127,7 +127,7 @@ export const FRUITS: Fruit[] = [
     id: 'passionfruit',
     name: 'Passionfruit',
     emoji: '💜',
-    image: '/images/fruits/passionfruit.jpg',
+    image: 'images/fruits/passionfruit',
     seasonality: {
       peak: ['Dec', 'Jan', 'Feb', 'Mar'],
       available: ['Nov', 'Apr']
@@ -152,7 +152,7 @@ export const FRUITS: Fruit[] = [
     id: 'cherry',
     name: 'Cherry',
     emoji: '🍒',
-    image: '/images/fruits/cherry.jpg',
+    image: 'images/fruits/cherry',
     seasonality: {
       peak: ['Dec'],
       available: ['Nov', 'Jan']
@@ -177,7 +177,7 @@ export const FRUITS: Fruit[] = [
     id: 'blueberry',
     name: 'Blueberry',
     emoji: '🫐',
-    image: '/images/fruits/blueberry.jpg',
+    image: 'images/fruits/blueberry',
     seasonality: {
       peak: ['Dec', 'Jan', 'Feb'],
       available: ['Nov', 'Mar']
@@ -201,7 +201,7 @@ export const FRUITS: Fruit[] = [
     id: 'nectarine',
     name: 'Nectarine',
     emoji: '🍑',
-    image: '/images/fruits/nectarine.jpg',
+    image: 'images/fruits/nectarine',
     seasonality: {
       peak: ['Dec', 'Jan', 'Feb'],
       available: ['Nov']
@@ -226,7 +226,7 @@ export const FRUITS: Fruit[] = [
     id: 'peach',
     name: 'Peach',
     emoji: '🍑',
-    image: '/images/fruits/peach.jpg',
+    image: 'images/fruits/peach',
     seasonality: {
       peak: ['Dec', 'Jan', 'Feb'],
       available: ['Nov']
@@ -251,7 +251,7 @@ export const FRUITS: Fruit[] = [
     id: 'apricot',
     name: 'Apricot',
     emoji: '🍑',
-    image: '/images/fruits/apricot.jpg',
+    image: 'images/fruits/apricot',
     seasonality: {
       peak: ['Dec', 'Jan'],
       available: ['Nov', 'Feb']
@@ -275,7 +275,7 @@ export const FRUITS: Fruit[] = [
     id: 'plum',
     name: 'Plum',
     emoji: '🟣',
-    image: '/images/fruits/plum.jpg',
+    image: 'images/fruits/plum',
     seasonality: {
       peak: ['Jan', 'Feb'],
       available: ['Dec', 'Mar']
@@ -300,7 +300,7 @@ export const FRUITS: Fruit[] = [
     id: 'fig',
     name: 'Fig',
     emoji: '🟤',
-    image: '/images/fruits/fig.jpg',
+    image: 'images/fruits/fig',
     seasonality: {
       peak: ['Feb', 'Mar'],
       available: ['Jan', 'Apr']
@@ -326,7 +326,7 @@ export const FRUITS: Fruit[] = [
     id: 'apple',
     name: 'Apple',
     emoji: '🍎',
-    image: '/images/fruits/apple.jpg',
+    image: 'images/fruits/apple',
     seasonality: {
       peak: ['Mar', 'Apr', 'May'],
       available: ['Feb', 'Jun']
@@ -351,7 +351,7 @@ export const FRUITS: Fruit[] = [
     id: 'pear',
     name: 'Pear',
     emoji: '🍐',
-    image: '/images/fruits/pear.jpg',
+    image: 'images/fruits/pear',
     seasonality: {
       peak: ['Mar', 'Apr', 'May'],
       available: ['Feb', 'Jun']
@@ -376,7 +376,7 @@ export const FRUITS: Fruit[] = [
     id: 'grape',
     name: 'Grape',
     emoji: '🍇',
-    image: '/images/fruits/grape.jpg',
+    image: 'images/fruits/grape',
     seasonality: {
       peak: ['Mar', 'Apr', 'May'],
       available: ['Feb']
@@ -400,7 +400,7 @@ export const FRUITS: Fruit[] = [
     id: 'persimmon',
     name: 'Persimmon',
     emoji: '🍊',
-    image: '/images/fruits/persimmon.jpg',
+    image: 'images/fruits/persimmon',
     seasonality: {
       peak: ['Apr', 'May'],
       available: ['Mar', 'Jun']
@@ -425,7 +425,7 @@ export const FRUITS: Fruit[] = [
     id: 'quince',
     name: 'Quince',
     emoji: '🍐',
-    image: '/images/fruits/quince.jpg',
+    image: 'images/fruits/quince',
     seasonality: {
       peak: ['Apr', 'May'],
       available: ['Mar']
@@ -450,7 +450,7 @@ export const FRUITS: Fruit[] = [
     id: 'pomegranate',
     name: 'Pomegranate',
     emoji: '❤️',
-    image: '/images/fruits/pomegranate.jpg',
+    image: 'images/fruits/pomegranate',
     seasonality: {
       peak: ['Mar', 'Apr', 'May'],
       available: ['Feb']
@@ -474,7 +474,7 @@ export const FRUITS: Fruit[] = [
     id: 'feijoa',
     name: 'Feijoa',
     emoji: '🥝',
-    image: '/images/fruits/feijoa.jpg',
+    image: 'images/fruits/feijoa',
     seasonality: {
       peak: ['Apr', 'May'],
       available: ['Mar', 'Jun']
@@ -501,7 +501,7 @@ export const FRUITS: Fruit[] = [
     id: 'orange',
     name: 'Orange',
     emoji: '🍊',
-    image: '/images/fruits/orange.jpg',
+    image: 'images/fruits/orange',
     seasonality: {
       peak: ['Jun', 'Jul', 'Aug'],
       available: ['May', 'Sep']
@@ -526,7 +526,7 @@ export const FRUITS: Fruit[] = [
     id: 'mandarin',
     name: 'Mandarin',
     emoji: '🍊',
-    image: '/images/fruits/mandarin.jpg',
+    image: 'images/fruits/mandarin',
     seasonality: {
       peak: ['Jun', 'Jul', 'Aug'],
       available: ['May', 'Sep']
@@ -551,7 +551,7 @@ export const FRUITS: Fruit[] = [
     id: 'grapefruit',
     name: 'Grapefruit',
     emoji: '🍊',
-    image: '/images/fruits/grapefruit.jpg',
+    image: 'images/fruits/grapefruit',
     seasonality: {
       peak: ['Jun', 'Jul', 'Aug'],
       available: ['May', 'Sep']
@@ -576,7 +576,7 @@ export const FRUITS: Fruit[] = [
     id: 'lemon',
     name: 'Lemon',
     emoji: '🍋',
-    image: '/images/fruits/lemon.jpg',
+    image: 'images/fruits/lemon',
     seasonality: {
       peak: ['Jun', 'Jul', 'Aug'],
       available: ['May', 'Sep', 'Oct']
@@ -600,7 +600,7 @@ export const FRUITS: Fruit[] = [
     id: 'lime',
     name: 'Lime',
     emoji: '🍋',
-    image: '/images/fruits/lime.jpg',
+    image: 'images/fruits/lime',
     seasonality: {
       peak: ['Jun', 'Jul', 'Aug'],
       available: ['May', 'Sep']
@@ -624,7 +624,7 @@ export const FRUITS: Fruit[] = [
     id: 'kiwifruit',
     name: 'Kiwifruit',
     emoji: '🥝',
-    image: '/images/fruits/kiwifruit.jpg',
+    image: 'images/fruits/kiwifruit',
     seasonality: {
       peak: ['Jun', 'Jul', 'Aug'],
       available: ['May', 'Sep']
@@ -649,7 +649,7 @@ export const FRUITS: Fruit[] = [
     id: 'avocado',
     name: 'Avocado',
     emoji: '🥑',
-    image: '/images/fruits/avocado.jpg',
+    image: 'images/fruits/avocado',
     seasonality: {
       peak: ['Jun', 'Jul', 'Aug', 'Sep'],
       available: ['May', 'Oct']
@@ -673,7 +673,7 @@ export const FRUITS: Fruit[] = [
     id: 'custard-apple',
     name: 'Custard Apple',
     emoji: '💚',
-    image: '/images/fruits/custard-apple.jpg',
+    image: 'images/fruits/custard-apple',
     seasonality: {
       peak: ['Jun', 'Jul', 'Aug'],
       available: ['May']
@@ -698,7 +698,7 @@ export const FRUITS: Fruit[] = [
     id: 'tangelo',
     name: 'Tangelo',
     emoji: '🍊',
-    image: '/images/fruits/tangelo.jpg',
+    image: 'images/fruits/tangelo',
     seasonality: {
       peak: ['Jul', 'Aug'],
       available: ['Jun', 'Sep']
@@ -725,7 +725,7 @@ export const FRUITS: Fruit[] = [
     id: 'strawberry',
     name: 'Strawberry',
     emoji: '🍓',
-    image: '/images/fruits/strawberry.jpg',
+    image: 'images/fruits/strawberry',
     seasonality: {
       peak: ['Sep', 'Oct', 'Nov'],
       available: ['Aug', 'Dec']
@@ -750,7 +750,7 @@ export const FRUITS: Fruit[] = [
     id: 'raspberry',
     name: 'Raspberry',
     emoji: '🔴',
-    image: '/images/fruits/raspberry.jpg',
+    image: 'images/fruits/raspberry',
     seasonality: {
       peak: ['Oct', 'Nov', 'Dec'],
       available: ['Sep', 'Jan']
@@ -774,7 +774,7 @@ export const FRUITS: Fruit[] = [
     id: 'banana',
     name: 'Banana',
     emoji: '🍌',
-    image: '/images/fruits/banana.jpg',
+    image: 'images/fruits/banana',
     seasonality: {
       peak: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
       available: ['Apr', 'May', 'Jun', 'Jul', 'Aug']
@@ -799,7 +799,7 @@ export const FRUITS: Fruit[] = [
     id: 'pineapple',
     name: 'Pineapple',
     emoji: '🍍',
-    image: '/images/fruits/pineapple.jpg',
+    image: 'images/fruits/pineapple',
     seasonality: {
       peak: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
       available: ['Sep', 'Mar']
@@ -824,7 +824,7 @@ export const FRUITS: Fruit[] = [
     id: 'papaya',
     name: 'Papaya',
     emoji: '🧡',
-    image: '/images/fruits/papaya.jpg',
+    image: 'images/fruits/papaya',
     seasonality: {
       peak: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
       available: ['Aug', 'Mar']
@@ -849,7 +849,7 @@ export const FRUITS: Fruit[] = [
     id: 'rhubarb',
     name: 'Rhubarb',
     emoji: '🌿',
-    image: '/images/fruits/rhubarb.jpg',
+    image: 'images/fruits/rhubarb',
     seasonality: {
       peak: ['Sep', 'Oct', 'Nov'],
       available: ['Aug', 'Dec']
@@ -874,7 +874,7 @@ export const FRUITS: Fruit[] = [
     id: 'mulberry',
     name: 'Mulberry',
     emoji: '🫐',
-    image: '/images/fruits/mulberry.jpg',
+    image: 'images/fruits/mulberry',
     seasonality: {
       peak: ['Oct', 'Nov'],
       available: ['Sep', 'Dec']
@@ -901,7 +901,7 @@ export const FRUITS: Fruit[] = [
     id: 'coconut',
     name: 'Coconut',
     emoji: '🥥',
-    image: '/images/fruits/coconut.jpg',
+    image: 'images/fruits/coconut',
     seasonality: {
       peak: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       available: []
@@ -925,7 +925,7 @@ export const FRUITS: Fruit[] = [
     id: 'dragon-fruit',
     name: 'Dragon Fruit',
     emoji: '🩷',
-    image: '/images/fruits/dragon-fruit.jpg',
+    image: 'images/fruits/dragon-fruit',
     seasonality: {
       peak: ['Jan', 'Feb', 'Nov', 'Dec'],
       available: ['Oct', 'Mar']
@@ -950,7 +950,7 @@ export const FRUITS: Fruit[] = [
     id: 'starfruit',
     name: 'Starfruit',
     emoji: '⭐',
-    image: '/images/fruits/starfruit.jpg',
+    image: 'images/fruits/starfruit',
     seasonality: {
       peak: ['Nov', 'Dec', 'Jan', 'Feb'],
       available: ['Oct', 'Mar']

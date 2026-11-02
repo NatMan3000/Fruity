@@ -1,5 +1,8 @@
-import { useState } from 'react'
-import type { Fruit, Season } from './types/fruit'
+import type { Season } from './types/fruit'
+import { SEASONS } from './types/fruit'
+import { useRoute, navigate, goBack } from './hooks/useRoute'
+import { useStoredState } from './hooks/useStoredState'
+import type { Route } from './utils/route'
 import { useCurrentMonth } from './hooks/useCurrentMonth'
 import { useFruits } from './hooks/useFruits'
 import { SearchBar } from './components/SearchBar'
@@ -14,14 +17,17 @@ import { FruitSaladPage } from './components/salad/FruitSaladPage'
 import { FRUITS } from './assets/fruits'
 import './index.css'
 
-type ViewMode = 'browse' | 'calendar' | 'quiz' | 'salad'
+const isString = (v: unknown): v is string => typeof v === 'string'
+const isBool = (v: unknown): v is boolean => typeof v === 'boolean'
+const isSeasonOrNull = (v: unknown): v is Season | null => v === null || (typeof v === 'string' && v in SEASONS)
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedSeason, setSelectedSeason] = useState<Season | null>(null)
-  const [showOnlyInSeason, setShowOnlyInSeason] = useState(false)
-  const [viewMode, setViewMode] = useState<ViewMode>('browse')
-  const [selectedFruit, setSelectedFruit] = useState<Fruit | null>(null)
+  const [searchQuery, setSearchQuery] = useStoredState('fruity.search', '', isString)
+  const [selectedSeason, setSelectedSeason] = useStoredState<Season | null>('fruity.season', null, isSeasonOrNull)
+  const [showOnlyInSeason, setShowOnlyInSeason] = useStoredState('fruity.inSeasonOnly', false, isBool)
+  const route = useRoute()
+  const viewMode = route.name === 'fruit' ? 'browse' : route.name
+  const selectedFruit = route.name === 'fruit' ? FRUITS.find(f => f.id === route.id) ?? null : null
 
   const currentMonth = useCurrentMonth()
 
@@ -32,18 +38,7 @@ function App() {
     showOnlyInSeason
   })
 
-  const handleFruitSelect = (fruitId: string) => {
-    const fruit = FRUITS.find(f => f.id === fruitId)
-    if (fruit) {
-      setSelectedFruit(fruit)
-      // Use instant scroll - smooth can conflict with React re-render on mobile
-      window.scrollTo(0, 0)
-    }
-  }
-
-  const handleBackFromDetail = () => {
-    setSelectedFruit(null)
-  }
+  const handleFruitSelect = (fruitId: string) => navigate({ name: 'fruit', id: fruitId })
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-yellow-400 to-green-400">
@@ -72,14 +67,14 @@ function App() {
           <div className="max-w-4xl mx-auto px-4">
             <div className="flex gap-1">
               {[
-                { id: 'browse' as ViewMode, label: '🍎 Fruits', title: 'Browse Fruits' },
-                { id: 'calendar' as ViewMode, label: '📅 Calendar', title: 'Season Calendar' },
-                { id: 'salad' as ViewMode, label: '🥗 Salad', title: 'Fruit Salad Maker' },
-                { id: 'quiz' as ViewMode, label: '🎯 Quiz', title: 'Guess the Fruit' }
+                { id: 'browse' as const, label: '🍎 Fruits', title: 'Browse Fruits' },
+                { id: 'calendar' as const, label: '📅 Calendar', title: 'Season Calendar' },
+                { id: 'salad' as const, label: '🥗 Salad', title: 'Fruit Salad Maker' },
+                { id: 'quiz' as const, label: '🎯 Quiz', title: 'Guess the Fruit' }
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setViewMode(tab.id)}
+                  onClick={() => navigate({ name: tab.id } as Route)}
                   className={`px-4 py-3 text-sm font-medium transition-colors ${
                     viewMode === tab.id
                       ? 'text-emerald-700 border-b-2 border-emerald-500'
@@ -102,7 +97,7 @@ function App() {
           <FruitDetail
             fruit={selectedFruit}
             currentMonth={currentMonth}
-            onBack={handleBackFromDetail}
+            onBack={goBack}
           />
         )}
 

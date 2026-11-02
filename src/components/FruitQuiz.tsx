@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import clsx from 'clsx'
 import { RotateCcw } from 'lucide-react'
 import type { Fruit } from '../types/fruit'
@@ -13,41 +13,38 @@ interface QuizQuestion {
   cluesRevealed: number // 0 = none, 1 = seasonality, 2 = pairings
 }
 
+function buildQuestions(fruits: Fruit[]): QuizQuestion[] {
+  // Pick 5 random fruits for questions
+  const shuffled = [...fruits].sort(() => Math.random() - 0.5)
+  const selectedFruits = shuffled.slice(0, 5)
+
+  return selectedFruits.map((correctFruit) => {
+    // Generate 3 wrong answers
+    const wrongAnswers = fruits
+      .filter((f) => f.id !== correctFruit.id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+
+    // Shuffle correct + wrong options
+    const options = [correctFruit, ...wrongAnswers].sort(() => Math.random() - 0.5)
+
+    return {
+      correctFruit,
+      options,
+      cluesRevealed: 0
+    }
+  })
+}
+
 export function FruitQuiz({ fruits }: FruitQuizProps) {
-  const [questions, setQuestions] = useState<QuizQuestion[]>([])
+  const [questions, setQuestions] = useState<QuizQuestion[]>(() => buildQuestions(fruits))
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [score, setScore] = useState({ correct: 0, total: 0 })
   const [showBlur, setShowBlur] = useState(true)
 
-  // Initialize game
-  useEffect(() => {
-    startNewGame()
-  }, [fruits])
-
   const startNewGame = () => {
-    // Pick 5 random fruits for questions
-    const shuffled = [...fruits].sort(() => Math.random() - 0.5)
-    const selectedFruits = shuffled.slice(0, 5)
-
-    const newQuestions = selectedFruits.map((correctFruit) => {
-      // Generate 3 wrong answers
-      const wrongAnswers = fruits
-        .filter((f) => f.id !== correctFruit.id)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3)
-
-      // Shuffle correct + wrong options
-      const options = [correctFruit, ...wrongAnswers].sort(() => Math.random() - 0.5)
-
-      return {
-        correctFruit,
-        options,
-        cluesRevealed: 0
-      }
-    })
-
-    setQuestions(newQuestions)
+    setQuestions(buildQuestions(fruits))
     setCurrentQuestionIndex(0)
     setSelectedAnswer(null)
     setScore({ correct: 0, total: 0 })

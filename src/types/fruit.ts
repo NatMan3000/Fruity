@@ -26,7 +26,7 @@ export interface Fruit {
   id: string
   name: string
   emoji: string
-  image?: string                // Wikimedia Commons image URL
+  image?: string                // Stem 'images/fruits/<id>'; files are <stem>-480.webp and <stem>-960.webp (scripts/build-images.ts)
   seasonality: FruitSeasonality
   notes?: string
   origin?: string               // Where the fruit originates from

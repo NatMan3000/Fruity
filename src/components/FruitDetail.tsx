@@ -3,6 +3,7 @@ import type { Fruit, Month } from '../types/fruit'
 import { MONTHS } from '../types/fruit'
 import { MonthBadge } from './MonthBadge'
 import { isPeakSeason, isInSeason } from '../utils/seasonality'
+import { fruitImageUrl } from '../utils/images'
 
 interface FruitDetailProps {
   fruit: Fruit
@@ -100,7 +101,7 @@ export function FruitDetail({ fruit, currentMonth, onBack }: FruitDetailProps) {
           {fruit.image && (
             <div className="md:w-1/2 relative bg-gradient-to-b from-gray-100 to-gray-50 order-first md:order-last">
               <img
-                src={`${import.meta.env.BASE_URL}${fruit.image.replace(/^\//, '')}`}
+                src={fruitImageUrl(fruit, 960)}
                 alt={fruit.name}
                 className="w-full h-64 md:h-full object-cover"
                 onError={(e) => {

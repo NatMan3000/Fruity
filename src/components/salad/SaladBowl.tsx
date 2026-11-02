@@ -279,8 +279,8 @@ export function SaladBowl({ fruits, isMixing, hasBeenMixed }: SaladBowlProps) {
                 dominantBaseline="middle"
                 className={isMixing ? 'animate-fruit-mix' : ''}
                 style={isMixing ? {
-                  '--mix-offset-x': `${8 + Math.random() * 8}px`,
-                  '--mix-offset-y': `${4 + Math.random() * 4}px`,
+                  '--mix-offset-x': `${8 + ((i * 7) % 8)}px`,
+                  '--mix-offset-y': `${4 + ((i * 5) % 4)}px`,
                   animationDelay: `${i * 0.05}s`,
                 } as React.CSSProperties : undefined}
               >

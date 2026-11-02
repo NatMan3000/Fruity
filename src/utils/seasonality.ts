@@ -8,7 +8,7 @@ export function getCurrentMonth(): Month {
 
 export function getCurrentSeason(): Season {
   const month = getCurrentMonth()
-  const entry = Object.entries(SEASONS).find(([_, months]) =>
+  const entry = Object.entries(SEASONS).find(([, months]) =>
     months.includes(month)
   )
   return (entry?.[0] as Season) || 'Summer'

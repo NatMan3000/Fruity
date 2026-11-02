@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import clsx from 'clsx'
 import type { Fruit, Month, RecipeSuggestion } from '../types/fruit'
 import { isPeakSeason } from '../utils/seasonality'
@@ -13,20 +14,16 @@ interface RecipeWithFruit extends RecipeSuggestion {
 }
 
 export function RecipeSuggestions({ fruits, currentMonth, onFruitClick }: RecipeSuggestionsProps) {
-  // Get all recipes from fruits currently in peak season
-  const recipesWithFruits: RecipeWithFruit[] = []
-
-  fruits.forEach((fruit) => {
-    if (isPeakSeason(fruit, currentMonth) && fruit.recipes) {
-      fruit.recipes.forEach((recipe) => {
-        recipesWithFruits.push({ ...recipe, fruit })
-      })
-    }
+  // Pick 3-6 random recipes from fruits in peak season, once per mount
+  const [selectedRecipes] = useState<RecipeWithFruit[]>(() => {
+    const all: RecipeWithFruit[] = []
+    fruits.forEach((fruit) => {
+      if (isPeakSeason(fruit, currentMonth) && fruit.recipes) {
+        fruit.recipes.forEach((recipe) => all.push({ ...recipe, fruit }))
+      }
+    })
+    return all.sort(() => Math.random() - 0.5).slice(0, 6)
   })
-
-  // Shuffle and select 3-6 recipes
-  const shuffled = recipesWithFruits.sort(() => Math.random() - 0.5)
-  const selectedRecipes = shuffled.slice(0, Math.min(6, shuffled.length))
 
   if (selectedRecipes.length === 0) return null
 
