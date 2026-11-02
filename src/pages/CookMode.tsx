@@ -8,6 +8,7 @@ import { goBack } from '../hooks/useRoute'
 import { canWakeLock, useWakeLock } from '../hooks/useWakeLock'
 import { mainFruit, stepIngredients, stepTimers } from '../utils/recipes'
 import { scaleQty } from '../utils/scale'
+import { dishUrl } from '../utils/images'
 import { FruitSticker } from '../components/FruitSticker'
 
 // Cook mode: the recipe one step at a time in big type, full screen over the tab bar, on the main fruit's
@@ -164,7 +165,11 @@ export default function CookMode({ recipe }: { recipe: Recipe }) {
             <span className="text-caption font-extrabold tracking-[0.06em] text-(--ink-soft) uppercase">Cooking</span>
             <span className="font-display text-[1.25rem] leading-tight break-words">{recipe.name}</span>
           </div>
-          {main && <FruitSticker fruit={main} size={52} />}
+          {/* The finished dish as a thumbnail, its fruit stuck on the corner */}
+          <span className="relative shrink-0" aria-hidden="true">
+            <img src={dishUrl(recipe.id, 720)} alt="" width={64} height={64} decoding="async" draggable={false} className="block size-16 rounded-[18px] bg-(--deep) object-cover object-[50%_60%] ring-[3px] ring-(--bright)" />
+            {main && <span className="absolute -right-2 -bottom-2"><FruitSticker fruit={main} size={32} /></span>}
+          </span>
         </header>
 
         {/* Progress dots: one per step, each a button */}

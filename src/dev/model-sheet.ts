@@ -21,7 +21,7 @@ scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture
 scene.environmentIntensity = 0.55
 scene.add(new THREE.HemisphereLight('#FFF4E0', '#6A3A5A', 1.1))
 const key = new THREE.DirectionalLight('#ffffff', 2.4)
-key.position.set(2.5, 5, 3)
+key.position.set(1.4, 6, 2.2) // the fruit page's key light (SpinFruit)
 key.castShadow = true
 key.shadow.mapSize.set(1024, 1024)
 key.shadow.bias = -0.0004
@@ -46,11 +46,45 @@ camera.updateMatrixWorld()
 const SIZE = 1.9
 
 declare global {
-  interface Window { renderFruit: (id: string, cut: boolean, turn?: number) => { url: string; overlaps: string[] }; fruitIds: string[] }
+  interface Window { renderFruit: (id: string, cut: boolean, turn?: number, after?: number) => { url: string; overlaps: string[] }; fruitIds: string[] }
+}
+
+// Leaves that lie on the skin (a strawberry's sepals and stem, tagged `hug` in models.ts) must sit just
+// above it, never inside or through it: each of their vertices is tested against the fruit's solid body
+// (its closed parts) by ray parity.
+function hugOverlaps(root: THREE.Object3D): string[] {
+  root.updateMatrixWorld(true)
+  const probes: THREE.Mesh[] = []
+  const hugs: THREE.Mesh[] = []
+  const twoSided = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide })
+  root.traverse(o => {
+    const m = o as THREE.Mesh
+    if (!m.isMesh) return
+    if (m.userData.solid) {
+      const p = new THREE.Mesh(m.geometry, twoSided)
+      p.matrixAutoUpdate = false
+      p.matrixWorld.copy(m.matrixWorld)
+      probes.push(p)
+    }
+    if (m.userData.hug) hugs.push(m)
+  })
+  const ray = new THREE.Raycaster()
+  const dir = new THREE.Vector3(0.13, 0.98, 0.09).normalize()
+  let inside = 0
+  const v = new THREE.Vector3()
+  for (const h of hugs) {
+    const pos = h.geometry.getAttribute('position')
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i).applyMatrix4(h.matrixWorld)
+      ray.set(v, dir)
+      if (ray.intersectObjects(probes, false).length % 2 === 1) inside++
+    }
+  }
+  return inside ? [`${inside} leaf vertices inside the body`] : []
 }
 
 window.fruitIds = FRUITS.map(f => f.id)
-window.renderFruit = (id, cut, turn = -0.5) => {
+window.renderFruit = (id, cut, turn = -0.5, after = 0) => {
   const fruit = FRUITS.find(f => f.id === id)!
   const t = tonesOf(fruit.colour)
   renderer.setClearColor(t.pop)
@@ -60,7 +94,7 @@ window.renderFruit = (id, cut, turn = -0.5) => {
   group.scale.setScalar(SIZE)
   group.rotation.y = turn
   scene.add(group)
-  let overlaps: string[] = []
+  let overlaps: string[] = hugOverlaps(group)
   if (cut) {
     const parts = cutParts(group)
     if (parts) {
@@ -68,9 +102,10 @@ window.renderFruit = (id, cut, turn = -0.5) => {
       c.target = 1
       c.p = 1
       stepCut(c, 0)
-      overlaps = cutOverlaps(group, parts.map(p => p.part))
+      overlaps = [...overlaps, ...cutOverlaps(group, parts.map(p => p.part))]
     }
   }
+  group.rotation.y += after // turn the whole scene round (the halves' skin sides)
   renderer.render(scene, camera)
   const url = canvas.toDataURL('image/png')
   scene.remove(group)

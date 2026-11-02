@@ -10,12 +10,13 @@
     "build": "bun run validate && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "images": "bun scripts/build-images.ts && bun scripts/contact-sheet.ts",
+    "images": "bun scripts/build-images.ts",
     "icons": "bun scripts/build-icons.ts",
     "art:import": "bun scripts/import-art.ts",
     "stickers": "bun scripts/build-stickers.ts",
-    "art": "bun run art:import && bun run images && bun run stickers",
-    "models:sheet": "bun scripts/model-sheet.ts"
+    "art": "bun run art:import && bun run images && bun run stickers && bun run dishes",
+    "models:sheet": "bun scripts/model-sheet.ts",
+    "dishes": "bun scripts/build-dishes.ts"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

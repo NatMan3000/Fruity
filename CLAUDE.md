@@ -42,8 +42,9 @@ bun run build     # Validate data, type-check, production build
 bun run test      # Vitest (run touched files with --maxWorkers=2)
 bun run lint      # ESLint
 bun run preview   # Preview production build
-bun run art       # New fruit art in one step: import from ~/.cache/kai-tmp/fruity-art, build the webps
-                  # and art-manifest.json, then the white-edged stickers (macOS: Apple Vision cut-out)
+bun run art       # New fruit art in one step: import from ~/.cache/kai-tmp/fruity-art, build the studio photos
+                  # and art-manifest.json, then the white-edged stickers (macOS: Apple Vision cut-out),
+                  # then the recipe dish photos from ~/.cache/kai-tmp/fruity-dishes (bun run dishes)
 ```
 
 ---
@@ -72,7 +73,8 @@ src/
 ├── App.tsx                   # Shell: routes, screen tones, tab bar, bag sheet
 └── index.css                 # Tokens (@theme), fonts, motion keyframes
 scripts/                      # validate-data, build-images, build-stickers (+ subject-mask.swift),
-                              # import-art, build-icons, colour-contrast.test.ts
+                              # build-dishes, import-art + originals (PNG to JPEG originals), build-icons,
+                              # colour-contrast.test.ts
 ```
 
 ---

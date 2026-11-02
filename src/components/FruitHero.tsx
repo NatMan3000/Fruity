@@ -7,6 +7,7 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
 import type { Fruit } from '../types/fruit'
 import type { CutNews } from '../three/cutting'
+import { BLOB } from '../three/framing'
 import { MODELLED } from '../three/modelled'
 import { tonesOf } from '../utils/tones'
 import { FruitSticker } from './FruitSticker'
@@ -15,6 +16,11 @@ import { Fallback, Slash } from './Lazy3D'
 import { SliceButton } from './SliceButton'
 
 const SpinFruit = lazy(() => import('../three/SpinFruit'))
+
+// The blob sits a little below the top bar with the canvas centred on it; the Slice button hangs half
+// off its lower edge, which sets the hero's height.
+const BLOB_TOP = 10
+const CANVAS_H = BLOB_TOP * 2 + BLOB.height
 
 export function FruitHero({ fruit }: { fruit: Fruit }) {
   const three = webgl && MODELLED.has(fruit.id)
@@ -33,29 +39,41 @@ export function FruitHero({ fruit }: { fruit: Fruit }) {
 
   // The sticker: still while the 3D fruit is on its way, dropping in by itself when it is the hero.
   const poster = (
-    <div className="absolute inset-x-0 bottom-2 flex justify-center" aria-hidden="true">
+    <div className="absolute inset-x-0 top-0 flex items-center justify-center" style={{ height: CANVAS_H }} aria-hidden="true">
       <div className={three ? undefined : 'drop-squash'}>
-        <FruitSticker fruit={fruit} size={250} tilt={-3} eager />
+        <FruitSticker fruit={fruit} size={Math.round(BLOB.height * 0.72)} tilt={-3} eager />
       </div>
     </div>
   )
 
   return (
+    // Every size is fixed up front (the blob, the canvas, the button), so nothing moves when the 3D
+    // canvas or the fonts arrive. The canvas is centred on the blob; SpinFruit centres the fruit in it.
     <div
-      className="relative h-[300px] overflow-x-clip"
+      className="relative overflow-x-clip"
+      style={{ height: CANVAS_H + 30 }}
       role="group"
       aria-label={three ? `${fruit.name}. Drag to turn it, tap it to cut it open.` : fruit.name}
     >
-      <span aria-hidden="true" className="blob-in absolute top-4 left-1/2 h-[250px] w-[290px] -translate-x-1/2 rounded-[58%_42%_49%_51%/46%_55%_45%_54%] bg-(--bright)" />
+      <span
+        aria-hidden="true"
+        className="blob-in absolute left-1/2 -translate-x-1/2 rounded-[58%_42%_49%_51%/46%_55%_45%_54%] bg-(--bright)"
+        style={{ top: BLOB_TOP, width: BLOB.width, height: BLOB.height }}
+      />
       {three && ready ? (
         <Fallback poster={poster}>
           <Suspense fallback={poster}>
-            <SpinFruit fruit={like} shade={tonesOf(fruit.colour).ink} slice={slice} onCut={onCut} className="absolute inset-0" />
+            <SpinFruit fruit={like} shade={tonesOf(fruit.colour).ink} slice={slice} onCut={onCut} className="absolute inset-x-0 top-0" style={{ height: CANVAS_H }} />
           </Suspense>
         </Fallback>
       ) : poster}
       <Slash at={slash} />
-      {three && <SliceButton onSlice={() => setSlice(s => s + 1)} label={open ? 'Put back' : 'Slice'} className="absolute right-4 bottom-1" />}
+      {/* The knife hangs from the middle of the blob's lower edge, half on it, in ink so it reads on both */}
+      {three && (
+        <div className="absolute inset-x-0 flex justify-center" style={{ top: BLOB_TOP + BLOB.height - 22 }}>
+          <SliceButton onSlice={() => setSlice(s => s + 1)} label={open ? 'Put back' : 'Slice'} tone="ink" />
+        </div>
+      )}
       <p aria-live="polite" className="sr-only">{said}</p>
     </div>
   )

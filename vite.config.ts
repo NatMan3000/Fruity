@@ -50,9 +50,11 @@ export default defineConfig({
       },
       workbox: {
         // Precache the fruit stickers, the two fonts and the 3D hero (three.js): at the shops an unvisited
-        // fruit page must still show its art offline, and Now's dish must still drop in. The old 4:3
-        // photos and round icons (<id>-480/-960/-icon.webp) are no longer drawn, so they are left out.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}', 'images/fruits/*-sticker*.webp'],
+        // fruit page must still show its art offline, and Now's dish must still drop in. The studio
+        // photos (<id>-photo-720.webp) are runtime-cached below instead.
+        // Recipe dish photos: the 720 card size is precached (every card shows one); the 1200 heroes
+        // are cached as each recipe is opened (below), and offline the hero falls back to its 720.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}', 'images/fruits/*-sticker*.webp', 'images/dishes/*-720.webp'],
         // The Fruit Salad Cafe's 3D bowl (three + Rapier physics, about 1.1 MB gzipped) is not
         // precached for everyone: it is cached the first time the game opens, then works offline.
         globIgnores: ['**/BowlScene-*.js'],
@@ -61,6 +63,17 @@ export default defineConfig({
             urlPattern: ({ url }) => /\/assets\/BowlScene-[\w-]+\.js$/.test(url.pathname),
             handler: 'CacheFirst',
             options: { cacheName: 'fruity-cafe-3d', expiration: { maxEntries: 2 } }
+          },
+          {
+            urlPattern: ({ url }) => /\/images\/dishes\/[\w-]+-1200\.webp$/.test(url.pathname),
+            handler: 'CacheFirst',
+            options: { cacheName: 'fruity-dishes', expiration: { maxEntries: 40 } }
+          },
+          {
+            // A fruit's studio photo shows only when its "More about it" is opened
+            urlPattern: ({ url }) => /\/images\/fruits\/[\w-]+-photo-720\.webp$/.test(url.pathname),
+            handler: 'CacheFirst',
+            options: { cacheName: 'fruity-fruit-photos', expiration: { maxEntries: 45 } }
           }
         ]
       }

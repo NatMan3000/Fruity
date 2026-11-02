@@ -509,16 +509,98 @@ function strawberry(id: string): THREE.Object3D {
   const seed = new THREE.SphereGeometry(0.026, 6, 4)
   seed.scale(0.8, 0.45, 1.1)
   const seedMat = skin({ colour: '#F2C94A', roughness: 0.4 })
-  const pts = surfacePoints(110, 0.3, Math.PI * 0.86, shape)
+  // Seeds stop short of the shoulders, which the sepals cover
+  const pts = surfacePoints(110, 0.3, Math.PI * 0.8, shape)
   a.add(scatter(seed, seedMat, pts.filter(p => p.p.z >= 0), -0.004))
-  innerOf(group.children[1]).add(scatter(seed, seedMat, pts.filter(p => p.p.z < 0), -0.004))
-  const cap = calyx(8, 0.62, 0.15, 0.18)
-  cap.position.y = 0.94
-  a.add(cap)
-  const s = stem(0.22, 0.03, 0.05, leafMat)
-  s.position.y = 0.92
-  a.add(s)
+  const b = innerOf(group.children[1])
+  b.add(scatter(seed, seedMat, pts.filter(p => p.p.z < 0), -0.004))
+  // The calyx (Nathan, 3 Nov 2026: the stiff crown sat on top like a hat and its tips poked through the
+  // skin): ten thin sepals lying down and out over the shoulders, a short stem in the middle. Each half
+  // carries the five on its side, and half the stem, so a lengthways cut leaves nothing floating.
+  const sepals = { n: 10, reach: 0.85, width: 0.085, seed: 7 }
+  a.add(shoulderSepals(shape, { ...sepals, half: 'a' }), halfStem(shape, 0.035, 0.13, 'a'))
+  b.add(shoulderSepals(shape, { ...sepals, half: 'b' }), halfStem(shape, 0.035, 0.13, 'b'))
   return g
+}
+
+// Sepals lying on a round body's shoulders (a strawberry's calyx). Each is a thin blade built on the
+// body's own surface and lifted just off it along the normal, so it follows the curve and never passes
+// through the skin: narrow at the stem, widest a third of the way, a point at the tip, edges a little
+// ragged, the tip lifting slightly. Darker green with a lighter midrib (vertex colours). Built for one
+// half of a lengthways cut ('a' is z >= 0, 'b' is z < 0): sepals sit wholly inside their half's turn.
+// Tagged `hug` for the model sheet's check that no vertex is inside the body.
+const sepalMat = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.55, clearcoat: 0.25, side: THREE.DoubleSide })
+function shoulderSepals(shape: Shape, { n, reach, width, seed, half }: { n: number; reach: number; width: number; seed: number; half: 'a' | 'b' }): THREE.Mesh {
+  const dark = C('#2C6620'), rib = C('#78B04A'), tmp = new THREE.Color()
+  const rand = (i: number, k: number) => { const x = Math.sin((i + 1) * 127.1 + k * 311.7 + seed) * 43758.5453; return x - Math.floor(x) }
+  const point = (phi: number, theta: number) => { const { r, y } = shape(phi, theta); return new THREE.Vector3(r * Math.cos(theta), y, r * Math.sin(theta)) }
+  const normalAt = (phi: number, theta: number) => {
+    const e = 1e-3
+    const dPhi = point(phi + e, theta).sub(point(phi - e, theta))
+    const dTheta = point(phi, theta + e).sub(point(phi, theta - e))
+    const nrm = new THREE.Vector3().crossVectors(dTheta, dPhi).normalize()
+    return nrm.dot(point(phi, theta)) < 0 ? nrm.negate() : nrm
+  }
+  const T = 16, S = 7 // samples along and across each sepal
+  const pos: number[] = [], col: number[] = [], idx: number[] = []
+  const step = TAU / n
+  for (let i = 0; i < n; i++) {
+    const jitter = (rand(i, 0) - 0.5) * 0.12
+    const centre = step / 2 + i * step + jitter
+    if ((centre < Math.PI) !== (half === 'a')) continue
+    const maxAng = step / 2 - Math.abs(jitter) - 0.03 // never reaches the cut plane or the next sepal
+    const len = reach * (0.82 + 0.3 * rand(i, 1)), wide = width * (0.85 + 0.3 * rand(i, 2))
+    const base = pos.length / 3
+    for (let t = 0; t <= T; t++) {
+      const u = t / T
+      const phi = Math.PI - 0.05 - u * len
+      const w = wide * (Math.pow(Math.sin(Math.PI * Math.pow(u, 0.6)), 0.9) + 0.15 * (1 - u))
+      const { r } = shape(phi, centre)
+      for (let k = 0; k <= S; k++) {
+        const sAcross = (k / S) * 2 - 1
+        const ragged = 1 + 0.12 * Math.sin(u * 23 + i * 1.7 + sAcross * 2.1)
+        const ang = Math.max(-maxAng, Math.min(maxAng, (sAcross * w * ragged) / Math.max(r, 1e-3)))
+        const theta = centre + ang
+        const lift = 0.012 + 0.018 * u * u + 0.007 * (1 - Math.abs(sAcross)) // tip curls up, midrib a ridge
+        const p = point(phi, theta).addScaledVector(normalAt(phi, theta), lift)
+        pos.push(p.x, p.y, p.z)
+        lerpC(tmp, dark, rib, Math.pow(1 - Math.abs(sAcross), 3) * (0.9 - 0.4 * u))
+        col.push(tmp.r, tmp.g, tmp.b)
+      }
+    }
+    const row = S + 1
+    for (let t = 0; t < T; t++) for (let k = 0; k < S; k++) {
+      const a0 = base + t * row + k, b0 = a0 + row
+      idx.push(a0, b0, a0 + 1, b0, b0 + 1, a0 + 1)
+    }
+  }
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3))
+  geo.setIndex(idx)
+  geo.computeVertexNormals()
+  const m = mesh(geo, sepalMat)
+  m.userData.hug = true
+  return m
+}
+
+// Half of a short stem standing on the top of a round body, split down the lengthways cut plane, so
+// each half of the fruit carries its own half. Its foot sits on the surface where the stem meets it.
+const calyxStemMat = new THREE.MeshPhysicalMaterial({ color: C('#4E8A2E'), roughness: 0.6, side: THREE.DoubleSide })
+function halfStem(shape: Shape, radius: number, height: number, half: 'a' | 'b'): THREE.Mesh {
+  // Highest point of the surface within the stem's radius, so the foot is never inside the body
+  let foot = -Infinity
+  for (let phi = Math.PI; phi > Math.PI / 2; phi -= 0.002) {
+    const { r, y } = shape(phi, 0)
+    if (r > radius) break
+    foot = Math.max(foot, y)
+  }
+  // CylinderGeometry puts theta 0 at +z: [-PI/2, PI/2] is the z >= 0 side
+  const geo = new THREE.CylinderGeometry(radius * 0.8, radius, height, 10, 1, false, half === 'a' ? -Math.PI / 2 : Math.PI / 2, Math.PI)
+  geo.translate(0, foot + height / 2 + 0.002, 0)
+  const m = mesh(geo, calyxStemMat)
+  m.userData.hug = true
+  return m
 }
 
 function cherries(): THREE.Object3D {

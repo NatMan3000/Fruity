@@ -1,5 +1,5 @@
 // Die-cut stickers for every fruit with new art (DESIGN.md "Fruit art"): lifts the fruit off its cream
-// studio backdrop and bakes a white sticker edge round it. Writes public/images/fruits/<id>-sticker.webp
+// studio backdrop (images-src/fruits/<id>-art.jpg) and bakes a white sticker edge round it. Writes public/images/fruits/<id>-sticker.webp
 // (640px, the fruit page) and <id>-sticker-sm.webp (256px, rows, rails, the bag), square and transparent.
 // The cut-out matte comes from Apple Vision's "lift subject" (scripts/subject-mask.swift, macOS only),
 // compiled once into ~/.cache/kai-tmp. Generated files are committed; deploy does not run this.
@@ -33,7 +33,7 @@ mkdirSync(OUT, { recursive: true })
 const fresh = (src: string, out: string) => existsSync(out) && statSync(out).mtimeMs >= statSync(src).mtimeMs
 
 async function sticker(id: string) {
-  const src = join(SRC, `${id}.png`)
+  const src = join(SRC, `${id}-art.jpg`)
   const large = join(OUT, `${id}-sticker.webp`), small = join(OUT, `${id}-sticker-sm.webp`)
   if (!force && fresh(src, large) && fresh(src, small)) return 'unchanged'
   const maskPath = join(tmpdir(), `fruity-mask-${id}.png`)

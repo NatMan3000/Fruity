@@ -1,19 +1,22 @@
 // Shared 3D plumbing for the lazy hero chunk: the canvas (render on demand, dpr capped at 2,
 // transparent so the page's sorbet shows through), studio lighting with a generated room for
 // reflections, and a shadow catcher tinted in the page's ink.
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, type CSSProperties, type ReactNode } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 
-export function Stage({ children, camera, className }: {
+export function Stage({ children, camera, className, style, keyLight = [2.5, 5, 3] }: {
   children: ReactNode
   camera: { position: [number, number, number]; fov: number; target: [number, number, number] }
   className?: string
+  style?: CSSProperties
+  keyLight?: [number, number, number] // the shadow-casting light; higher means shorter shadows
 }) {
   return (
-    // pan-y: a vertical swipe over the canvas still scrolls the page; sideways drags reach the scene.
-    <div className={className} style={{ touchAction: 'pan-y' }}>
+    // pan-y: a vertical swipe over the canvas still scrolls the page and sideways drags reach the scene;
+    // a press that starts on the fruit page's fruit cancels its own touchmoves (motion.ts useTrackball).
+    <div className={className} style={{ ...style, touchAction: 'pan-y' }}>
       <Canvas
         frameloop="demand"
         dpr={[1, 2]}
@@ -27,14 +30,14 @@ export function Stage({ children, camera, className }: {
         }}
         style={{ touchAction: 'pan-y' }}
       >
-        <Lights />
+        <Lights keyLight={keyLight} />
         {children}
       </Canvas>
     </div>
   )
 }
 
-function Lights() {
+function Lights({ keyLight }: { keyLight: [number, number, number] }) {
   const get = useThree(s => s.get)
   useEffect(() => {
     const { gl, scene, invalidate } = get()
@@ -55,7 +58,7 @@ function Lights() {
     <>
       <hemisphereLight args={['#FFF4E0', '#6A3A5A', 1.1]} />
       <directionalLight
-        position={[2.5, 5, 3]}
+        position={keyLight}
         intensity={2.4}
         castShadow
         shadow-mapSize={[1024, 1024]}

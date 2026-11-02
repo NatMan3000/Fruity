@@ -211,13 +211,16 @@
   animation: rise 520ms var(--ease-spring) backwards;
 }
 
-/* Fruit page: the blob springs in with a twist, the art drops onto it and squashes as it lands. */
+/* Fruit page: the blob pops in where it rests (scale and fade only; its centring is the `translate`
+   property, which this never touches, so it ends exactly where it sits: it used to animate
+   transform: translateX(-50%) on top of Tailwind's translate, so it came in from the left and jumped,
+   Nathan, 3 Nov 2026). The art drops onto it and squashes as it lands. */
 @keyframes blob-in {
-  from { transform: translateX(-50%) scale(0.4) rotate(-20deg); }
-  to { transform: translateX(-50%); }
+  from { opacity: 0; transform: scale(0.82); }
+  to { opacity: 1; transform: none; }
 }
 .blob-in {
-  animation: blob-in 700ms var(--ease-bounce) backwards;
+  animation: blob-in 260ms var(--ease-out-soft) backwards;
 }
 @keyframes drop-squash {
   0% { transform: translateY(-360px) scale(0.86, 1.16); animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5); }

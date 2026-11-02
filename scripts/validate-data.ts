@@ -77,13 +77,11 @@ export function validateFruits(
       }
     }
 
-    if (typeof f?.image !== 'string' || !f.image) {
-      err('missing image field')
-    } else {
-      for (const size of [480, 960]) {
-        const rel = `public/${f.image.replace(/^\//, '')}-${size}.webp`
-        if (!imageExists(rel)) err(`missing image file ${rel}`)
-      }
+    // The die-cut stickers every fruit is drawn with (no emoji fallback on screen) and the studio photo
+    // in "More about it" (scripts/build-stickers.ts, scripts/build-images.ts)
+    for (const suffix of ['sticker', 'sticker-sm', 'photo-720']) {
+      const rel = `public/images/fruits/${id}-${suffix}.webp`
+      if (!imageExists(rel)) err(`missing image file ${rel}`)
     }
 
     if (f?.pairings !== undefined &&
@@ -111,8 +109,12 @@ const MIN_PER_MONTH = 3
 
 // Fails the build on bad recipe data: unknown fruit, 3 to 8 steps, serves or makes, no Unicode dashes,
 // "Ai" not "AI", an oven temperature without its fan-forced figure, and at least 3 recipes a month whose
-// main fruit is at its Victorian peak.
-export function validateRecipes(recipes: readonly unknown[], fruits: readonly unknown[]): string[] {
+// main fruit is at its Victorian peak, and both dish photos for every recipe (scripts/build-dishes.ts).
+export function validateRecipes(
+  recipes: readonly unknown[],
+  fruits: readonly unknown[],
+  imageExists: (relPath: string) => boolean,
+): string[] {
   const errors: string[] = []
   const fruitById = new Map((fruits as Loose[]).map(f => [f?.id as string, f]))
   const seen = new Set<string>()
@@ -122,6 +124,11 @@ export function validateRecipes(recipes: readonly unknown[], fruits: readonly un
     const r = raw as Loose
     const id = typeof r?.id === 'string' && r.id ? r.id : `recipe #${i}`
     const err = (msg: string) => errors.push(`${id}: ${msg}`)
+
+    for (const size of [720, 1200]) {
+      const rel = `public/images/dishes/${id}-${size}.webp`
+      if (!imageExists(rel)) err(`missing dish photo ${rel} (bun run dishes)`)
+    }
 
     if (typeof r?.id !== 'string' || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(r.id)) err('id must be kebab-case')
     else if (seen.has(r.id)) err('duplicate recipe id')
@@ -182,7 +189,8 @@ export function validateRecipes(recipes: readonly unknown[], fruits: readonly un
 
 if (import.meta.main) {
   const root = join(import.meta.dir, '..')
-  const errors = [...validateFruits(FRUITS, rel => existsSync(join(root, rel))), ...validateRecipes(RECIPES, FRUITS)]
+  const exists = (rel: string) => existsSync(join(root, rel))
+  const errors = [...validateFruits(FRUITS, exists), ...validateRecipes(RECIPES, FRUITS, exists)]
   console.log(`validate-data: ${FRUITS.length} fruits, ${RECIPES.length} recipes`)
   if (errors.length) {
     for (const e of errors) console.error(`  ERROR ${e}`)

@@ -3,7 +3,8 @@
 // Chrome, renders through models.html (src/dev/model-sheet.ts), and writes two labelled PNGs plus a
 // full-size image of every cut (outDir/cut/<id>.png) to look at closely.
 // It FAILS (exit 1, red labels) if any cut piece passes through another piece or through what is
-// left of the fruit (oriented-box overlap after layout, 0.01 tolerance): DESIGN.md's cut rule.
+// left of the fruit (oriented-box overlap after layout, 0.01 tolerance): DESIGN.md's cut rule; or if a
+// leaf that lies on the skin (a strawberry's sepals) has any vertex inside the body.
 // Run: bun run models:sheet [outDir]   (default /tmp; macOS Chrome path)
 import sharp from 'sharp'
 import { spawn } from 'node:child_process'

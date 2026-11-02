@@ -13,6 +13,7 @@ import { addRecipe } from '../utils/bag'
 import { formatMinutes, mainFruit, recipeStatus, totalMinutes, TYPE_LABEL } from '../utils/recipes'
 import { scaleQty } from '../utils/scale'
 import { statusWord } from '../utils/status'
+import { dishUrl } from '../utils/images'
 import { FruitSticker } from '../components/FruitSticker'
 import { StatusSticker } from '../components/StatusSticker'
 import { TopBar } from '../components/TopBar'
@@ -39,25 +40,25 @@ export default function RecipePage({ recipe, month }: { recipe: Recipe; month: M
 
   return (
     <article className="flex flex-col pb-8 text-(--ink)">
-      <TopBar back={{ name: 'cook' }} right={<SaveDisc saved={saved} onToggle={() => toggleSaved(recipe.id)} name={recipe.name} />} />
-
-      {/* The main fruit drops onto a blob in its bright tone; any other fruit are slapped on beside it */}
-      <div className="relative h-[230px] overflow-x-clip" aria-hidden="true">
-        <span className="blob-in absolute top-2 left-1/2 h-[200px] w-[260px] -translate-x-1/2 rounded-[58%_42%_49%_51%/46%_55%_45%_54%] bg-(--bright)" />
-        {main && (
-          <div className="absolute inset-x-0 bottom-1 flex justify-center">
-            <div className="drop-squash"><FruitSticker fruit={main} size={190} tilt={-4} eager /></div>
-          </div>
-        )}
-        {extras.slice(0, 2).map((f, i) => (
-          <span key={f.id} className={clsx('absolute', i ? 'top-6 left-[calc(50%-150px)]' : 'right-[calc(50%-150px)] bottom-3')}>
-            <FruitSticker fruit={f} size={84} slap delay={520 + i * 140} tilt={i ? -10 : 12} />
-          </span>
-        ))}
+      {/* The finished dish, edge to edge under the top bar (its discs carry their own colour, so no text
+          sits on the photo); the main fruit drops onto its lower edge, any other fruit slap on beside it */}
+      <div className="relative">
+        <DishHero key={recipe.id} recipe={recipe} />
+        <div className="absolute inset-x-0 top-0 z-10">
+          <TopBar back={{ name: 'cook' }} right={<SaveDisc saved={saved} onToggle={() => toggleSaved(recipe.id)} name={recipe.name} />} />
+        </div>
+        <div className="pointer-events-none absolute right-3 -bottom-16 z-10 flex items-end" aria-hidden="true">
+          {extras.slice(0, 2).map((f, i) => (
+            <span key={f.id} className={clsx('-mr-2', i ? 'mb-[100px]' : 'mb-[68px]')}>
+              <FruitSticker fruit={f} size={72} slap delay={520 + i * 140} tilt={i ? -10 : 12} />
+            </span>
+          )).reverse()}
+          {main && <div className="drop-squash"><FruitSticker fruit={main} size={132} tilt={-4} eager /></div>}
+        </div>
       </div>
 
-      <header className="relative z-10 flex flex-col items-start gap-3 px-5 pt-1">
-        <div className="flex flex-wrap items-center gap-2">
+      <header className="relative flex flex-col items-start gap-3 px-5 pt-6">
+        <div className="flex flex-wrap items-center gap-2 pr-[136px]">
           <span
             className="slap inline-flex h-8 items-center rounded-full bg-(--ink) px-3 text-[13px] font-extrabold tracking-[0.06em] text-(--light) uppercase"
             style={{ '--tilt': '-4deg', '--delay': '560ms', transform: 'rotate(var(--tilt))' } as CSSProperties}
@@ -179,6 +180,24 @@ export default function RecipePage({ recipe, month }: { recipe: Recipe; month: M
         </p>
       </div>
     </article>
+  )
+}
+
+// The 1200 hero is cached the first time a recipe is opened; offline before that, it falls back to the
+// precached 720 card photo rather than a broken image.
+function DishHero({ recipe }: { recipe: Recipe }) {
+  const [small, setSmall] = useState(false)
+  return (
+    <img
+      src={dishUrl(recipe.id, small ? 720 : 1200)}
+      alt={`${recipe.name}, the finished dish`}
+      width={1200}
+      height={900}
+      decoding="async"
+      fetchPriority="high"
+      onError={() => setSmall(true)}
+      className="block aspect-[4/3] max-h-[60dvh] w-full rounded-b-[40px] bg-(--deep) object-cover object-[50%_60%]"
+    />
   )
 }
 

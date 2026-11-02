@@ -1,5 +1,6 @@
 // Motion helpers for the 3D scenes: render-on-demand animation and drag-to-spin.
 import { useEffect, useRef, type RefObject } from 'react'
+import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
 
 export interface FruitLike {
@@ -71,6 +72,111 @@ export function useSpin(start = 0, kick = 0, held?: RefObject<boolean>) {
       }
       st.angle += st.vel * dt
       st.vel *= Math.exp(-dt * 2.6)
+      return true
+    },
+  }
+}
+
+// Free rotation for a single model (a fruit's page), like a model viewer: a drag that STARTS on the
+// fruit (`grab`, from the fruit's own pointerdown, so it is a raycast hit) turns it about the screen axis
+// at right angles to the drag, in any direction (quaternions: no gimbal lock, no limits), and a flick
+// coasts. That press owns the gesture: its touchmoves are cancelled so the page does not scroll under it.
+// A drag that starts on empty canvas only turns it about the vertical, and a vertical one there scrolls
+// the page as usual (touch-action: pan-y). No drift back to upright: it stays as you leave it, like a
+// model viewer, and cutting lays the pieces out from wherever it is. Reduced motion: no arrival spin
+// and no coast; dragging still turns it directly.
+// `held` is true while a press on the fruit is deciding whether it is a cut (a quick flick or a tap)
+// or a turn; nothing turns until it decides.
+export function useTrackball(startYaw = 0, kick = 0, held?: RefObject<boolean>) {
+  const { gl, camera, invalidate } = useThree()
+  const s = useRef({
+    q: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), startYaw),
+    w: new THREE.Vector3(0, reducedMotion() ? 0 : kick, 0), // angular velocity, rad/s, world axes
+    dragging: false,
+    free: false,
+    grabbedAt: -1,
+    lastX: 0,
+    lastY: 0,
+    lastT: 0,
+  })
+  useEffect(() => {
+    const el = gl.domElement
+    const axis = new THREE.Vector3(), turn = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0)
+    const down = (e: PointerEvent) => {
+      const st = s.current
+      st.dragging = true
+      st.free = st.grabbedAt === e.timeStamp // the fruit's own handler ran first for this press
+      st.lastX = e.clientX
+      st.lastY = e.clientY
+      st.lastT = e.timeStamp
+      st.w.set(0, 0, 0)
+    }
+    const move = (e: PointerEvent) => {
+      const st = s.current
+      if (!st.dragging) return
+      const dx = e.clientX - st.lastX, dy = e.clientY - st.lastY
+      const dt = Math.max(1, e.timeStamp - st.lastT) / 1000
+      st.lastX = e.clientX
+      st.lastY = e.clientY
+      st.lastT = e.timeStamp
+      if (held?.current) return // still deciding: keep in step, hold still
+      let angle: number
+      if (st.free) {
+        // Drag right turns about the screen's up axis, drag down about its right axis
+        angle = Math.hypot(dx, dy) * 0.012
+        if (angle === 0) return
+        axis.set(dy, dx, 0).normalize().applyQuaternion(camera.quaternion)
+      } else {
+        angle = Math.abs(dx) * 0.012
+        if (angle === 0) return
+        axis.copy(up).multiplyScalar(Math.sign(dx))
+      }
+      st.q.premultiply(turn.setFromAxisAngle(axis, angle)).normalize()
+      st.w.multiplyScalar(0.5).addScaledVector(axis, (angle / dt) * 0.5)
+      invalidate()
+    }
+    const end = () => {
+      const st = s.current
+      st.dragging = false
+      st.free = false
+      if (reducedMotion()) st.w.set(0, 0, 0)
+      invalidate()
+    }
+    // The press that started on the fruit keeps the page still (iOS and Chrome scroll on touchmove).
+    const touchmove = (e: TouchEvent) => { if (s.current.free && e.cancelable) e.preventDefault() }
+    el.addEventListener('pointerdown', down)
+    el.addEventListener('touchmove', touchmove, { passive: false })
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', end)
+    window.addEventListener('pointercancel', end)
+    return () => {
+      el.removeEventListener('pointerdown', down)
+      el.removeEventListener('touchmove', touchmove)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', end)
+      window.removeEventListener('pointercancel', end)
+    }
+  }, [gl, camera, invalidate, held])
+  const turn = new THREE.Quaternion()
+  return {
+    state: s,
+    // From the fruit's onPointerDown: this press began on the fruit, so it turns it freely.
+    grab(e: { timeStamp: number }) {
+      s.current.grabbedAt = e.timeStamp
+      s.current.free = true
+      s.current.dragging = true
+    },
+    // Coast with friction; returns true while still moving.
+    step(dt: number): boolean {
+      const st = s.current
+      if (st.dragging) return false
+      const speed = st.w.length()
+      if (speed < 0.03) {
+        st.w.set(0, 0, 0)
+        return false
+      }
+      st.q.premultiply(turn.setFromAxisAngle(st.w.clone().divideScalar(speed), speed * dt)).normalize()
+      st.w.multiplyScalar(Math.exp(-dt * 2.6))
       return true
     },
   }

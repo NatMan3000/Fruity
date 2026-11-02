@@ -1,12 +1,13 @@
 import { useRef, useState, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
-import { Check, ChevronDown, Hand, Plus, Refrigerator } from 'lucide-react'
+import { Check, Hand, Plus, Refrigerator } from 'lucide-react'
 import type { Fruit, Month } from '../types/fruit'
 import { updateBag, useBag } from '../hooks/useBag'
 import { useRecipes } from '../hooks/useRecipes'
 import { addFruit, fruitItemId, hasFruit, removeItem } from '../utils/bag'
 import { recipesForFruit } from '../utils/recipes'
+import { photoUrl } from '../utils/images'
 import { fruitStatus } from '../utils/seasonality'
 import { statusSentence } from '../utils/status'
 import { FruitHero } from '../components/FruitHero'
@@ -89,12 +90,10 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
         )}
 
         {(fruit.notes || fruit.origin || fruit.history || fruit.nutrition) && (
-        <details className="group mt-2 rounded-block bg-(--bright)">
-          <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-5 py-3 [&::-webkit-details-marker]:hidden">
-            <span className="font-display text-[1.375rem]">More about it</span>
-            <ChevronDown aria-hidden="true" className="size-6 transition-transform duration-200 group-open:rotate-180" strokeWidth={2.5} />
-          </summary>
-          <div className="flex flex-col gap-4 px-5 pb-5 text-body">
+        <section aria-labelledby="more-about" className="flex flex-col gap-3">
+          <h2 id="more-about" className="px-1 font-display text-title">More about it</h2>
+          <div className="flex flex-col gap-4 rounded-block bg-(--bright) p-5 text-body">
+            <StudioPhoto key={fruit.id} fruit={fruit} />
             {fruit.notes && <p className="font-medium">{fruit.notes}</p>}
             {fruit.origin && <Fact title="Origin" text={fruit.origin} />}
             {fruit.history && <Fact title="History" text={fruit.history} />}
@@ -110,10 +109,35 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
               </div>
             )}
           </div>
-        </details>
+        </section>
         )}
       </div>
     </article>
+  )
+}
+
+// The fruit's whole studio picture at the top of "More about it", fetched as it scrolls near (lazy) and
+// runtime-cached. Offline before it was ever cached, the (precached) sticker stands in on the same square.
+function StudioPhoto({ fruit }: { fruit: Fruit }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <div className="flex aspect-square w-full items-center justify-center rounded-[20px] bg-(--pop)">
+        <FruitSticker fruit={fruit} size={240} />
+      </div>
+    )
+  }
+  return (
+    <img
+      src={photoUrl(fruit)}
+      alt={`${fruit.name} on a plain background`}
+      width={720}
+      height={720}
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(true)}
+      className="block aspect-square w-full rounded-[20px] bg-(--pop) object-cover"
+    />
   )
 }
 

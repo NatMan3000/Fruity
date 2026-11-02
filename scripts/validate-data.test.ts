@@ -4,7 +4,7 @@ import { FRUITS } from '../src/assets/fruits'
 import { RECIPES } from '../src/assets/recipes'
 
 const good = {
-  id: 'x', name: 'X', emoji: 'x', colour: '#FF9F1C', image: 'images/fruits/x',
+  id: 'x', name: 'X', emoji: 'x', colour: '#FF9F1C',
   seasonality: { peak: ['Jan'], available: ['Feb'] },
   sources: [
     { name: 'a', url: 'https://a.example', says: 'a' },
@@ -51,13 +51,18 @@ describe('validateFruits', () => {
   it('fails on a missing image file', () => {
     expect(validateFruits([good], () => false, now).join()).toContain('missing image file')
   })
+
+  it('fails on a missing sticker', () => {
+    expect(validateFruits([good], rel => !rel.endsWith('-sticker-sm.webp'), now))
+      .toEqual(['x: missing image file public/images/fruits/x-sticker-sm.webp'])
+  })
 })
 
 describe('validateRecipes', () => {
   const recipe = RECIPES.find(r => r.id === 'cherry-clafoutis')!
 
   it('accepts the real recipes', () => {
-    expect(validateRecipes(RECIPES, FRUITS)).toEqual([])
+    expect(validateRecipes(RECIPES, FRUITS, always)).toEqual([])
   })
 
   it('fails on every kind of broken recipe', () => {
@@ -71,16 +76,23 @@ describe('validateRecipes', () => {
       { ...recipe, id: 'emdash', steps: [...recipe.steps.slice(0, 3), 'Bake \u2014 then cool.'] },
       { ...recipe, id: 'nofan', steps: [...recipe.steps.slice(0, 3), 'Heat the oven to 180°C.'] },
     ]
-    const errors = validateRecipes([...RECIPES, ...broken], FRUITS).join('\n')
+    const errors = validateRecipes([...RECIPES, ...broken], FRUITS, always).join('\n')
     for (const [id, msg] of [['badfruit', 'unknown fruitId "durian"'], ['badingfruit', 'unknown fruitId'], ['twosteps', '3 to 8 steps'],
       ['ninesteps', '3 to 8 steps'], ['noserves', 'serves'], ['endash', 'Unicode dash'], ['emdash', 'Unicode dash'], ['nofan', 'fan-forced']]) {
       expect(errors).toMatch(new RegExp(`${id}: .*${msg.replace(/[()]/g, '.')}`))
     }
   })
 
+  it('fails a recipe without both dish photos', () => {
+    const no1200 = (rel: string) => !rel.endsWith('cherry-clafoutis-1200.webp')
+    expect(validateRecipes(RECIPES, FRUITS, no1200)).toEqual([
+      'cherry-clafoutis: missing dish photo public/images/dishes/cherry-clafoutis-1200.webp (bun run dishes)',
+    ])
+  })
+
   it('fails a month with fewer than 3 recipes whose main fruit is at peak', () => {
     const noSpring = RECIPES.filter(r => !['strawberry', 'rhubarb'].includes(r.fruitIds[0]))
-    const errors = validateRecipes(noSpring, FRUITS)
+    const errors = validateRecipes(noSpring, FRUITS, always)
     expect(errors).toContain('Oct: only 2 recipe(s) whose main fruit is at its Victorian peak (need 3)')
   })
 })
