@@ -12,3 +12,5 @@
 | `data/state-overrides-research.json` | State overrides research data with sources | 2026-11-02 |
 | `research/2026-11-02-recipes-draft.md` | 33 recipe drafts for Phase 3, table + month coverage + checks | 2026-11-02 |
 | `data/recipes-draft.json` | 33 recipe drafts as data (not yet reviewed) | 2026-11-02 |
+| `research/2026-11-02-look-decision.md` | The hybrid look Nathan picked from the three comps (D7), spec for the integration build | 2026-11-02 |
+| `research/2026-11-02-feedback/` | Nathan iPhone screenshots of each build round | 2026-11-02 |
