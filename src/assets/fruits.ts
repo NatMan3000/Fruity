@@ -12,6 +12,9 @@ export const FRUITS: Fruit[] = [
       peak: ['Dec', 'Jan', 'Feb'],
       available: ['Oct', 'Nov', 'Mar']
     },
+    stateOverrides: {
+      NT: { peak: ['Oct', 'Nov'], available: ['Sep', 'Dec'] }
+    },
     variesByState: true,
     stateNote: 'NT mangoes start around Aug-Sep and Qld from late Oct, so Darwin and Brisbane shops have mangoes earlier and longer than Melbourne. Vic shops sell Qld and NT fruit; Mildura grows a little Kensington Pride.',
     pick: 'Heavy for its size, fruity smell at the stem end, gives slightly under your thumb. Skip very hard or wrinkled ones.',
@@ -214,6 +217,9 @@ export const FRUITS: Fruit[] = [
     seasonality: {
       peak: ['Dec'],
       available: ['Nov', 'Jan', 'Feb']
+    },
+    stateOverrides: {
+      TAS: { peak: ['Jan'], available: ['Dec', 'Feb'] }
     },
     stateNote: 'Tas cherries run later (late Jan-Feb); NSW and SA start earlier (Oct-Nov).',
     pick: 'Glossy, firm, with green fresh stems. Skip soft, split or wrinkled ones.',
@@ -1026,6 +1032,9 @@ export const FRUITS: Fruit[] = [
     seasonality: {
       peak: ['Sep', 'Oct', 'Nov', 'Dec'],
       available: ['Jan', 'Feb', 'Mar', 'Apr', 'Jun', 'Jul', 'Aug']
+    },
+    stateOverrides: {
+      QLD: { peak: ['Jul', 'Aug', 'Sep', 'Oct'], available: ['May', 'Jun', 'Nov'] }
     },
     variesByState: true,
     stateNote: 'QLD winter season May-Oct (peak Aug-Oct); VIC Oct-Apr (Oct 2026: peak Vic fruit); WA and TAS in summer. Shops have a gap about mid-May to early June.',

@@ -1,0 +1,125 @@
+{
+  "mango": {
+    "NT": {
+      "peak": [
+        "Oct",
+        "Nov"
+      ],
+      "available": [
+        "Sep",
+        "Dec"
+      ],
+      "confidence": "medium",
+      "sources": [
+        {
+          "name": "FreshPlaza (NT mango season, 8 Sep 2020)",
+          "url": "https://www.freshplaza.com/north-america/article/9247819/mango-production-in-full-swing-in-the-northern-territory-as-main-summer-season-approaches/",
+          "says": "Darwin harvest peaking in late October, until early December."
+        },
+        {
+          "name": "FreshPlaza (NT mango season ramps up, 17 Sep 2025)",
+          "url": "https://www.freshplaza.com/oceania/article/9766265/northern-territory-mango-season-ramps-up/",
+          "says": "The mango harvest in Australia's Northern Territory is underway (17 Sep 2025)."
+        }
+      ]
+    }
+  },
+  "strawberry": {
+    "QLD": {
+      "peak": [
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct"
+      ],
+      "available": [
+        "May",
+        "Jun",
+        "Nov"
+      ],
+      "confidence": "medium",
+      "sources": [
+        {
+          "name": "Moreton Bay Regional Council / trade press via search",
+          "url": "https://moretonbay.qld.gov.au/News/Media/Strawberry-season-kicks-off-in-Moreton-Bay",
+          "says": "Queensland strawberry season runs May to October (page now 404; wording seen in search result only). A travel article puts the height at July to September."
+        },
+        {
+          "name": "FreshPlaza (Qld strawberries peak, spring)",
+          "url": "https://www.freshplaza.com/oceania/article/9867999/queensland-strawberries-peak-as-australian-spring-produce-arrives/",
+          "says": "We're in peak strawberry season from the Queensland Sunshine Coast area (Mumford Wholesalers, spring report)."
+        }
+      ]
+    }
+  },
+  "cherry": {
+    "TAS": {
+      "peak": [
+        "Jan"
+      ],
+      "available": [
+        "Dec",
+        "Feb"
+      ],
+      "confidence": "high",
+      "sources": [
+        {
+          "name": "Fruit Growers Tasmania",
+          "url": "https://www.fruitgrowerstas.org.au/news/tasmania-where-the-worlds-best-cherries-are-grown",
+          "says": "The peak of the cherry season comes in January."
+        },
+        {
+          "name": "Fruit Growers Tasmania (season begins)",
+          "url": "https://www.fruitgrowerstas.org.au/news/the-wait-is-over-tasmanian-cherries-have-begun",
+          "says": "Cherries available across the state by mid-December; industry sources give December to February with January peak (from search summary)."
+        }
+      ]
+    }
+  },
+  "blueberry": {
+    "NSW": {
+      "peak": [
+        "Oct",
+        "Nov",
+        "Dec"
+      ],
+      "available": [
+        "Aug",
+        "Sep",
+        "Jan",
+        "Feb"
+      ],
+      "confidence": "low",
+      "sources": [
+        {
+          "name": "Sydney Markets reports (Aug, Oct)",
+          "url": "https://www.sydneymarkets.com.au/recipes-and-produce/market-report/20-26-october-2025",
+          "says": "October report: a flush of blueberries from the North Coast of NSW; an August report notes fresh blueberries arriving (from search summary)."
+        }
+      ]
+    }
+  },
+  "avocado": {
+    "WA": {
+      "peak": [
+        "Oct",
+        "Nov",
+        "Dec",
+        "Jan"
+      ],
+      "available": [
+        "Sep",
+        "Feb",
+        "Mar"
+      ],
+      "confidence": "low",
+      "sources": [
+        {
+          "name": "Search summary of industry profile and WA exporters",
+          "url": "https://hassavocadoboard.com/wp-content/uploads/2019/07/hab-marketers-country-profiles-2017-australia.pdf",
+          "says": "Hass picked to mid-February in southern WA; national peak Sep-Nov; a Manjimup exporter lists Sep-Mar, a Pemberton grower Jul-Mar (not opened, search summary only)."
+        }
+      ]
+    }
+  }
+}

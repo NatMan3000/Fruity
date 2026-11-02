@@ -8,3 +8,5 @@
 | `research/2026-11-02-phase1-seasons-diff.md` | Phase 1 proposed Victorian seasons, old vs new, for approval | 2026-11-02 |
 | `data/phase1-seasons-proposed.json` | Phase 1 proposed seasonality data with sources | 2026-11-02 |
 | `research/2026-11-02-art-test/test6-sheet.png` | First 6 Ai-generated fruit images (agy), style test for D3 | 2026-11-02 |
+| `research/2026-11-02-state-overrides.md` | Per-state season differences research (3 shipped, 2 dropped) | 2026-11-02 |
+| `data/state-overrides-research.json` | State overrides research data with sources | 2026-11-02 |
