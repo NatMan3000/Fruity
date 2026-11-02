@@ -44,6 +44,18 @@ export function updateBag(change: (current: BagItem[]) => BagItem[]) {
   listeners.forEach(l => l())
 }
 
+// Empties the bag and hands back what it held, so the caller can offer Undo.
+export function clearBag(): BagItem[] {
+  const previous = bag
+  updateBag(() => [])
+  return previous
+}
+
+// Undo for clearBag: the old items first, then anything added since (an item is never doubled).
+export function restoreBag(previous: BagItem[]) {
+  updateBag(current => [...previous, ...current.filter(c => !previous.some(p => p.id === c.id))])
+}
+
 export function useBag(): BagItem[] {
   return useSyncExternalStore(subscribe, () => bag, () => bag)
 }

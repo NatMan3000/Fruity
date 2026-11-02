@@ -42,9 +42,9 @@ export function CookPage({ month }: { month: Month }) {
   return (
     <div className="flex flex-col pb-6">
       <TopBar title="Cook" intro={intro} />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         <div className="px-4">
-          <div role="radiogroup" aria-label="Which recipes" className="flex rounded-full bg-(--ink) p-1">
+          <div role="radiogroup" aria-label="Which recipes" className="flex rounded-full bg-(--ink) p-0.5">
             {VIEWS.map(({ view, label, Icon }) => {
               const on = filter.view === view
               return (
@@ -67,7 +67,7 @@ export function CookPage({ month }: { month: Month }) {
           </div>
         </div>
 
-        <ChipRow label="Recipe type" wrap>
+        <ChipRow label="Recipe type" className="snap-x snap-proximity scroll-ps-4">
           {RECIPE_TYPES.map(type => (
             <Chip key={type} on={filter.type === type} onClick={() => setFilter(f => ({ ...f, type: f.type === type ? null : type }))}>
               {TYPE_LABEL[type]}
@@ -76,9 +76,9 @@ export function CookPage({ month }: { month: Month }) {
           <Chip on={filter.kids} onClick={() => setFilter(f => ({ ...f, kids: !f.kids }))} Icon={Smile}>Kid-friendly</Chip>
         </ChipRow>
 
-        <div className="flex flex-col gap-4 px-4 pt-1">
+        <div className="flex flex-col gap-4 px-4">
           {recipes && (
-            <p aria-live="polite" className="text-small font-bold tabular-nums">
+            <p aria-live="polite" className="-mt-1 text-small font-bold tabular-nums">
               {countLine(list.length, filter.view)}
               {narrowed && list.length > 0 && (
                 <>
@@ -106,7 +106,7 @@ export function CookPage({ month }: { month: Month }) {
 
 function countLine(n: number, view: CookView): string {
   const word = n === 1 ? 'recipe' : 'recipes'
-  if (view === 'season') return `${n} ${word} with fruit in the shops now`
+  if (view === 'season') return `${n} ${word} in season`
   if (view === 'saved') return `${n} saved ${word}`
   return `${n} ${word}`
 }
@@ -118,7 +118,7 @@ function Chip({ on, onClick, children, Icon }: { on: boolean; onClick: () => voi
       aria-pressed={on}
       onClick={onClick}
       className={clsx(
-        'chip inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-[var(--chip-px,16px)] text-small font-bold whitespace-nowrap',
+        'chip inline-flex h-11 shrink-0 snap-start items-center gap-2 rounded-full px-[var(--chip-px,16px)] text-small font-bold whitespace-nowrap',
         on ? 'bg-(--pop) text-(--ink)' : 'bg-(--deep) text-(--light)',
       )}
     >

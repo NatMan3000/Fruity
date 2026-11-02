@@ -10,11 +10,12 @@ interface SheetProps {
   title: string
   children: ReactNode
   footer?: ReactNode
+  action?: ReactNode // a small control in the header, before Close
 }
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
+export function Sheet({ open, onClose, title, children, footer, action }: SheetProps) {
   const ref = useRef<HTMLDialogElement>(null)
   const titleId = useId()
 
@@ -53,6 +54,7 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
       <div className="flex max-h-[85dvh] flex-col">
         <div className="flex items-center gap-3 pt-3 pr-3 pb-2 pl-5">
           <h2 id={titleId} className="flex-1 font-display text-title">{title}</h2>
+          {action}
           <button
             type="button"
             onClick={onClose}

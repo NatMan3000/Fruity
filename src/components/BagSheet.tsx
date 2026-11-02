@@ -2,16 +2,19 @@ import { useEffect, useState, type CSSProperties } from 'react'
 import clsx from 'clsx'
 import { Check, Copy, Share, X } from 'lucide-react'
 import { FRUITS } from '../assets/fruits'
-import { updateBag, useBag } from '../hooks/useBag'
+import { clearBag, restoreBag, updateBag, useBag } from '../hooks/useBag'
 import { bagText, clearDone, groupBag, removeItem, toggleDone, type BagItem } from '../utils/bag'
 import { FruitSticker } from './FruitSticker'
 import { Sheet } from './Sheet'
 
 type CopyState = 'idle' | 'copied' | 'failed'
 
+const UNDO_MS = 6000
+
 export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const bag = useBag()
   const [copyState, setCopyState] = useState<CopyState>('idle')
+  const [cleared, setCleared] = useState<BagItem[] | null>(null) // what Clear bag just emptied, for Undo
   const canShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function'
   const anyDone = bag.some(i => i.done)
   const { fruit, other } = groupBag(bag)
@@ -23,6 +26,12 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
     const t = setTimeout(() => setCopyState('idle'), 2500)
     return () => clearTimeout(t)
   }, [copyState])
+
+  useEffect(() => {
+    if (!cleared) return
+    const t = setTimeout(() => setCleared(null), UNDO_MS)
+    return () => clearTimeout(t)
+  }, [cleared])
 
   const shareList = async () => {
     const text = bagText(bag)
@@ -43,6 +52,17 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
       setCopyState('failed')
     }
   }
+
+  // Header, away from the rows and the Share button: a small text button, with Undo after it.
+  const clearAction = bag.length > 0 && (
+    <button
+      type="button"
+      onClick={() => setCleared(clearBag())}
+      className="inline-flex h-11 items-center rounded-full px-3 text-small font-bold text-(--ink-soft) underline active:bg-(--pop)"
+    >
+      Clear bag
+    </button>
+  )
 
   const footer = bag.length > 0 && (
     <div className="flex flex-col gap-2">
@@ -72,7 +92,19 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
   )
 
   return (
-    <Sheet open={open} onClose={onClose} title="Bag" footer={footer || undefined}>
+    <Sheet open={open} onClose={() => { setCleared(null); onClose() }} title="Bag" footer={footer || undefined} action={clearAction || undefined}>
+      {bag.length === 0 && cleared && cleared.length > 0 && (
+        <div role="status" className="mt-2 mb-3 flex items-center gap-3 rounded-full bg-(--ink) py-1 pr-1 pl-5 text-(--light)">
+          <p className="flex-1 text-small font-bold">Bag cleared</p>
+          <button
+            type="button"
+            onClick={() => { restoreBag(cleared); setCleared(null) }}
+            className="press inline-flex h-11 items-center rounded-full bg-(--pop) px-5 font-extrabold text-(--ink)"
+          >
+            Undo
+          </button>
+        </div>
+      )}
       {bag.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-6 text-center">
           <span aria-hidden="true" className="slap inline-flex size-20 items-center justify-center rounded-full bg-(--pop) text-[44px] leading-none" style={{ '--tilt': '-6deg', transform: 'rotate(var(--tilt))' } as CSSProperties}>
