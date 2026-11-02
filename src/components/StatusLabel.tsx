@@ -5,11 +5,11 @@ import { statusWord } from '../utils/status'
 
 // Status is colour + word + icon, always (DESIGN.md "Colour"). Nothing else invents a status style.
 const STATUS: Record<FruitStatus, { Icon: LucideIcon; tone: string }> = {
-  peak: { Icon: Star, tone: 'text-tomato-deep' },
-  ending: { Icon: Hourglass, tone: 'text-mango-deep' },
-  available: { Icon: Check, tone: 'text-leaf-deep' },
+  peak: { Icon: Star, tone: 'text-peak-ink' },
+  ending: { Icon: Hourglass, tone: 'text-ending-ink' },
+  available: { Icon: Check, tone: 'text-season-ink' },
   always: { Icon: Repeat, tone: 'text-ink-2' },
-  off: { Icon: CircleDashed, tone: 'text-ink-3' },
+  off: { Icon: CircleDashed, tone: 'text-off-ink' },
 }
 
 export function StatusLabel({ status, className }: { status: FruitStatus; className?: string }) {

@@ -10,7 +10,7 @@ const TABS: { tab: Tab; label: string; to: Route; Icon: LucideIcon }[] = [
   { tab: 'play', label: 'Play', to: { name: 'play' }, Icon: Puzzle },
 ]
 
-// Bottom tab bar. The current tab is neutral-selected (recessed tile pill), never an accent.
+// Bottom tab bar. The current tab's icon sits in a tangerine pill (DESIGN.md "Components").
 export function TabBar({ active }: { active: Tab }) {
   return (
     <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-30 bg-card pb-[env(safe-area-inset-bottom)]">
@@ -28,7 +28,7 @@ export function TabBar({ active }: { active: Tab }) {
                   current ? 'font-semibold text-ink' : 'font-medium text-ink-3',
                 )}
               >
-                <span className={clsx('inline-flex h-7 w-14 items-center justify-center rounded-full', current && 'bg-tile')}>
+                <span className={clsx('inline-flex h-7 w-14 items-center justify-center rounded-full', current && 'bg-tangerine-wash')}>
                   <Icon aria-hidden="true" className="size-5" strokeWidth={current ? 2.25 : 1.75} />
                 </span>
                 {label}

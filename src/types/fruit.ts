@@ -36,6 +36,7 @@ export interface Fruit {
   id: string
   name: string
   emoji: string
+  colour: string                // The fruit's own colour, #RRGGBB; tints its icon, rows and detail header (src/utils/colour.ts)
   image?: string                // Stem 'images/fruits/<id>'; files are <stem>-480.webp and <stem>-960.webp (scripts/build-images.ts)
   seasonality: FruitSeasonality // The Victorian season (default)
   stateOverrides?: Partial<Record<AusState, FruitSeasonality>> // Per-state seasons where they differ from Victoria

@@ -31,15 +31,37 @@
   --color-ink-2: #4A5345;
   --color-ink-3: #656B5F;
 
-  --color-tomato: #D8452E;
-  --color-tomato-deep: #B23421;
-  --color-tomato-soft: #F7DCD3;
-  --color-leaf: #3F7D4E;
-  --color-leaf-deep: #2F6A3F;
-  --color-leaf-soft: #DCE8D6;
-  --color-mango: #F2A93B;
-  --color-mango-deep: #8F5400;
-  --color-mango-soft: #FBE7C4;
+  /* Season status (DESIGN.md "Colour"): green means buy, red-family means not now. Fill for
+     shapes, -ink for text and icons (4.5:1 on card and every fruit tint), -soft for tints. */
+  --color-peak: #1FA34A;
+  --color-peak-ink: #12722F;
+  --color-peak-soft: #DCF9E0;
+  --color-season: #7CC25A;
+  --color-season-ink: #3F6B2B;
+  --color-season-soft: #E3F8DA;
+  --color-off: #DE9D95;
+  --color-off-ink: #A0473F;
+  --color-off-soft: #FEEBE9;
+  --color-ending: #F2A93B;
+  --color-ending-ink: #8F5400;
+  --color-ending-soft: #FEEDD9;
+
+  /* Juice: decoration only, never status. Vivid for marks and icon circles, -soft for pills and
+     selection, -wash for header bands. Each season of the year owns one (spring berry, summer
+     tangerine, autumn grape, winter citrus). */
+  --color-berry: #E5365F;
+  --color-berry-ink: #B3213F;
+  --color-berry-soft: #FEEBEC;
+  --color-berry-wash: #FED1D4;
+  --color-tangerine: #FF8A1E;
+  --color-tangerine-soft: #FEECE1;
+  --color-tangerine-wash: #FFD4B8;
+  --color-citrus: #FFC928;
+  --color-citrus-soft: #FDEFCF;
+  --color-citrus-wash: #F6DB9D;
+  --color-grape: #7E4BB0;
+  --color-grape-soft: #F4ECFE;
+  --color-grape-wash: #E7D5FE;
 
   --font-sans: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Fraunces', ui-serif, Georgia, serif;
@@ -85,7 +107,7 @@
   }
 
   ::selection {
-    background: var(--color-mango-soft);
+    background: var(--color-citrus-wash);
     color: var(--color-ink);
   }
 
@@ -110,6 +132,12 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* A sideways chip row fades at its right edge while more chips are hidden past it (BrowsePage). */
+.chip-fade {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent);
 }
 
 /* ============================================

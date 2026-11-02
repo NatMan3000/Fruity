@@ -6,12 +6,13 @@ import { BagButton } from './BagButton'
 
 interface PageHeaderProps {
   title?: string
+  mark?: ReactNode    // a small mark before the title (the season circle on Now)
   children?: ReactNode // extra content beside the title (the state chip on Now)
   back?: Route         // show a back button; this is where it goes on a deep-link entry
   bag?: boolean
 }
 
-export function PageHeader({ title, children, back, bag = true }: PageHeaderProps) {
+export function PageHeader({ title, mark, children, back, bag = true }: PageHeaderProps) {
   return (
     <header className="flex items-center gap-2 px-4 pt-[calc(env(safe-area-inset-top)+12px)] pb-3">
       {back && (
@@ -24,7 +25,8 @@ export function PageHeader({ title, children, back, bag = true }: PageHeaderProp
           Back
         </button>
       )}
-      <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-1">
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+        {mark}
         {title && <h1 className="font-display text-display font-semibold text-ink">{title}</h1>}
         {children}
       </div>

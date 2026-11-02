@@ -162,8 +162,8 @@ export function FruitQuiz({ fruits }: FruitQuizProps) {
               className={clsx(
                 'flex min-h-12 items-center justify-between gap-2 rounded-control px-4 py-3 text-left text-body font-medium',
                 !selectedAnswer && 'bg-tile text-ink active:bg-tile-strong',
-                right && 'bg-leaf-soft text-leaf-deep',
-                wrong && 'bg-tomato-soft text-tomato-deep',
+                right && 'bg-peak-soft text-peak-ink',
+                wrong && 'bg-berry-soft text-berry-ink',
                 selectedAnswer && !right && !wrong && 'bg-tile text-ink-2 opacity-60',
               )}
             >

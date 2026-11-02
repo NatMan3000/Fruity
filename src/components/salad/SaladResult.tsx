@@ -38,7 +38,7 @@ export function SaladResult({ fruits, nutrition, pairingInfo }: SaladResultProps
         <div className="font-display text-title font-semibold">{scoreLabel}</div>
         <div className="text-small text-ink-2 tabular-nums">Compatibility {pairingInfo.score}%</div>
         {pairingInfo.goodPairings.length > 0 && (
-          <div className="mt-2 text-small text-leaf-deep">{pairingInfo.goodPairings[0]}</div>
+          <div className="mt-2 text-small text-season-ink">{pairingInfo.goodPairings[0]}</div>
         )}
       </div>
 
@@ -62,7 +62,7 @@ export function SaladResult({ fruits, nutrition, pairingInfo }: SaladResultProps
         {nutrition.highlights.length > 0 && (
           <ul className="mt-3 flex flex-wrap gap-1.5">
             {nutrition.highlights.slice(0, 4).map((highlight, i) => (
-              <li key={i} className="rounded-full bg-leaf-soft px-2.5 py-1 text-caption text-leaf-deep">
+              <li key={i} className="rounded-full bg-season-soft px-2.5 py-1 text-caption text-season-ink">
                 {highlight}
               </li>
             ))}

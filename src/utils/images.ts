@@ -5,6 +5,7 @@ export type ImageSize = 480 | 960
 
 // Ids with new generated art (written by scripts/build-images.ts).
 const withArt = new Set<string>(artManifest)
+export const hasArt = (fruit: Fruit) => withArt.has(fruit.id)
 
 // `fruit.image` is a stem such as 'images/fruits/mango'; the build script writes <stem>-480.webp and <stem>-960.webp.
 export function fruitImageUrl(fruit: Fruit, size: ImageSize): string | undefined {

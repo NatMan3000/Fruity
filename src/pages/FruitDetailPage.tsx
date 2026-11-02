@@ -6,7 +6,8 @@ import { STATE_NAMES, useAusState } from '../hooks/useAusState'
 import { updateBag, useBag } from '../hooks/useBag'
 import { canMorph } from '../hooks/useRoute'
 import { addFruit, fruitItemId, hasFruit, removeItem } from '../utils/bag'
-import { fruitImageUrl } from '../utils/images'
+import { fruitTints } from '../utils/colour'
+import { fruitImageUrl, hasArt } from '../utils/images'
 import { fruitStatus } from '../utils/seasonality'
 import { statusSentence } from '../utils/status'
 import { PageHeader } from '../components/PageHeader'
@@ -25,14 +26,17 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
   // Without View Transitions the page fades in instead of morphing (DESIGN.md "Motion").
   const [fade] = useState(() => !canMorph())
   const hasOverride = !!fruit.stateOverrides?.[state]
+  const tints = fruitTints(fruit.colour)
+  // New art sits on a cream backdrop: multiplied onto the wash it takes the fruit's colour.
+  const blend = hasArt(fruit)
 
   return (
     <article className={clsx('flex flex-col pb-8', fade && 'route-fade')}>
-      <PageHeader back={{ name: 'browse' }} />
-
-      <div className="flex flex-col gap-6 px-4">
-        <div className="flex flex-col gap-4">
-          <div className="aspect-[4/3] overflow-hidden rounded-card bg-tile" style={{ viewTransitionName: 'fruit-hero' }}>
+      {/* The header band is washed in the fruit's own colour (DESIGN.md "Fruit colour"). */}
+      <div className="mb-4 flex flex-col rounded-b-[28px] pb-4" style={{ backgroundColor: tints.wash }}>
+        <PageHeader back={{ name: 'browse' }} />
+        <div className="flex flex-col gap-3 px-4">
+          <div className="aspect-[4/3] overflow-hidden rounded-card" style={{ viewTransitionName: 'fruit-hero', backgroundColor: tints.wash }}>
             {fruit.image && !heroFailed ? (
               <img
                 src={fruitImageUrl(fruit, 960)}
@@ -40,15 +44,19 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
                 width={960}
                 height={720}
                 onError={() => setHeroFailed(true)}
-                className="size-full object-cover"
+                className={clsx('size-full object-cover', blend && 'mix-blend-multiply')}
               />
             ) : (
               <span role="img" aria-label={fruit.name} className="flex size-full items-center justify-center text-[96px]">{fruit.emoji}</span>
             )}
           </div>
+          <h1 className="font-display text-hero font-semibold">{fruit.name}</h1>
+        </div>
+      </div>
 
+      <div className="flex flex-col gap-6 px-4">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <h1 className="font-display text-hero font-semibold">{fruit.name}</h1>
             <p className="flex flex-wrap items-baseline gap-x-2 text-small text-ink-2">
               <StatusLabel status={fruitStatus(fruit, month, state)} />
               <span>in {STATE_NAMES[state]}{hasOverride ? ' (its own season here)' : ''}</span>
@@ -74,12 +82,12 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
 
         {(fruit.pick || fruit.storage) && (
           <div className="flex flex-col gap-2">
-            {fruit.pick && <TipBlock Icon={Hand} title="How to pick" text={fruit.pick} />}
-            {fruit.storage && <TipBlock Icon={Refrigerator} title="How to store" text={fruit.storage} />}
+            {fruit.pick && <TipBlock Icon={Hand} title="How to pick" text={fruit.pick} tint={tints.wash} />}
+            {fruit.storage && <TipBlock Icon={Refrigerator} title="How to store" text={fruit.storage} tint={tints.wash} />}
           </div>
         )}
 
-        {fruit.stateNote && <TipBlock Icon={MapPin} title="Varies by state" text={fruit.stateNote} />}
+        {fruit.stateNote && <TipBlock Icon={MapPin} title="Varies by state" text={fruit.stateNote} tint={tints.wash} />}
 
         {fruit.recipes && fruit.recipes.length > 0 && (
           <section aria-labelledby="ideas" className="flex flex-col gap-2">
@@ -93,7 +101,7 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
             <h2 id="pairs" className="font-display text-title font-semibold">Goes well with</h2>
             <ul className="flex flex-wrap gap-2">
               {fruit.pairings.map(p => (
-                <li key={p} className="rounded-full bg-card px-3 py-1.5 text-small text-ink">{p}</li>
+                <li key={p} className="rounded-full px-3 py-1.5 text-small text-ink" style={{ backgroundColor: tints.soft }}>{p}</li>
               ))}
             </ul>
           </section>
@@ -137,10 +145,10 @@ export function FruitDetailPage({ fruit, month }: { fruit: Fruit; month: Month }
   )
 }
 
-function TipBlock({ Icon, title, text }: { Icon: typeof Hand; title: string; text: string }) {
+function TipBlock({ Icon, title, text, tint }: { Icon: typeof Hand; title: string; text: string; tint: string }) {
   return (
     <section className="flex items-start gap-3 rounded-card bg-card p-4">
-      <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-tile text-ink-2">
+      <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full text-ink" style={{ backgroundColor: tint }}>
         <Icon aria-hidden="true" className="size-5" />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">

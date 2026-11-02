@@ -1,9 +1,12 @@
+import { useLayoutEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import { Check, Search, X } from 'lucide-react'
 import type { Month } from '../types/fruit'
 import { FRUITS } from '../assets/fruits'
 import { useAusState } from '../hooks/useAusState'
 import { BROWSE_FILTERS, browseFruits, type BrowseFilter } from '../utils/browse'
+import { ACCENTS, SEASON_ACCENT } from '../utils/accents'
+import { fruitTints } from '../utils/colour'
 import { fruitStatus } from '../utils/seasonality'
 import { FruitIcon } from '../components/FruitIcon'
 import { Link } from '../components/Link'
@@ -55,26 +58,7 @@ export function BrowsePage({ month, query, onQuery, filter, onFilter }: BrowsePa
             )}
           </label>
         </div>
-        <div role="group" aria-label="Filter" className="flex gap-2 overflow-x-auto px-4 scrollbar-hide">
-          {BROWSE_FILTERS.map(({ id, label }) => {
-            const on = filter === id
-            return (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={on}
-                onClick={() => onFilter(on ? null : id)}
-                className={clsx(
-                  'inline-flex h-11 shrink-0 items-center gap-1 rounded-full px-4 text-small whitespace-nowrap',
-                  on ? 'bg-ink font-semibold text-paper' : 'bg-card font-medium text-ink active:bg-tile',
-                )}
-              >
-                {on && <Check aria-hidden="true" className="-ml-1 size-4" strokeWidth={2.5} />}
-                {label}
-              </button>
-            )
-          })}
-        </div>
+        <FilterChips filter={filter} onFilter={onFilter} />
       </div>
 
       <div className="flex flex-col gap-3 px-4">
@@ -97,15 +81,18 @@ export function BrowsePage({ month, query, onQuery, filter, onFilter }: BrowsePa
             </button>
           </div>
         ) : (
-          <ul className="grid gap-2 sm:grid-cols-2">
+          <ul className="grid gap-2">
+            {/* One column at every width: two columns squeezed long names onto two lines and knocked
+                those rows' bars out of line with their neighbours. */}
             {fruits.map(f => (
               <li key={f.id} className="flex">
-                <Link to={{ name: 'fruit', id: f.id }} morph className="flex w-full items-center gap-3 rounded-card bg-card p-3 active:bg-tile">
+                <Link to={{ name: 'fruit', id: f.id }} morph className="flex w-full items-center gap-3 rounded-card p-3 active:brightness-95" style={{ backgroundColor: fruitTints(f.colour).soft }}>
                   <FruitIcon fruit={f} size="lg" morph />
                   <span className="flex min-w-0 flex-1 flex-col gap-2">
-                    <span className="flex flex-wrap items-baseline justify-between gap-x-3">
-                      <span className="font-display text-name font-semibold">{f.name}</span>
-                      <StatusLabel status={fruitStatus(f, month, state)} />
+                    {/* The status never wraps under the name, so every row's bar sits at the same height */}
+                    <span className="flex items-baseline justify-between gap-x-3">
+                      <span className="min-w-0 font-display text-name font-semibold">{f.name}</span>
+                      <StatusLabel status={fruitStatus(f, month, state)} className="shrink-0" />
                     </span>
                     <SeasonBar fruit={f} month={month} state={state} size="sm" />
                   </span>
@@ -115,6 +102,63 @@ export function BrowsePage({ month, query, onQuery, filter, onFilter }: BrowsePa
           </ul>
         )}
       </div>
+    </div>
+  )
+}
+
+// Chip dots echo the season colours: peak and in-season greens, each season's own accent.
+const CHIP_DOT: Record<BrowseFilter, string> = {
+  peak: 'bg-peak',
+  inSeason: 'bg-season',
+  Spring: ACCENTS[SEASON_ACCENT.Spring.accent].mark,
+  Summer: ACCENTS[SEASON_ACCENT.Summer.accent].mark,
+  Autumn: ACCENTS[SEASON_ACCENT.Autumn.accent].mark,
+  Winter: ACCENTS[SEASON_ACCENT.Winter.accent].mark,
+  yearRound: 'bg-ink-3',
+}
+
+// Single-select filter chips. On a phone they scroll sideways, and the right edge fades while more
+// chips are hidden past it; from the sm breakpoint up they wrap, so none is ever out of reach.
+function FilterChips({ filter, onFilter }: { filter: BrowseFilter | null; onFilter: (f: BrowseFilter | null) => void }) {
+  const row = useRef<HTMLDivElement>(null)
+  const [more, setMore] = useState(false)
+  const measure = () => {
+    const el = row.current
+    if (el) setMore(el.scrollLeft + el.clientWidth < el.scrollWidth - 4)
+  }
+  useLayoutEffect(() => {
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [])
+  return (
+    <div
+      ref={row}
+      role="group"
+      aria-label="Filter"
+      onScroll={measure}
+      className={clsx('flex gap-2 overflow-x-auto px-4 scrollbar-hide sm:flex-wrap sm:overflow-visible', more && 'chip-fade')}
+    >
+      {BROWSE_FILTERS.map(({ id, label }) => {
+        const on = filter === id
+        return (
+          <button
+            key={id}
+            type="button"
+            aria-pressed={on}
+            onClick={() => onFilter(on ? null : id)}
+            className={clsx(
+              'inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full px-4 text-small whitespace-nowrap',
+              on ? 'bg-ink font-semibold text-paper' : 'bg-card font-medium text-ink active:bg-tile',
+            )}
+          >
+            {on
+              ? <Check aria-hidden="true" className="-ml-1 size-4" strokeWidth={2.5} />
+              : <span aria-hidden="true" className={clsx('size-2.5 rounded-full', CHIP_DOT[id])} />}
+            {label}
+          </button>
+        )
+      })}
     </div>
   )
 }

@@ -155,11 +155,11 @@ export function SaladBowl({ fruits, isMixing, hasBeenMixed }: SaladBowlProps) {
       >
         <defs>
           <linearGradient id="bowlGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="var(--color-leaf)" />
-            <stop offset="100%" stopColor="var(--color-leaf-deep)" />
+            <stop offset="0%" stopColor="var(--color-season)" />
+            <stop offset="100%" stopColor="var(--color-season-ink)" />
           </linearGradient>
           <linearGradient id="bowlInnerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="var(--color-leaf-soft)" />
+            <stop offset="0%" stopColor="var(--color-season-soft)" />
             <stop offset="100%" stopColor="var(--color-tile-strong)" />
           </linearGradient>
           <clipPath id="bowlInteriorClip">
@@ -177,7 +177,7 @@ export function SaladBowl({ fruits, isMixing, hasBeenMixed }: SaladBowlProps) {
         />
 
         {/* Bowl rim */}
-        <ellipse cx="100" cy="40" rx="80" ry="24" fill="var(--color-leaf)" />
+        <ellipse cx="100" cy="40" rx="80" ry="24" fill="var(--color-season)" />
         <ellipse cx="100" cy="40" rx="72" ry="20" fill="url(#bowlInnerGradient)" />
 
         {/* Bowl interior with fruits */}
@@ -292,7 +292,7 @@ export function SaladBowl({ fruits, isMixing, hasBeenMixed }: SaladBowlProps) {
 
 
         {/* Bowl highlight */}
-        <ellipse cx="100" cy="40" rx="80" ry="24" fill="none" stroke="var(--color-leaf-soft)" strokeWidth="2" />
+        <ellipse cx="100" cy="40" rx="80" ry="24" fill="none" stroke="var(--color-season-soft)" strokeWidth="2" />
       </svg>
 
       {/* Empty bowl message */}

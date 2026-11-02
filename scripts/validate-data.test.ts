@@ -3,7 +3,7 @@ import { validateFruits } from './validate-data'
 import { FRUITS } from '../src/assets/fruits'
 
 const good = {
-  id: 'x', name: 'X', emoji: 'x', image: 'images/fruits/x',
+  id: 'x', name: 'X', emoji: 'x', colour: '#FF9F1C', image: 'images/fruits/x',
   seasonality: { peak: ['Jan'], available: ['Feb'] },
   sources: [
     { name: 'a', url: 'https://a.example', says: 'a' },
@@ -38,10 +38,11 @@ describe('validateFruits', () => {
       { ...good, id: 'badstate', stateOverrides: { XX: { peak: ['Jan'], available: [] } } },
       { ...good, id: 'overlap', stateOverrides: { NSW: { peak: ['Jan'], available: ['Jan'] } } },
       { ...good, id: 'badrecipe', recipes: [{ name: 'a', type: 'nope', description: 'd' }] },
+      { ...good, id: 'badcolour', colour: 'orange' },
     ]
     const errors = validateFruits([good, ...broken], always, now).join('\n')
     for (const id of ['badmonth', 'both', 'x:', 'empty', 'badpair', 'badrecipe',
-      'onesource', 'stale', 'nodate', 'noconf', 'badstate', 'overlap']) {
+      'onesource', 'stale', 'nodate', 'noconf', 'badstate', 'overlap', 'badcolour']) {
       expect(errors).toContain(id)
     }
   })

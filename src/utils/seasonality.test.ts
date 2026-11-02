@@ -6,7 +6,7 @@ import {
 } from './seasonality'
 
 const fruit = (id: string, peak: Fruit['seasonality']['peak'], available: Fruit['seasonality']['available']): Fruit => ({
-  id, name: id[0].toUpperCase() + id.slice(1), emoji: '', seasonality: { peak, available },
+  id, name: id[0].toUpperCase() + id.slice(1), emoji: '', colour: '#FF9F1C', seasonality: { peak, available },
   sources: [], checkedOn: '2026-11-02', confidence: 'high',
 })
 const mango = fruit('mango', ['Dec', 'Jan'], ['Nov'])

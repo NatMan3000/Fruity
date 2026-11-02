@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icons/*.svg'],
+      includeAssets: ['icons/favicon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
         name: 'Fruity - Australian Fruit Seasons',
         short_name: 'Fruity',
@@ -19,11 +19,15 @@ export default defineConfig({
         theme_color: '#F6F0E4',
         background_color: '#F6F0E4',
         display: 'standalone',
+        id: '/Fruity/',
         start_url: '/Fruity/',
+        scope: '/Fruity/',
+        // PNG only: iOS cannot use an SVG home-screen icon and shows a letter placeholder instead.
+        // Built by scripts/build-icons.ts (DESIGN.md "App icon").
         icons: [
           { src: '/Fruity/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: '/Fruity/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: '/Fruity/icons/icon-512.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }
+          { src: '/Fruity/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ]
       },
       workbox: {

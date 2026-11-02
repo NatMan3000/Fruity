@@ -6,12 +6,13 @@ export function getCurrentMonth(): Month {
   return MONTHS[monthIndex]
 }
 
-export function getCurrentSeason(): Season {
-  const month = getCurrentMonth()
-  const entry = Object.entries(SEASONS).find(([, months]) =>
-    months.includes(month)
-  )
+export function seasonOf(month: Month): Season {
+  const entry = Object.entries(SEASONS).find(([, months]) => months.includes(month))
   return (entry?.[0] as Season) || 'Summer'
+}
+
+export function getCurrentSeason(): Season {
+  return seasonOf(getCurrentMonth())
 }
 
 export function getSeasonality(fruit: Fruit, state: AusState = 'VIC'): FruitSeasonality {

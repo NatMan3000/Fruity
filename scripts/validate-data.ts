@@ -47,6 +47,8 @@ export function validateFruits(
       if (peak.length === 0 && available.length === 0) err('no peak or available months')
     }
 
+    if (typeof f?.colour !== 'string' || !/^#[0-9A-Fa-f]{6}$/.test(f.colour)) err('colour must be a #RRGGBB hex')
+
     if (!Array.isArray(f?.sources) || f.sources.length < 2) err('needs at least 2 sources')
     if (typeof f?.checkedOn !== 'string' || Number.isNaN(Date.parse(f.checkedOn))) {
       err('checkedOn must be an ISO date')

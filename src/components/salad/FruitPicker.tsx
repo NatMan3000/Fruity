@@ -60,7 +60,7 @@ export function FruitPicker({
                 )}
               </span>
               <span className="text-caption text-ink">{fruit.name}</span>
-              {isPeak && <span className="text-caption font-semibold text-tomato-deep">Peak</span>}
+              {isPeak && <span className="text-caption font-semibold text-peak-ink">Peak</span>}
             </button>
           )
         })}

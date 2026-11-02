@@ -88,7 +88,7 @@ export function BagSheet({ open, onClose }: { open: boolean; onClose: () => void
                   <span
                     className={clsx(
                       'inline-flex size-6 shrink-0 items-center justify-center rounded-full',
-                      item.done ? 'bg-leaf text-card' : 'bg-card ring-2 ring-tile-strong ring-inset',
+                      item.done ? 'bg-peak-ink text-card' : 'bg-card ring-2 ring-tile-strong ring-inset',
                     )}
                   >
                     {item.done && <Check aria-hidden="true" className="tick-in size-4" strokeWidth={3} />}

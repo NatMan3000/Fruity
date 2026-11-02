@@ -5,7 +5,7 @@ import { monthLevel } from '../utils/seasonality'
 import { seasonLabel } from '../utils/status'
 
 // The 12-segment season bar (DESIGN.md "Season bar"). Peak, in season and off differ in shape
-// as well as colour: full-height tomato, half-height leaf, a thin line.
+// as well as colour: full-height bright green, half-height soft green, a thin soft-red line.
 interface SeasonBarProps {
   fruit: Fruit
   month: Month
@@ -33,9 +33,9 @@ export function SeasonBar({ fruit, month, state, size = 'sm', marker = true, ini
               <div
                 className={clsx(
                   'w-full rounded-[3px]',
-                  level === 'peak' && 'h-full bg-tomato',
-                  level === 'available' && 'h-1/2 bg-leaf',
-                  level === 'off' && 'h-[3px] bg-tile-strong',
+                  level === 'peak' && 'h-full bg-peak',
+                  level === 'available' && 'h-1/2 bg-season',
+                  level === 'off' && 'h-[3px] bg-off',
                   animate && level !== 'off' && 'segment-fill',
                 )}
                 style={animate ? { animationDelay: `${i * 8}ms` } : undefined}
@@ -70,9 +70,9 @@ export function SeasonLegend({ className }: { className?: string }) {
   )
   return (
     <div className={clsx('flex flex-wrap gap-x-4 gap-y-1', className)}>
-      {item('h-full bg-tomato', 'Peak')}
-      {item('h-1/2 bg-leaf', 'In season')}
-      {item('h-[3px] bg-tile-strong', 'Out of season')}
+      {item('h-full bg-peak', 'Peak')}
+      {item('h-1/2 bg-season', 'In season')}
+      {item('h-[3px] bg-off', 'Out of season')}
     </div>
   )
 }
