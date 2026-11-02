@@ -33,7 +33,17 @@ export default defineConfig({
       workbox: {
         // Precache every fruit image and icon (about 3 MB) and the two fonts: at the shops an unvisited
         // detail page must still show its photo offline.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}', 'images/fruits/*.webp']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}', 'images/fruits/*.webp'],
+        // The Fruit Salad Cafe's 3D bowl (three + Rapier physics, about 1.1 MB gzipped) is not
+        // precached for everyone: it is cached the first time the game opens, then works offline.
+        globIgnores: ['**/BowlScene-*.js'],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => /\/assets\/BowlScene-[\w-]+\.js$/.test(url.pathname),
+            handler: 'CacheFirst',
+            options: { cacheName: 'fruity-cafe-3d', expiration: { maxEntries: 2 } }
+          }
+        ]
       }
     })
   ],

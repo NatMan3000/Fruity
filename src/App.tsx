@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react'
 import type { AusState } from './types/fruit'
 import { FRUITS } from './assets/fruits'
 import { AusStateContext, isAusState } from './hooks/useAusState'
@@ -14,13 +14,16 @@ import { Link } from './components/Link'
 import { PageHeader } from './components/PageHeader'
 import { StateSheet } from './components/StateSheet'
 import { TabBar } from './components/TabBar'
-import { FruitSaladPage } from './components/salad/FruitSaladPage'
+import { CafeLoading } from './cafe/CafeLoading'
 import { BrowsePage } from './pages/BrowsePage'
 import { CookPage } from './pages/CookPage'
 import { FruitDetailPage } from './pages/FruitDetailPage'
 import { NowPage } from './pages/NowPage'
 import { PlayPage } from './pages/PlayPage'
 import { YearPage } from './pages/YearPage'
+
+// The Fruit Salad Cafe game (three.js + physics) is its own chunk, fetched only when opened.
+const CafeGame = lazy(() => import('./cafe/CafeGame'))
 
 const isString = (v: unknown): v is string => typeof v === 'string'
 
@@ -93,10 +96,9 @@ function Screen({ route, month, query, setQuery, filter, setFilter, browseWith }
       )
     case 'salad':
       return (
-        <div className="flex flex-col pb-6">
-          <PageHeader title="Fruit salad maker" back={{ name: 'play' }} bag={false} />
-          <div className="px-4"><FruitSaladPage currentMonth={month} /></div>
-        </div>
+        <Suspense fallback={<CafeLoading />}>
+          <CafeGame month={month} />
+        </Suspense>
       )
   }
 }

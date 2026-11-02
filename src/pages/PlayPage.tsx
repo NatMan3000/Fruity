@@ -22,9 +22,9 @@ export function PlayPage() {
         />
         <PlayEntry
           to={{ name: 'salad' }}
-          title="Fruit salad maker"
-          text="Pick fruit, mix the bowl and see how the flavours pair."
-          fruits={pick('mango', 'passionfruit', 'lychee')}
+          title="Fruit Salad Cafe"
+          text="Customers order by picture. Drop, chop and stir their bowl for stars and stickers, then make it for real."
+          fruits={pick('strawberry', 'banana', 'kiwifruit')}
         />
       </ul>
     </div>
