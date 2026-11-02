@@ -10,3 +10,5 @@
 | `research/2026-11-02-art-test/test6-sheet.png` | First 6 Ai-generated fruit images (agy), style test for D3 | 2026-11-02 |
 | `research/2026-11-02-state-overrides.md` | Per-state season differences research (3 shipped, 2 dropped) | 2026-11-02 |
 | `data/state-overrides-research.json` | State overrides research data with sources | 2026-11-02 |
+| `research/2026-11-02-recipes-draft.md` | 33 recipe drafts for Phase 3, table + month coverage + checks | 2026-11-02 |
+| `data/recipes-draft.json` | 33 recipe drafts as data (not yet reviewed) | 2026-11-02 |
