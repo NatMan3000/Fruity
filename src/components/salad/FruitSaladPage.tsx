@@ -6,12 +6,8 @@ import { FruitPicker } from './FruitPicker'
 import { MixButton } from './MixButton'
 import { SaladResult } from './SaladResult'
 
-interface FruitSaladPageProps {
-  currentMonth: Month
-  onBack?: () => void
-}
-
-export function FruitSaladPage({ currentMonth, onBack }: FruitSaladPageProps) {
+// Restyled to the design tokens in Phase 2; Phase 4 reworks the salad maker itself.
+export function FruitSaladPage({ currentMonth }: { currentMonth: Month }) {
   const {
     selectedIds,
     selectedFruits,
@@ -25,28 +21,11 @@ export function FruitSaladPage({ currentMonth, onBack }: FruitSaladPageProps) {
   } = useSalad()
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            <span className="mr-2">🥗</span>
-            Fruit Salad Maker
-          </h2>
-          <p className="text-sm text-gray-600">Pick fruits and mix them up!</p>
-        </div>
-        {onBack && (
-          <button
-            onClick={onBack}
-            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-white/50 rounded-lg transition-colors"
-          >
-            ✕
-          </button>
-        )}
-      </div>
+    <div className="flex flex-col gap-4">
+      <p className="text-body text-ink-2">Pick fruit and mix them up.</p>
 
-      {/* Bowl Section */}
-      <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-sm">
+      {/* Bowl: side padding leaves room for the spoon and fork drawn outside it */}
+      <div className="rounded-card bg-card px-10 py-6">
         <SaladBowl
           fruits={selectedFruits}
           isMixing={isMixing}
@@ -54,7 +33,6 @@ export function FruitSaladPage({ currentMonth, onBack }: FruitSaladPageProps) {
         />
       </div>
 
-      {/* Mix Button */}
       <MixButton
         fruitCount={selectedFruits.length}
         isMixing={isMixing}
@@ -72,9 +50,9 @@ export function FruitSaladPage({ currentMonth, onBack }: FruitSaladPageProps) {
         />
       )}
 
-      {/* Fruit Picker (hide when showing results, or always show?) */}
+      {/* Fruit picker */}
       {!hasBeenMixed && (
-        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 shadow-sm">
+        <div className="rounded-card bg-card p-4">
           <FruitPicker
             fruits={FRUITS}
             selectedIds={selectedIds}
@@ -86,11 +64,9 @@ export function FruitSaladPage({ currentMonth, onBack }: FruitSaladPageProps) {
 
       {/* Quick stats when picking */}
       {!hasBeenMixed && selectedFruits.length > 0 && (
-        <div className="flex justify-center gap-4 text-xs text-gray-600">
-          <span>🔥 {Math.round(nutrition.totalCalories)} cal</span>
-          <span>🍊 {Math.round(nutrition.totalVitaminC)}mg Vit C</span>
-          <span>🌾 {nutrition.totalFiber.toFixed(1)}g fiber</span>
-        </div>
+        <p className="text-center text-caption text-ink-2 tabular-nums">
+          {Math.round(nutrition.totalCalories)} cal, {Math.round(nutrition.totalVitaminC)} mg vitamin C, {nutrition.totalFiber.toFixed(1)} g fibre
+        </p>
       )}
     </div>
   )

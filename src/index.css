@@ -1,26 +1,109 @@
 @import "tailwindcss";
 
-/* Custom theme variables */
-@theme {
-  --color-primary: #10b981;
-  --color-primary-dark: #059669;
-  --color-secondary: #f59e0b;
-  --color-accent: #ef4444;
-  --font-sans: 'Inter', system-ui, sans-serif;
+/* Fonts: self-hosted variable WOFF2, Latin subset only (precached by the service worker). DESIGN.md "Type". */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2') format('woff2-variations');
 }
 
-/* Base styles */
-body {
-  @apply bg-gray-50 text-gray-900 min-h-screen;
-  font-family: var(--font-sans);
+/* Design tokens: DESIGN.md is the reference; use these names, never raw hex. */
+@theme static {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-paper: #F6F0E4;
+  --color-card: #FBF7EE;
+  --color-tile: #EFE6D2;
+  --color-tile-strong: #E4D8BF;
+  --color-line: #DDD0B6;
+  --color-ink: #1F2A1C;
+  --color-ink-2: #4A5345;
+  --color-ink-3: #656B5F;
+
+  --color-tomato: #D8452E;
+  --color-tomato-deep: #B23421;
+  --color-tomato-soft: #F7DCD3;
+  --color-leaf: #3F7D4E;
+  --color-leaf-deep: #2F6A3F;
+  --color-leaf-soft: #DCE8D6;
+  --color-mango: #F2A93B;
+  --color-mango-deep: #8F5400;
+  --color-mango-soft: #FBE7C4;
+
+  --font-sans: 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+
+  --text-display: 1.875rem;
+  --text-display--line-height: 2.125rem;
+  --text-hero: 2.125rem;
+  --text-hero--line-height: 2.375rem;
+  --text-title: 1.25rem;
+  --text-title--line-height: 1.625rem;
+  --text-name: 1.125rem;
+  --text-name--line-height: 1.375rem;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.5rem;
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.25rem;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1rem;
+
+  --radius-card: 16px;
+  --radius-control: 10px;
+
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* PWA install prompt styling */
-#root {
-  @apply min-h-screen;
+@layer base {
+  html {
+    background: var(--color-paper);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    scrollbar-color: var(--color-tile-strong) transparent;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    caret-color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-mango-soft);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  a {
+    text-underline-offset: 3px;
+  }
+
+  button {
+    cursor: pointer;
+  }
 }
 
-/* Hide scrollbar but keep functionality */
+/* Hide scrollbar but keep scrolling (horizontal rails and chip rows) */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -30,130 +113,137 @@ body {
 }
 
 /* ============================================
-   FRUIT SALAD ANIMATIONS
+   MEANINGFUL MOTION (DESIGN.md "Motion")
    ============================================ */
 
-/* Fruit drop animation when added to bowl */
-@keyframes fruitDrop {
-  0% {
-    transform: translate(-50%, -200%) rotate(0deg);
-    opacity: 0;
-  }
-  60% {
-    transform: translate(-50%, calc(-50% + 10px)) rotate(10deg);
-    opacity: 1;
-  }
-  80% {
-    transform: translate(-50%, calc(-50% - 5px)) rotate(-5deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(var(--rotation, 0deg));
-    opacity: 1;
-  }
+/* Card to detail: the tapped icon morphs into the hero. */
+::view-transition-group(fruit-hero) {
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease-out-soft);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
 }
 
-.animate-fruit-drop {
-  animation: fruitDrop 0.5s ease-out forwards;
+/* Fallback where View Transitions are missing: a short fade on the detail page. */
+@keyframes route-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.route-fade {
+  animation: route-fade 150ms ease-out;
 }
 
-/* Fruit emoji mixing animation (for SVG text elements) */
+/* Season bar fills upward when a detail page opens. */
+@keyframes segment-fill {
+  from { transform: scaleY(0); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+.segment-fill {
+  transform-origin: bottom;
+  animation: segment-fill 160ms var(--ease-out-soft) backwards;
+}
+
+/* Bag tick */
+@keyframes tick-in {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.tick-in {
+  animation: tick-in 150ms var(--ease-out-soft);
+}
+
+/* Bottom sheet (native dialog) */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes sheet-down {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+dialog.sheet[open] {
+  animation: sheet-up 220ms var(--ease-out-soft);
+}
+dialog.sheet[data-closing] {
+  animation: sheet-down 180ms ease-out forwards;
+}
+dialog.sheet::backdrop {
+  background: color-mix(in srgb, var(--color-ink) 20%, transparent);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
+  animation: backdrop-in 220ms ease-out;
+}
+
+/* ============================================
+   FRUIT SALAD (Phase 4 reworks these; they run only while mixing)
+   ============================================ */
+
 @keyframes fruitMix {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  20% {
-    transform: translate(var(--mix-offset-x, 10px), calc(var(--mix-offset-y, 5px) * -1)) rotate(20deg);
-  }
-  40% {
-    transform: translate(calc(var(--mix-offset-x, 10px) * -1), var(--mix-offset-y, 5px)) rotate(-15deg);
-  }
-  60% {
-    transform: translate(var(--mix-offset-y, 5px), var(--mix-offset-x, 10px)) rotate(25deg);
-  }
-  80% {
-    transform: translate(calc(var(--mix-offset-y, 5px) * -1), calc(var(--mix-offset-x, 10px) * -1)) rotate(-20deg);
-  }
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(var(--mix-offset-x, 10px), calc(var(--mix-offset-y, 5px) * -1)) rotate(20deg); }
+  40% { transform: translate(calc(var(--mix-offset-x, 10px) * -1), var(--mix-offset-y, 5px)) rotate(-15deg); }
+  60% { transform: translate(var(--mix-offset-y, 5px), var(--mix-offset-x, 10px)) rotate(25deg); }
+  80% { transform: translate(calc(var(--mix-offset-y, 5px) * -1), calc(var(--mix-offset-x, 10px) * -1)) rotate(-20deg); }
 }
-
 .animate-fruit-mix {
-  animation: fruitMix 0.25s ease-in-out infinite;
+  animation: fruitMix 0.25s ease-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
 
-/* Bowl shake animation */
 @keyframes bowlShake {
   0%, 100% { transform: rotate(0deg); }
   25% { transform: rotate(2deg); }
   75% { transform: rotate(-2deg); }
 }
-
 .animate-bowl-shake {
-  animation: bowlShake 0.2s ease-in-out infinite;
+  animation: bowlShake 0.2s ease-out infinite;
 }
 
-/* Spoon stirring animation (left side) */
 @keyframes stirLeft {
   0%, 100% { transform: rotate(-30deg); }
   50% { transform: rotate(-10deg) translateX(5px); }
 }
-
 .animate-stir-left {
-  animation: stirLeft 0.3s ease-in-out infinite;
+  animation: stirLeft 0.3s ease-out infinite;
 }
 
-/* Fork stirring animation (right side) */
 @keyframes stirRight {
   0%, 100% { transform: rotate(30deg) scaleX(-1); }
   50% { transform: rotate(10deg) scaleX(-1) translateX(-5px); }
 }
-
 .animate-stir-right {
-  animation: stirRight 0.3s ease-in-out infinite;
+  animation: stirRight 0.3s ease-out infinite;
 }
 
-/* Fruit pieces mixing/shaking animation */
-@keyframes pieceMix {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(var(--mix-x, 5px), var(--mix-y, -5px));
-  }
-  50% {
-    transform: translate(calc(var(--mix-x, 5px) * -1), calc(var(--mix-y, -5px) * 0.5));
-  }
-  75% {
-    transform: translate(calc(var(--mix-x, 5px) * 0.5), calc(var(--mix-y, -5px) * -1));
-  }
-}
-
-.animate-piece-mix {
-  animation: pieceMix 0.15s ease-in-out infinite;
-}
-
-/* Subtle pulse for mix button */
-@keyframes pulseSubtle {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
-.animate-pulse-subtle {
-  animation: pulseSubtle 2s ease-in-out infinite;
-}
-
-/* Fade in for results */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.24s ease-out forwards;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+/* Reduced motion: everything above is off. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after,
+  dialog.sheet[open],
+  dialog.sheet[data-closing],
+  dialog.sheet::backdrop {
+    animation: none !important;
+    transition: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

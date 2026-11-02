@@ -1,3 +1,6 @@
+import clsx from 'clsx'
+import { LoaderCircle, RotateCcw, Shuffle } from 'lucide-react'
+
 interface MixButtonProps {
   fruitCount: number
   isMixing: boolean
@@ -5,6 +8,8 @@ interface MixButtonProps {
   onMix: () => void
   onReset: () => void
 }
+
+const base = 'inline-flex h-14 w-full items-center justify-center gap-2 rounded-control text-body font-semibold'
 
 export function MixButton({
   fruitCount,
@@ -14,58 +19,37 @@ export function MixButton({
   onReset
 }: MixButtonProps) {
   const canMix = fruitCount >= 2 && !isMixing && !hasBeenMixed
-  const showReset = hasBeenMixed
 
-  if (showReset) {
+  if (hasBeenMixed) {
     return (
-      <button
-        onClick={onReset}
-        className="
-          w-full py-4 px-6 rounded-2xl
-          bg-gradient-to-r from-purple-500 to-pink-500
-          text-white font-bold text-lg
-          shadow-lg hover:shadow-xl
-          transform hover:scale-[1.02] active:scale-[0.98]
-          transition-all
-        "
-      >
-        <span className="mr-2">🔄</span>
-        Make Another Salad
+      <button type="button" onClick={onReset} className={clsx(base, 'bg-ink text-paper active:opacity-90')}>
+        <RotateCcw aria-hidden="true" className="size-5" />
+        Make another salad
       </button>
     )
   }
 
   return (
     <button
+      type="button"
       onClick={onMix}
       disabled={!canMix}
-      className={`
-        w-full py-4 px-6 rounded-2xl
-        font-bold text-lg
-        shadow-lg
-        transform transition-all
-        ${canMix
-          ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] animate-pulse-subtle'
-          : isMixing
-            ? 'bg-gradient-to-r from-amber-400 to-orange-400 text-white animate-pulse'
-            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-        }
-      `}
+      className={clsx(
+        base,
+        canMix ? 'bg-ink text-paper active:opacity-90' : 'cursor-not-allowed bg-tile text-ink-2',
+      )}
     >
       {isMixing ? (
         <>
-          <span className="inline-block animate-spin mr-2">🥣</span>
-          Mixing...
+          <LoaderCircle aria-hidden="true" className="size-5 motion-safe:animate-spin" />
+          Mixing
         </>
       ) : fruitCount < 2 ? (
-        <>
-          <span className="mr-2">🥗</span>
-          Add {2 - fruitCount} more fruit{fruitCount === 0 ? 's' : ''} to mix
-        </>
+        <>Add {2 - fruitCount} more fruit to mix</>
       ) : (
         <>
-          <span className="mr-2">🥣</span>
-          Mix It Up!
+          <Shuffle aria-hidden="true" className="size-5" />
+          Mix it up
         </>
       )}
     </button>

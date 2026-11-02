@@ -1,5 +1,6 @@
 import type { Fruit } from '../../types/fruit'
 import type { SaladNutrition } from '../../hooks/useSalad'
+import { FruitIcon } from '../FruitIcon'
 
 interface SaladResultProps {
   fruits: Fruit[]
@@ -12,87 +13,60 @@ interface SaladResultProps {
 }
 
 export function SaladResult({ fruits, nutrition, pairingInfo }: SaladResultProps) {
-  const scoreEmoji =
-    pairingInfo.score >= 80 ? '🌟' :
-    pairingInfo.score >= 60 ? '👍' :
-    pairingInfo.score >= 40 ? '🤔' : '😬'
-
   const scoreLabel =
-    pairingInfo.score >= 80 ? 'Perfect Combo!' :
-    pairingInfo.score >= 60 ? 'Great Mix!' :
-    pairingInfo.score >= 40 ? 'Interesting Mix' : 'Bold Choice!'
+    pairingInfo.score >= 80 ? 'A perfect combo' :
+    pairingInfo.score >= 60 ? 'A great mix' :
+    pairingInfo.score >= 40 ? 'An interesting mix' : 'A bold choice'
 
   return (
-    <div className="space-y-4 animate-fade-in">
-      {/* Your Salad Header */}
+    <div className="animate-fade-in flex flex-col gap-4">
       <div className="text-center">
-        <h3 className="text-xl font-bold text-gray-900">Your Fruit Salad!</h3>
-        <p className="text-sm text-gray-600">{fruits.length} fruits combined</p>
+        <h3 className="font-display text-title font-semibold">Your fruit salad</h3>
+        <p className="text-small text-ink-2 tabular-nums">{fruits.length} fruit combined</p>
       </div>
 
-      {/* Fruit Summary */}
-      <div className="flex flex-wrap justify-center gap-2">
+      <ul className="flex flex-wrap justify-center gap-2">
         {fruits.map(fruit => (
-          <span
-            key={fruit.id}
-            className="inline-flex items-center gap-1 bg-white/80 px-3 py-1.5 rounded-full text-sm shadow-sm"
-          >
-            <span>{fruit.emoji}</span>
-            <span className="text-gray-700">{fruit.name}</span>
-          </span>
+          <li key={fruit.id} className="inline-flex items-center gap-2 rounded-full bg-card py-1 pr-3 pl-1 text-small text-ink">
+            <FruitIcon fruit={fruit} size="sm" />
+            {fruit.name}
+          </li>
         ))}
-      </div>
+      </ul>
 
-      {/* Pairing Score */}
-      <div className="bg-white/90 rounded-xl p-4 text-center shadow-sm">
-        <div className="text-4xl mb-1">{scoreEmoji}</div>
-        <div className="text-lg font-semibold text-gray-900">{scoreLabel}</div>
-        <div className="text-sm text-gray-500">Compatibility: {pairingInfo.score}%</div>
+      <div className="rounded-card bg-card p-4 text-center">
+        <div className="font-display text-title font-semibold">{scoreLabel}</div>
+        <div className="text-small text-ink-2 tabular-nums">Compatibility {pairingInfo.score}%</div>
         {pairingInfo.goodPairings.length > 0 && (
-          <div className="mt-2 text-xs text-emerald-700">
-            {pairingInfo.goodPairings[0]}
-          </div>
+          <div className="mt-2 text-small text-leaf-deep">{pairingInfo.goodPairings[0]}</div>
         )}
       </div>
 
-      {/* Nutrition Card */}
-      <div className="bg-white/90 rounded-xl p-4 shadow-sm">
-        <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <span>📊</span> Nutrition (per serving)
-        </h4>
-        <div className="grid grid-cols-3 gap-3 text-center">
-          <div className="bg-amber-50 rounded-lg p-3">
-            <div className="text-2xl font-bold text-amber-600">
-              {Math.round(nutrition.totalCalories)}
-            </div>
-            <div className="text-xs text-gray-600">Calories</div>
+      <div className="rounded-card bg-card p-4">
+        <h4 className="mb-3 text-small font-semibold text-ink">Nutrition, per serving</h4>
+        <dl className="grid grid-cols-3 gap-2">
+          <div className="flex flex-col gap-0.5 rounded-control bg-tile p-3">
+            <dt className="text-caption text-ink-2">Energy</dt>
+            <dd className="text-body font-semibold tabular-nums">{Math.round(nutrition.totalCalories)} cal</dd>
           </div>
-          <div className="bg-orange-50 rounded-lg p-3">
-            <div className="text-2xl font-bold text-orange-600">
-              {Math.round(nutrition.totalVitaminC)}mg
-            </div>
-            <div className="text-xs text-gray-600">Vitamin C</div>
+          <div className="flex flex-col gap-0.5 rounded-control bg-tile p-3">
+            <dt className="text-caption text-ink-2">Vitamin C</dt>
+            <dd className="text-body font-semibold tabular-nums">{Math.round(nutrition.totalVitaminC)} mg</dd>
           </div>
-          <div className="bg-green-50 rounded-lg p-3">
-            <div className="text-2xl font-bold text-green-600">
-              {nutrition.totalFiber.toFixed(1)}g
-            </div>
-            <div className="text-xs text-gray-600">Fiber</div>
+          <div className="flex flex-col gap-0.5 rounded-control bg-tile p-3">
+            <dt className="text-caption text-ink-2">Fibre</dt>
+            <dd className="text-body font-semibold tabular-nums">{nutrition.totalFiber.toFixed(1)} g</dd>
           </div>
-        </div>
+        </dl>
 
-        {/* Nutrition Highlights */}
         {nutrition.highlights.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1">
+          <ul className="mt-3 flex flex-wrap gap-1.5">
             {nutrition.highlights.slice(0, 4).map((highlight, i) => (
-              <span
-                key={i}
-                className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full"
-              >
+              <li key={i} className="rounded-full bg-leaf-soft px-2.5 py-1 text-caption text-leaf-deep">
                 {highlight}
-              </span>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
     </div>

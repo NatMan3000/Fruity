@@ -24,7 +24,7 @@ function getMixedFruitPieces(fruits: Fruit[], count: number = 20) {
 
   const colors = fruits.length > 0
     ? fruits.flatMap(f => {
-        // Map emoji to colors
+        // Flesh colours for the cut pieces (illustration, not UI colour; Phase 4 reworks the bowl)
         const colorMap: Record<string, string[]> = {
           '🍎': ['#dc2626', '#ef4444'],
           '🍐': ['#84cc16', '#a3e635'],
@@ -44,7 +44,7 @@ function getMixedFruitPieces(fruits: Fruit[], count: number = 20) {
         }
         return colorMap[f.emoji] || ['#f87171', '#fbbf24']
       })
-    : ['#e5e7eb']
+    : ['#E4D8BF'] // tile-strong: an empty bowl
 
   for (let i = 0; i < count; i++) {
     // Bowl interior ellipse is at cx=100, cy=40, rx=72, ry=20
@@ -155,13 +155,12 @@ export function SaladBowl({ fruits, isMixing, hasBeenMixed }: SaladBowlProps) {
       >
         <defs>
           <linearGradient id="bowlGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="60%" stopColor="#16a34a" />
-            <stop offset="100%" stopColor="#15803d" />
+            <stop offset="0%" stopColor="var(--color-leaf)" />
+            <stop offset="100%" stopColor="var(--color-leaf-deep)" />
           </linearGradient>
           <linearGradient id="bowlInnerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#7ed468" />
-            <stop offset="100%" stopColor="#388d38" />
+            <stop offset="0%" stopColor="var(--color-leaf-soft)" />
+            <stop offset="100%" stopColor="var(--color-tile-strong)" />
           </linearGradient>
           <clipPath id="bowlInteriorClip">
             <ellipse cx="100" cy="40" rx="72" ry="22" />
@@ -169,7 +168,7 @@ export function SaladBowl({ fruits, isMixing, hasBeenMixed }: SaladBowlProps) {
         </defs>
 
         {/* Bowl shadow */}
-        <ellipse cx="100" cy="130" rx="70" ry="8" fill="rgba(0,0,0,0.1)" />
+        <ellipse cx="100" cy="130" rx="70" ry="8" fill="var(--color-ink)" fillOpacity="0.1" />
 
         {/* Bowl body - main shape */}
         <path
@@ -178,7 +177,7 @@ export function SaladBowl({ fruits, isMixing, hasBeenMixed }: SaladBowlProps) {
         />
 
         {/* Bowl rim */}
-        <ellipse cx="100" cy="40" rx="80" ry="24" fill="#22c55e" />
+        <ellipse cx="100" cy="40" rx="80" ry="24" fill="var(--color-leaf)" />
         <ellipse cx="100" cy="40" rx="72" ry="20" fill="url(#bowlInnerGradient)" />
 
         {/* Bowl interior with fruits */}
@@ -293,14 +292,14 @@ export function SaladBowl({ fruits, isMixing, hasBeenMixed }: SaladBowlProps) {
 
 
         {/* Bowl highlight */}
-        <ellipse cx="100" cy="40" rx="80" ry="24" fill="none" stroke="#4ade80" strokeWidth="3" />
+        <ellipse cx="100" cy="40" rx="80" ry="24" fill="none" stroke="var(--color-leaf-soft)" strokeWidth="2" />
       </svg>
 
       {/* Empty bowl message */}
       {fruits.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center" style={{ top: '10%' }}>
-          <p className="text-gray-500 text-sm font-medium bg-white/80 px-3 py-1 rounded-full">
-            Add fruits to your salad!
+          <p className="rounded-full bg-card px-3 py-1 text-small font-medium text-ink-2">
+            Add fruit to your salad
           </p>
         </div>
       )}

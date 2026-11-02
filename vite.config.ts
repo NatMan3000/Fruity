@@ -15,8 +15,9 @@ export default defineConfig({
         name: 'Fruity - Australian Fruit Seasons',
         short_name: 'Fruity',
         description: 'Quick reference for fruit seasonality in Australia',
-        theme_color: '#10b981',
-        background_color: '#ffffff',
+        // DESIGN.md: paper is the app's real background, so the splash and status bar match it
+        theme_color: '#F6F0E4',
+        background_color: '#F6F0E4',
         display: 'standalone',
         start_url: '/Fruity/',
         icons: [
@@ -26,8 +27,9 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // Precache every fruit image (about 3.3 MB): at the shops an unvisited detail page must still show its photo offline.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}', 'images/fruits/*.webp']
+        // Precache every fruit image and icon (about 3 MB) and the two fonts: at the shops an unvisited
+        // detail page must still show its photo offline.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}', 'images/fruits/*.webp']
       }
     })
   ],

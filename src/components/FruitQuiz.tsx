@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import clsx from 'clsx'
-import { RotateCcw } from 'lucide-react'
+import { ArrowRight, Check, Lightbulb, RotateCcw, X } from 'lucide-react'
 import type { Fruit } from '../types/fruit'
-import { getSeasonality } from '../utils/seasonality'
+import { useAusState } from '../hooks/useAusState'
+import { describeMonths, getSeasonality } from '../utils/seasonality'
+import { FruitIcon } from './FruitIcon'
 
 interface FruitQuizProps {
   fruits: Fruit[]
@@ -38,6 +40,7 @@ function buildQuestions(fruits: Fruit[]): QuizQuestion[] {
 }
 
 export function FruitQuiz({ fruits }: FruitQuizProps) {
+  const { state } = useAusState()
   const [questions, setQuestions] = useState<QuizQuestion[]>(() => buildQuestions(fruits))
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
@@ -88,120 +91,106 @@ export function FruitQuiz({ fruits }: FruitQuizProps) {
 
   if (questions.length === 0) return null
 
+  const primary = 'inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-control bg-ink font-semibold text-paper active:opacity-90'
+
   if (isGameComplete) {
     return (
-      <div className="p-6 rounded-xl bg-white border border-gray-200 shadow-sm text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          🎉 Quiz Complete!
-        </h2>
-        <p className="text-4xl font-bold text-emerald-600 mb-4">
+      <div className="flex flex-col items-center gap-3 rounded-card bg-card p-6 text-center">
+        <h2 className="font-display text-title font-semibold">Quiz complete</h2>
+        <p className="font-display text-hero font-semibold tabular-nums">
           {score.correct} / {score.total}
         </p>
-        <p className="text-gray-600 mb-6">
+        <p className="text-body text-ink-2">
           {score.correct === score.total
-            ? "Perfect score! You're a fruit expert! 🌟"
+            ? 'Perfect score. You really know your fruit.'
             : score.correct >= score.total * 0.6
-            ? "Great job! You know your fruits! 👏"
-            : "Keep learning about seasonal fruits! 📚"}
+            ? 'Nicely done. You know your fruit.'
+            : 'Keep going, the seasons take a while to learn.'}
         </p>
-        <button
-          onClick={startNewGame}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors"
-        >
-          <RotateCcw className="h-4 w-4" />
-          Play Again
+        <button type="button" onClick={startNewGame} className={clsx(primary, 'w-full max-w-xs flex-none')}>
+          <RotateCcw aria-hidden="true" className="size-5" />
+          Play again
         </button>
       </div>
     )
   }
 
-  return (
-    <div className="p-6 rounded-xl bg-white border border-gray-200 shadow-sm">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">
-          🎮 Guess the Fruit
-        </h2>
-        <div className="text-sm text-gray-600">
-          Question {currentQuestionIndex + 1} of {questions.length} •{' '}
-          <span className="font-medium text-emerald-600">
-            {score.correct}/{score.total}
-          </span>
-        </div>
-      </div>
+  const peak = getSeasonality(currentQuestion.correctFruit, state).peak
 
-      {/* Fruit emoji (blurred initially) */}
-      <div className="flex justify-center mb-6">
-        <span
-          className={clsx(
-            'text-8xl transition-all duration-500',
-            showBlur && 'blur-lg scale-110'
-          )}
-        >
-          {currentQuestion.correctFruit.emoji}
+  return (
+    <div className="flex flex-col gap-5 rounded-card bg-card p-5">
+      <p className="text-small text-ink-2 tabular-nums">
+        Question {currentQuestionIndex + 1} of {questions.length}, score {score.correct}/{score.total}
+      </p>
+
+      {/* The fruit, blurred until answered */}
+      <div className="flex justify-center">
+        <span className={clsx('transition-[filter,transform] duration-200 ease-out', showBlur && 'scale-110 blur-lg')}>
+          <FruitIcon fruit={currentQuestion.correctFruit} size="2xl" />
         </span>
       </div>
 
       {/* Clues */}
-      <div className="mb-6 space-y-2">
-        {currentQuestion.cluesRevealed >= 1 && (
-          <div className="p-3 rounded-lg bg-blue-50 text-sm text-blue-900">
-            <span className="font-medium">Peak season:</span>{' '}
-            {getSeasonality(currentQuestion.correctFruit).peak.join(', ') || 'Year-round'}
-          </div>
-        )}
-        {currentQuestion.cluesRevealed >= 2 && currentQuestion.correctFruit.pairings && (
-          <div className="p-3 rounded-lg bg-purple-50 text-sm text-purple-900">
-            <span className="font-medium">Pairs well with:</span>{' '}
-            {currentQuestion.correctFruit.pairings.slice(0, 3).join(', ')}
-          </div>
-        )}
-      </div>
+      {currentQuestion.cluesRevealed >= 1 && (
+        <ul className="flex flex-col gap-2">
+          <li className="rounded-control bg-tile p-3 text-small text-ink">
+            <span className="font-semibold">Peak season:</span>{' '}
+            {peak.length ? describeMonths(peak) : 'all year, no peak'}
+          </li>
+          {currentQuestion.cluesRevealed >= 2 && currentQuestion.correctFruit.pairings && (
+            <li className="rounded-control bg-tile p-3 text-small text-ink">
+              <span className="font-semibold">Goes well with:</span>{' '}
+              {currentQuestion.correctFruit.pairings.slice(0, 3).join(', ')}
+            </li>
+          )}
+        </ul>
+      )}
 
       {/* Options */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {currentQuestion.options.map((fruit) => (
-          <button
-            key={fruit.id}
-            onClick={() => handleAnswer(fruit.id)}
-            disabled={!!selectedAnswer}
-            className={clsx(
-              'p-4 rounded-xl border-2 transition-all text-left',
-              {
-                'border-gray-200 hover:border-emerald-400 hover:bg-emerald-50/50':
-                  !selectedAnswer,
-                'border-emerald-500 bg-emerald-100':
-                  selectedAnswer === fruit.id && isCorrect,
-                'border-red-500 bg-red-100':
-                  selectedAnswer === fruit.id && !isCorrect,
-                'border-emerald-500 bg-emerald-50':
-                  selectedAnswer && fruit.id === currentQuestion.correctFruit.id,
-                'opacity-50': selectedAnswer && fruit.id !== currentQuestion.correctFruit.id && fruit.id !== selectedAnswer,
-                'cursor-not-allowed': !!selectedAnswer,
-                'cursor-pointer': !selectedAnswer
-              }
-            )}
-          >
-            <div className="font-medium text-gray-900">{fruit.name}</div>
-          </button>
-        ))}
+      <div className="grid grid-cols-2 gap-2">
+        {currentQuestion.options.map((fruit) => {
+          const isAnswer = fruit.id === currentQuestion.correctFruit.id
+          const isPicked = selectedAnswer === fruit.id
+          const right = !!selectedAnswer && isAnswer
+          const wrong = isPicked && !isCorrect
+          return (
+            <button
+              key={fruit.id}
+              type="button"
+              onClick={() => handleAnswer(fruit.id)}
+              disabled={!!selectedAnswer}
+              className={clsx(
+                'flex min-h-12 items-center justify-between gap-2 rounded-control px-4 py-3 text-left text-body font-medium',
+                !selectedAnswer && 'bg-tile text-ink active:bg-tile-strong',
+                right && 'bg-leaf-soft text-leaf-deep',
+                wrong && 'bg-tomato-soft text-tomato-deep',
+                selectedAnswer && !right && !wrong && 'bg-tile text-ink-2 opacity-60',
+              )}
+            >
+              {fruit.name}
+              {right && <Check aria-label="Correct" className="size-5 shrink-0" strokeWidth={2.5} />}
+              {wrong && <X aria-label="Wrong" className="size-5 shrink-0" strokeWidth={2.5} />}
+            </button>
+          )
+        })}
       </div>
 
-      {/* Action buttons */}
-      <div className="flex gap-3">
+      {/* Actions */}
+      <div className="flex gap-2">
         {!selectedAnswer && currentQuestion.cluesRevealed < 2 && (
           <button
+            type="button"
             onClick={revealClue}
-            className="flex-1 px-4 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium hover:bg-blue-200 transition-colors"
+            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-control bg-tile font-semibold text-ink active:bg-tile-strong"
           >
-            💡 Show Clue
+            <Lightbulb aria-hidden="true" className="size-5" />
+            {currentQuestion.cluesRevealed === 0 ? 'Show a clue' : 'Another clue'}
           </button>
         )}
         {selectedAnswer && (
-          <button
-            onClick={nextQuestion}
-            className="flex-1 px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors"
-          >
-            {currentQuestionIndex < questions.length - 1 ? 'Next →' : 'Finish'}
+          <button type="button" onClick={nextQuestion} className={primary}>
+            {currentQuestionIndex < questions.length - 1 ? 'Next' : 'Finish'}
+            <ArrowRight aria-hidden="true" className="size-5" />
           </button>
         )}
       </div>

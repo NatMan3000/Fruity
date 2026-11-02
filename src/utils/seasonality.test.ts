@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Fruit } from '../types/fruit'
 import {
   filterFruitsBySeason, filterFruitsInSeason, getCurrentMonth, getCurrentSeason,
-  isInSeason, isPeakSeason, searchFruits,
+  isInSeason, isPeakSeason, searchFruits, nowSections, fruitStatus, describeMonths,
 } from './seasonality'
 
 const fruit = (id: string, peak: Fruit['seasonality']['peak'], available: Fruit['seasonality']['available']): Fruit => ({
@@ -63,5 +63,51 @@ describe('seasonality', () => {
     vi.setSystemTime(new Date(2026, 6, 15))
     expect(getCurrentMonth()).toBe('Jul')
     expect(getCurrentSeason()).toBe('Winter')
+  })
+})
+
+describe('Now screen sections', () => {
+  const f = (id: string, peak: Fruit['seasonality']['peak'], available: Fruit['seasonality']['available'], extra: Partial<Fruit> = {}): Fruit =>
+    ({ ...fruit(id, peak, available), ...extra })
+  const fruits = [
+    f('cherry', ['Dec', 'Jan'], ['Nov']),         // Nov: just landed (available, new)
+    f('strawberry', ['Oct', 'Nov'], ['Sep']),     // Nov: peak, ending this month
+    f('pineapple', ['Nov', 'Dec'], ['Oct']),      // Nov: peak, newly peak
+    f('papaya', ['Oct', 'Nov', 'Dec'], ['Sep']),  // Nov: peak, mid-season
+    f('lemon', ['Jul'], ['Oct', 'Nov']),          // Nov: available, last month
+    f('banana', [], ALL, { yearRound: 'grown' }), // never on Now
+    f('apple', ['Apr'], ['May']),                 // Nov: off
+  ]
+
+  it('splits fruit into exclusive sections and ranks Buy now', () => {
+    const s = nowSections(fruits, 'Nov')
+    expect(s.buyNow.map(x => x.id)).toEqual(['strawberry', 'pineapple', 'papaya'])
+    expect(s.justLanded.map(x => x.id)).toEqual(['cherry'])
+    expect(s.endingSoon.map(x => x.id)).toEqual(['lemon'])
+    const all = [...s.buyNow, ...s.justLanded, ...s.endingSoon].map(x => x.id)
+    expect(new Set(all).size).toBe(all.length)
+    expect(all).not.toContain('banana')
+  })
+
+  it('uses the chosen state', () => {
+    const mango = f('mango', ['Jan'], ['Dec', 'Feb'], { stateOverrides: { NT: { peak: ['Oct', 'Nov'], available: ['Sep', 'Dec'] } } })
+    expect(nowSections([mango], 'Nov').buyNow).toEqual([])
+    expect(nowSections([mango], 'Nov', 'NT').buyNow).toEqual([mango])
+  })
+
+  it('gives each fruit one status word', () => {
+    expect(fruitStatus(fruits[1], 'Nov')).toBe('peak')
+    expect(fruitStatus(fruits[4], 'Nov')).toBe('ending')
+    expect(fruitStatus(fruits[0], 'Nov')).toBe('available')
+    expect(fruitStatus(fruits[5], 'Nov')).toBe('always')
+    expect(fruitStatus(fruits[6], 'Nov')).toBe('off')
+  })
+
+  it('describes month runs across the year end', () => {
+    expect(describeMonths(['Dec', 'Jan', 'Feb'])).toBe('Dec to Feb')
+    expect(describeMonths(['Oct', 'Nov', 'Mar'])).toBe('Mar, Oct, Nov')
+    expect(describeMonths(['Jan', 'Dec'])).toBe('Dec, Jan')
+    expect(describeMonths(ALL)).toBe('all year')
+    expect(describeMonths([])).toBe('')
   })
 })
