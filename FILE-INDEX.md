@@ -14,3 +14,4 @@
 | `data/recipes-draft.json` | 33 recipe drafts as data (not yet reviewed) | 2026-11-02 |
 | `research/2026-11-02-look-decision.md` | The hybrid look Nathan picked from the three comps (D7), spec for the integration build | 2026-11-02 |
 | `research/2026-11-02-feedback/` | Nathan iPhone screenshots of each build round | 2026-11-02 |
+| `research/2026-11-02-art-test/dish-sheet.jpg` | All 35 recipe dish photos (generated, paid route) | 2026-11-02 |
