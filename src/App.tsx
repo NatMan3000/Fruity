@@ -10,7 +10,6 @@ import { tabFor, type Route } from './utils/route'
 import { seasonOf } from './utils/seasonality'
 import { seasonTones, tonesOf } from './utils/tones'
 import { BagSheet } from './components/BagSheet'
-import { FruitQuiz } from './components/FruitQuiz'
 import { Link } from './components/Link'
 import { TabBar } from './components/TabBar'
 import { TopBar } from './components/TopBar'
@@ -24,6 +23,8 @@ import { YearPage } from './pages/YearPage'
 
 // The Fruit Salad Cafe game (three.js + physics) is its own chunk, fetched only when opened.
 const CafeGame = lazy(() => import('./cafe/CafeGame'))
+// "Guess the fruit" is its own chunk too (its 3D stage is a further lazy chunk inside it).
+const QuizPage = lazy(() => import('./quiz/QuizPage'))
 
 const isString = (v: unknown): v is string => typeof v === 'string'
 
@@ -88,11 +89,9 @@ function Screen({ route, month, query, setQuery, filter, setFilter, browseWith }
       return <PlayPage />
     case 'quiz':
       return (
-        <div className="flex flex-col pb-6">
-          <TopBar back={{ name: 'play' }} bag={false} />
-          <h1 className="px-5 pb-4 font-display text-[clamp(2.25rem,11vw,3rem)] leading-none">Guess the fruit</h1>
-          <div className="px-4"><FruitQuiz fruits={FRUITS} /></div>
-        </div>
+        <Suspense fallback={<QuizLoading />}>
+          <QuizPage month={month} />
+        </Suspense>
       )
     case 'salad':
       return (
@@ -101,6 +100,15 @@ function Screen({ route, month, query, setQuery, filter, setFilter, browseWith }
         </Suspense>
       )
   }
+}
+
+function QuizLoading() {
+  return (
+    <div className="flex flex-col pb-6" role="status">
+      <TopBar back={{ name: 'play' }} bag={false} />
+      <h1 className="px-5 font-display text-[clamp(2.5rem,13vw,3.5rem)] leading-none">Guess the fruit</h1>
+    </div>
+  )
 }
 
 function NotFound() {

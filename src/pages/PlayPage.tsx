@@ -1,6 +1,5 @@
 import { ChevronRight } from 'lucide-react'
 import { type CSSProperties } from 'react'
-import clsx from 'clsx'
 import type { Fruit } from '../types/fruit'
 import { FRUITS } from '../assets/fruits'
 import { toneVars, tonesOf } from '../utils/tones'
@@ -21,9 +20,8 @@ export function PlayPage() {
           to={{ name: 'quiz' }}
           colour="#7E57C2"
           title="Guess the fruit"
-          text="Five rounds. A blurred fruit, four names, and clues if you need them."
+          text="Cut-open fruit, spinning shadows, close-ups and season smarts. Streaks, combos, a daily challenge and pass the phone."
           fruits={pick('dragon-fruit', 'starfruit', 'feijoa')}
-          blur
         />
         <PlayEntry
           i={1}
@@ -38,7 +36,7 @@ export function PlayPage() {
   )
 }
 
-function PlayEntry({ i, to, colour, title, text, fruits, blur = false }: { i: number; to: Route; colour: string; title: string; text: string; fruits: Fruit[]; blur?: boolean }) {
+function PlayEntry({ i, to, colour, title, text, fruits }: { i: number; to: Route; colour: string; title: string; text: string; fruits: Fruit[] }) {
   return (
     <li className="pop-in" style={{ '--i': i } as CSSProperties}>
       <Link
@@ -48,7 +46,7 @@ function PlayEntry({ i, to, colour, title, text, fruits, blur = false }: { i: nu
       >
         <span className="flex items-end -space-x-2" aria-hidden="true">
           {fruits.map((f, k) => (
-            <FruitSticker key={f.id} fruit={f} size={k === 1 ? 84 : 68} slap delay={180 + k * 90 + i * 120} className={clsx(blur && 'blur-[3px]')} />
+            <FruitSticker key={f.id} fruit={f} size={k === 1 ? 84 : 68} slap delay={180 + k * 90 + i * 120} />
           ))}
         </span>
         <span className="flex items-end justify-between gap-3">

@@ -133,6 +133,16 @@ Every text pair above is checked for all 39 fruit and all four seasons at 4.5:1,
 - **Sheet** (`Sheet`): native `<dialog>`, the screen's `bright` with `ink` text, a `pop` close disc.
 - **Filter chips**: `deep` with a colour dot, `pop` with a check when on; they squish when pressed.
 
+## Guess the fruit (src/quiz/)
+
+A game, not a flash-card set (Nathan, 2 Nov 2026: "not very fun! ... do better!"). Full screen over the tab bar like the cafe, on the season's page colour; the question card is `bright`, answers `deep`, right `peak`, wrong `off`.
+
+- **Round types, mixed each game:** Inside out (the 3D fruit already cut open, swaying), Silhouette spin (a flat ink shape spinning, colour then shine arriving as the clock runs), Close-up (a tight zoom on the skin pulling back), Season sense (tap a peak month on a 12-month grid; which one is NOT in season, or at its peak, this month), Pairs (ingredient pictures, the right one from `pairings`, the wrong ones firmly savoury), Odd one out (shop families in `src/quiz/logic/traits.ts`). Every answer comes from the data; `src/quiz/logic/questions.test.ts` checks it.
+- **Scoring:** 100 plus up to 100 for speed (15 s clock), times a combo (x2 from 3 in a row, x3 from 6, x4 from 10), three strawberry hearts, 1 to 3 stars, personal best and the daily on this phone (`localStorage 'fruity.quiz'`). Difficulty follows the streak in Quick play and the position in the daily and Pass the phone.
+- **Feedback:** right: the 3D fruit slices open with juice (an inside-out one closes back up and hops), juice drops burst from the tapped answer, the points float up, the result bar slides up in `peak` and moves on by itself; wrong: the card squishes, the fruit wobbles, the bar in `off` shows the answer and a one-line fun fact and waits. Streaks of 3, 5 and 10 slap a sticker with rays. Sounds reuse the cafe's (`src/cafe/sound.ts`), off until switched on.
+- **Modes:** Quick play (10), Pass the phone (two named players, 6 each, a hand-over screen in the player's colour before every turn so the clock only starts when they tap), Daily fruit challenge (8, dealt from the date so both phones match, one go a day, a day streak).
+- **3D:** one canvas for the whole game (`src/three/QuizStage.tsx`, lazy, preloaded while the menu is up), frameloop demand: it renders while the clock runs and stops once the answer has played. No WebGL: the sticker does the same trick in 2D (black, blurred or zoomed, clearing with the clock).
+
 ## App icon
 
 A red apple with a lime leaf on a bright green square (`scripts/build-icons.ts`, `bun run icons`), PNG only in the manifest: iOS cannot use an SVG home-screen icon. A changed icon needs the home-screen app deleted and re-added.

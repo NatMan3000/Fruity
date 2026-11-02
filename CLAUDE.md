@@ -60,8 +60,9 @@ bun run art       # New fruit art in one step: import from ~/.cache/kai-tmp/frui
 src/
 ├── assets/fruits.ts          # 39 Australian fruits (validator prints the count); art-manifest.json
 ├── cafe/                     # Fruit Salad Cafe kids' game (lazy chunk, its own look)
+├── quiz/                     # Guess the fruit (lazy chunk): logic/ (pure, tested), QuizGame, 3D stage in three/QuizStage
 ├── components/               # FruitSticker, StatusSticker, SeasonStrip, TopBar, TabBar, Sheet,
-│                             # BagSheet, NowHero (lazy 3D hero), FruitQuiz, RecipeIdeas, FruitIcon
+│                             # BagSheet, NowHero (lazy 3D hero), RecipeIdeas, FruitIcon
 ├── hooks/                    # useRoute, useBag, useScreen (screen colours), useCurrentMonth, ...
 ├── pages/                    # Now, Browse (Fruit list), Year, FruitDetail, Cook, Play
 ├── three/                    # Lazy 3D: HeroDish (the dish and cutting), models (39 procedural
