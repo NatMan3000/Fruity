@@ -145,7 +145,7 @@ A game, not a flash-card set (Nathan, 2 Nov 2026: "not very fun! ... do better!"
 
 ## App icon
 
-A red apple with a lime leaf on a bright green square (`scripts/build-icons.ts`, `bun run icons`), PNG only in the manifest: iOS cannot use an SVG home-screen icon. A changed icon needs the home-screen app deleted and re-added.
+A red apple with a lime leaf on a bright green square (`scripts/build-icons.ts`, `bun run icons`). The home-screen icon is the 180px PNG `public/icons/apple-touch-icon.png`, inlined into the page head as a `data:` URI at build (`vite.config.ts` `inlineTouchIcon`): on iOS 26 a URL-based touch icon gave a letter tile on the theme colour (the Add to Home Screen sheet's own loader failed), and SVG touch icons are ignored for the Home Screen. Manifest icons are PNG, cache-busted `?v=N`. Fixed and confirmed on Nathan's iPhone, 2 Nov 2026. A changed icon needs the home-screen app deleted and re-added.
 
 ## Writing
 
