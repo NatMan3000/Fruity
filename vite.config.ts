@@ -20,19 +20,15 @@ export default defineConfig({
         theme_color: '#B7014E',
         background_color: '#B7014E',
         display: 'standalone',
-        id: '/Fruity/',
         start_url: '/Fruity/',
         scope: '/Fruity/',
-        // PNG only: iOS cannot use an SVG home-screen icon and shows a letter placeholder instead.
-        // Built by scripts/build-icons.ts (DESIGN.md "App icon").
-        // SVG icons first: the pre-rebuild app listed only SVG icons here and iOS used them for the
-        // home-screen icon; after switching to PNG-only, iOS showed a letter placeholder (Nathan, 2 Nov 2026).
+        // Mirrors Bready's manifest, which gets its home-screen icon on Nathan's iPhone: no `id`,
+        // relative SVG icons only (192, 512, 512 maskable). PNG icons and an `id` coincided with iOS
+        // showing a letter placeholder instead (2 Nov 2026).
         icons: [
-          { src: '/Fruity/icons/icon-192.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
-          { src: '/Fruity/icons/icon-512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any' },
-          { src: '/Fruity/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: '/Fruity/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: '/Fruity/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+          { src: 'icons/icon-192.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
+          { src: 'icons/icon-512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any' },
+          { src: 'icons/icon-512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'maskable' }
         ]
       },
       workbox: {
