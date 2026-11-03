@@ -15,3 +15,15 @@
 | `research/2026-11-02-look-decision.md` | The hybrid look Nathan picked from the three comps (D7), spec for the integration build | 2026-11-02 |
 | `research/2026-11-02-feedback/` | Nathan iPhone screenshots of each build round | 2026-11-02 |
 | `research/2026-11-02-art-test/dish-sheet.jpg` | All 35 recipe dish photos (generated, paid route) | 2026-11-02 |
+| `research/2026-11-03-fruity-responsive-audit.md` | 393px responsive audit of the release candidate, findings by layer | 2026-11-03 |
+| `scripts/download-images.ts` | Downloads fruit photos from the Wikipedia API (the original photo source) | 2026-01-26 |
+| `scripts/import-art.ts` | Copies generated fruit art (`<id>.png`) into `images-src/fruits` for known fruit ids | 2026-11-02 |
+| `scripts/build-images.ts` | Builds the grid, detail and icon WebP files from `images-src/fruits` and writes `src/assets/art-manifest.json` | 2026-11-02 |
+| `scripts/build-stickers.ts` | Die-cut sticker WebPs for every fruit with new art (cut-out matte plus white edge) | 2026-11-02 |
+| `scripts/subject-mask.swift` | Apple Vision "lift subject" greyscale mask, used by `build-stickers.ts` | 2026-11-02 |
+| `scripts/build-icons.ts` | Draws the app icons as SVG and renders the iOS, manifest and maskable PNGs | 2026-11-02 |
+| `scripts/contact-sheet.ts` | Writes a labelled contact sheet of every grid image to `/tmp` | 2026-11-02 |
+| `scripts/model-sheet.ts` | Contact sheets of every 3D fruit whole and cut open; fails if a cut piece overlaps another | 2026-11-02 |
+| `scripts/validate-data.ts` | Fails the build on bad fruit data (`bun run validate`) | 2026-11-02 |
+| `scripts/validate-data.test.ts` | Tests for the fruit data validator | 2026-11-02 |
+| `scripts/colour-contrast.test.ts` | Checks every text colour pair the Sorbet look draws, for every fruit and season | 2026-11-02 |
