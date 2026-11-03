@@ -1,8 +1,9 @@
 // A fruit page's hero: the fruit in 3D dropping in spinning, bouncing and coasting to a stop
 // (src/three/SpinFruit.tsx, comp-3d's drop), on a juicier blob in the fruit's colour. Drag to turn it;
 // tap it or swipe quickly across it to cut it open, tap again to put it back. Lazy like the Now hero:
-// the 3D chunk is asked for after first paint, and the white-edged sticker stands in until it lands,
-// for good where WebGL is missing or fails, and for any fruit without a model (where it drops in
+// the 3D chunk is asked for after first paint and the blob waits empty until the fruit drops onto it
+// (never the sticker first: it flashed up and vanished, Nathan, 3 Nov 2026). The white-edged sticker is
+// the hero only where there is no 3D: WebGL missing or failing, or a fruit without a model (it drops in
 // itself, with a squash).
 import { lazy, Suspense, useMemo, useState } from 'react'
 import type { Fruit } from '../types/fruit'
@@ -37,7 +38,7 @@ export function FruitHero({ fruit }: { fruit: Fruit }) {
     if (n.open) showSlash(n)
   }
 
-  // The sticker: still while the 3D fruit is on its way, dropping in by itself when it is the hero.
+  // The sticker, when it is the hero (dropping in by itself) or the 3D scene failed.
   const poster = (
     <div className="absolute inset-x-0 top-0 flex items-center justify-center" style={{ height: CANVAS_H }} aria-hidden="true">
       <div className={three ? undefined : 'drop-squash'}>
@@ -60,13 +61,13 @@ export function FruitHero({ fruit }: { fruit: Fruit }) {
         className="blob-in absolute left-1/2 -translate-x-1/2 rounded-[58%_42%_49%_51%/46%_55%_45%_54%] bg-(--bright)"
         style={{ top: BLOB_TOP, width: BLOB.width, height: BLOB.height }}
       />
-      {three && ready ? (
+      {!three ? poster : ready && (
         <Fallback poster={poster}>
-          <Suspense fallback={poster}>
+          <Suspense fallback={null}>
             <SpinFruit fruit={like} shade={tonesOf(fruit.colour).ink} slice={slice} onCut={onCut} className="absolute inset-x-0 top-0" style={{ height: CANVAS_H }} />
           </Suspense>
         </Fallback>
-      ) : poster}
+      )}
       <Slash at={slash} />
       {/* The knife hangs from the middle of the blob's lower edge, half on it, in ink so it reads on both */}
       {three && (

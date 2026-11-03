@@ -11,11 +11,12 @@ const TABS: { tab: Tab; label: string; to: Route; Icon: LucideIcon }[] = [
 ]
 
 // A floating dark pill (DESIGN.md "Components"). The current tab sits in a scoop of the screen's colour
-// that slides across with an overshoot when you switch tabs (CSS only).
+// that slides across with an overshoot when you switch tabs (CSS only). It sits out of the page moves
+// (index.css), so it stays put while the screens slide and its scoop slides live.
 export function TabBar({ active }: { active: Tab }) {
   const index = TABS.findIndex(t => t.tab === active)
   return (
-    <nav aria-label="Main" className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-3 pb-[calc(env(safe-area-inset-bottom)+10px)]">
+    <nav aria-label="Main" className="pointer-events-none fixed inset-x-0 bottom-0 z-30 px-3 [view-transition-name:tab-bar] pb-[calc(env(safe-area-inset-bottom)+10px)]">
       <ul className="pointer-events-auto relative mx-auto flex max-w-md rounded-full bg-(--ink) p-1.5 shadow-[0_10px_30px_-8px_rgb(20_6_14/0.55)]">
         <li
           aria-hidden="true"

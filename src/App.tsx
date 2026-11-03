@@ -1,8 +1,8 @@
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useMemo, useState } from 'react'
 import { FRUITS } from './assets/fruits'
 import { useCurrentMonth } from './hooks/useCurrentMonth'
-import { useRecipes } from './hooks/useRecipes'
-import { navigate, useRoute } from './hooks/useRoute'
+import { loadRecipes, useRecipes } from './hooks/useRecipes'
+import { navigate, setRoutePreload, useRoute } from './hooks/useRoute'
 import { useScreen } from './hooks/useScreen'
 import { useStoredState } from './hooks/useStoredState'
 import { UiContext } from './hooks/useUi'
@@ -13,6 +13,7 @@ import { seasonOf } from './utils/seasonality'
 import { seasonTones, tonesOf } from './utils/tones'
 import { BagSheet } from './components/BagSheet'
 import { Link } from './components/Link'
+import { preloadable } from './components/preloadable'
 import { TabBar } from './components/TabBar'
 import { TopBar } from './components/TopBar'
 import { CafeLoading } from './cafe/CafeLoading'
@@ -24,12 +25,22 @@ import { PlayPage } from './pages/PlayPage'
 import { YearPage } from './pages/YearPage'
 
 // The Fruit Salad Cafe game (three.js + physics) is its own chunk, fetched only when opened.
-const CafeGame = lazy(() => import('./cafe/CafeGame'))
+const CafeGame = preloadable(() => import('./cafe/CafeGame'))
 // "Guess the fruit" is its own chunk too (its 3D stage is a further lazy chunk inside it).
-const QuizPage = lazy(() => import('./quiz/QuizPage'))
+const QuizPage = preloadable(() => import('./quiz/QuizPage'))
 // A recipe's page and cook mode are chunks of their own, as is the recipe data (useRecipes).
-const RecipePage = lazy(() => import('./pages/RecipePage'))
-const CookMode = lazy(() => import('./pages/CookMode'))
+const RecipePage = preloadable(() => import('./pages/RecipePage'))
+const CookMode = preloadable(() => import('./pages/CookMode'))
+
+// A move into one of them fetches it first, so the page slides in whole rather than its loading screen.
+setRoutePreload(route => {
+  switch (route.name) {
+    case 'recipe': return Promise.all([loadRecipes(), RecipePage.preload()])
+    case 'cookmode': return Promise.all([loadRecipes(), CookMode.preload()])
+    case 'quiz': return QuizPage.preload()
+    case 'salad': return CafeGame.preload()
+  }
+})
 
 const isString = (v: unknown): v is string => typeof v === 'string'
 

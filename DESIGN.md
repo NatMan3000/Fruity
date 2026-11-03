@@ -137,6 +137,7 @@ Every text pair above is checked for all 39 fruit and all four seasons at 4.5:1,
 | A fruit page opens | The blob pops in where it rests, the 3D fruit drops in spinning and coasts to a stop, the status sticker slaps on, the Year bars bounce up one by one (Market Sticker's entrance) |
 | Add to bag | The button swells once and turns peak green, the tick spins in, a small sticker of the fruit hops up into the bag, whose count pops |
 | Tabs | The current pill slides across with an overshoot |
+| Page moves | A fruit, a recipe or a game slides in from the right over the screen it came from, and Back slides it off to the right again (300 ms, `--ease-out-soft`); between tabs the new screen fades in with a short slide from the side you moved towards (240 ms). The tab bar stays put. The iPhone's back swipe is Safari's own animation: nothing is added to it |
 | Sheet | Springs up, slides down |
 | Hero | Drop-in, cut, juice, rejoin (above) |
 

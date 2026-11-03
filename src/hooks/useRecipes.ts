@@ -24,5 +24,7 @@ export function useRecipes(enabled = true): Recipe[] | null {
     loadRecipes().then(r => { if (live) setList(r) }, err => console.warn('fruity: could not load the recipes', err))
     return () => { live = false }
   }, [list, enabled])
-  return list
+  // Once loaded anywhere, every caller has them on its first render (a recipe screen never flashes its
+  // loading state while its own effect catches up).
+  return list ?? recipes
 }

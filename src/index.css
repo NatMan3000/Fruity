@@ -314,17 +314,38 @@
   animation: slash 360ms ease-out forwards;
 }
 
-/* Route fade where View Transitions are missing. */
-@keyframes route-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* Page moves (src/hooks/useRoute.ts sets html[data-nav] for one View Transition of the whole screen).
+   push: the new screen slides in from the right over the old one, which eases a little left (the
+   iPhone's own push); pop is the same in reverse. next / prev (tabs): the new screen fades in over the
+   old with a short slide from the side you moved towards. Both screens stay opaque (no blend), so no
+   frame is ever blank or a mix of two colours. A swipe back is Safari's own animation: nothing here
+   runs for it. Where View Transitions are missing, useRoute slides the new screen in alone. */
+@keyframes nav-from-right { from { transform: translateX(100%); } }
+@keyframes nav-to-right { to { transform: translateX(100%); } }
+@keyframes nav-from-left-part { from { transform: translateX(-28%); } }
+@keyframes nav-to-left-part { to { transform: translateX(-28%); } }
+/* Opaque by 60% so the two screens overlap only briefly, while the slide runs its full length. */
+@keyframes nav-fade-from-right { from { opacity: 0; transform: translateX(32px); } 60% { opacity: 1; } }
+@keyframes nav-fade-from-left { from { opacity: 0; transform: translateX(-32px); } 60% { opacity: 1; } }
+/* Full shorthands only: the build's minifier drops longhands written after `animation: none` (the
+   slides sat at 0 s and the move was an instant swap). */
+html[data-nav]::view-transition-old(root),
+html[data-nav]::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation: none;
 }
-.route-fade {
-  animation: route-fade 150ms ease-out;
-}
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 180ms;
+html[data-nav='push']::view-transition-old(root) { animation: nav-to-left-part 300ms var(--ease-out-soft) both; }
+html[data-nav='push']::view-transition-new(root) { animation: nav-from-right 300ms var(--ease-out-soft) both; }
+html[data-nav='pop']::view-transition-old(root) { animation: nav-to-right 300ms var(--ease-out-soft) both; z-index: 1; }
+html[data-nav='pop']::view-transition-new(root) { animation: nav-from-left-part 300ms var(--ease-out-soft) both; }
+html[data-nav='next']::view-transition-new(root) { animation: nav-fade-from-right 240ms var(--ease-out-soft) both; }
+html[data-nav='prev']::view-transition-new(root) { animation: nav-fade-from-left 240ms var(--ease-out-soft) both; }
+/* The tab bar stays put: the live new one (its scoop sliding across) sits over the old one, which stays
+   underneath so a browser that fails to paint the new image still shows a tab bar (WebKit in testing). */
+::view-transition-old(tab-bar),
+::view-transition-new(tab-bar) {
+  mix-blend-mode: normal;
+  animation: none;
 }
 
 /* Bottom sheet (native dialog): springs up, slides down. */
