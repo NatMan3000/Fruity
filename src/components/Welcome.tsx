@@ -1,17 +1,19 @@
 // The welcome screen (DESIGN.md "Welcome", Nathan's D21, 3 Nov 2026): "Fruity" in big Shrikhand over
-// this month's lead fruit, floating and slowly turning in 3D on the season's colour, and "Tap to slice".
+// this month's lead fruit, floating and slowly turning in 3D on the season's colour. No "Tap to slice"
+// cue: it is obvious what to do (Nathan, 3 Nov 2026).
 // The whole screen is one button. The tap cuts the fruit along a knife stroke (the slice sound, juice),
 // the pieces fly apart and the screen itself splits along the same line, its two halves pulling apart to
 // show the app underneath (Now on a launch, the linked screen on a deep link, whatever was there on a
 // return), in about 0.8 s. The tap is also the gesture iOS needs to start sound, so the Now bowl that
 // drops in after it is heard (the heroes wait for the welcome to go: useWelcome.ts).
 //
-// Paints at once from the main bundle (colour, wordmark, cue, the fruit's sticker); the 3D fruit is a lazy
-// chunk that takes the sticker's place when its first frame is up. No WebGL: the sticker stays and is cut
-// with the screen. Reduced motion: still there, still needs the tap, then a short fade.
+// Paints at once from the main bundle (colour, wordmark, the fruit's blob); the 3D fruit is a lazy chunk
+// that appears in the empty blob when its first frame is up. Never the fruit's photo first and then the 3D
+// (DESIGN.md "3D", rule 1: the third time it happened, 3 Nov 2026). No WebGL, or the scene fails: the
+// sticker is the fruit, and is cut with the screen. Reduced motion: still there, still needs the tap, then a short fade.
 import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import clsx from 'clsx'
-import { Citrus, Flower2, Leaf, Slice, Sun, type LucideIcon } from 'lucide-react'
+import { Citrus, Flower2, Leaf, Sun, type LucideIcon } from 'lucide-react'
 import type { Month, Season } from '../types/fruit'
 import { FRUITS } from '../assets/fruits'
 import { prepareAudio, sfx, unlockAudio } from '../audio/sound'
@@ -107,9 +109,9 @@ function WelcomeScreen({ month }: { month: Month }) {
   const dialog = useRef<HTMLDialogElement>(null)
   const halves = useRef<(HTMLDivElement | null)[]>([])
   const pieces3d = useRef<HTMLDivElement>(null)
-  const cue = useRef<HTMLSpanElement>(null)
   const leaving = useRef(false)
   const [ready3d, setReady3d] = useState(false)
+  const [failed3d, setFailed3d] = useState(false) // the scene threw: the sticker is the fruit after all
   const [cut, setCut] = useState<'whole' | 'cut' | 'cut2d'>('whole')
   const [slash, showSlash] = useSlash()
   const like = useMemo(() => ({ id: lead.id, name: lead.name, colour: lead.colour }), [lead.id, lead.name, lead.colour])
@@ -179,7 +181,6 @@ function WelcomeScreen({ month }: { month: Month }) {
     }
     setCut(ready3d ? 'cut' : 'cut2d')
     showSlash({ x: cx, y: cy, angle: ANGLE })
-    cue.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 120, fill: 'forwards' })
     // Each half moves off along the cut's normal (top up and left, bottom down and right), a quick
     // little parting first, then pulled away faster and faster, hinging a few degrees about the cut.
     const part = (el: HTMLDivElement | null, sign: number) => el?.animate([
@@ -216,6 +217,7 @@ function WelcomeScreen({ month }: { month: Month }) {
       </header>
       {others.map((f, i) => (
         <span key={f.id} className="absolute" style={CORNERS[i]}>
+          {/* 3d-fallback-ok: art, not a 3D stand-in (the month's other fruit as stickers round the edge) */}
           <FruitSticker fruit={f} size={Math.round(size * 0.34)} slap delay={260 + i * 90} tilt={TILTS[i]} eager />
         </span>
       ))}
@@ -224,12 +226,11 @@ function WelcomeScreen({ month }: { month: Month }) {
         className="welcome-blob absolute rounded-[58%_42%_49%_51%/46%_55%_45%_54%] bg-(--pop)"
         style={{ left: cx - size * 0.62, top: cy - size * 0.55, width: size * 1.24, height: size * 1.1 }}
       />
-      <span
-        className={clsx('absolute flex items-center justify-center transition-opacity duration-200', ready3d && cut !== 'cut2d' && 'opacity-0')}
-        style={{ left: cx - size / 2, top: cy - size / 2, width: size, height: size }}
-      >
-        <FruitSticker fruit={lead} size={Math.round(size * 0.9)} tilt={-6} eager />
-      </span>
+      {(!three || failed3d) && (
+        <span className="absolute flex items-center justify-center" style={{ left: cx - size / 2, top: cy - size / 2, width: size, height: size }}>
+          <FruitSticker fruit={lead} size={Math.round(size * 0.9)} tilt={-6} eager />
+        </span>
+      )}
       {/* The cut's own face along each half's edge, once it is cut */}
       <span
         className={clsx('absolute bg-(--bright)', cut === 'whole' && 'opacity-0')}
@@ -250,7 +251,7 @@ function WelcomeScreen({ month }: { month: Month }) {
       {half(1)}
       {three && visible && cut !== 'cut2d' && (
         <div ref={pieces3d} aria-hidden="true" className="pointer-events-none absolute inset-x-0" style={{ top: cy - canvasH / 2, height: canvasH }}>
-          <Fallback poster={null}>
+          <Fallback poster={<Failed onFail={() => setFailed3d(true)} />}>
             <Suspense fallback={null}>
               <WelcomeFruit fruit={like} size={size} angle={ANGLE} cut={cut === 'cut'} onReady={() => setReady3d(true)} className={clsx('absolute inset-0 transition-opacity duration-200', !ready3d && 'opacity-0')} />
             </Suspense>
@@ -264,16 +265,9 @@ function WelcomeScreen({ month }: { month: Month }) {
       <button
         type="button"
         onClick={enter}
-        className="group absolute inset-0 flex touch-none flex-col items-center justify-end pb-[calc(env(safe-area-inset-bottom)+8vh)] outline-none select-none"
+        className="absolute inset-0 touch-none outline-none select-none focus-visible:outline-3 focus-visible:-outline-offset-8 focus-visible:outline-(--light)"
       >
-        <span className="sr-only">Enter Fruity. </span>
-        <span
-          ref={cue}
-          className="welcome-cue block-shadow inline-flex h-14 items-center gap-2 rounded-full bg-(--ink) pr-6 pl-5 text-body font-extrabold text-(--light) group-focus-visible:outline-3 group-focus-visible:outline-offset-4 group-focus-visible:outline-(--light)"
-        >
-          <Slice aria-hidden="true" className="size-6" strokeWidth={2.5} />
-          Tap to slice
-        </span>
+        <span className="sr-only">Enter Fruity</span>
       </button>
     </dialog>
   )
@@ -287,3 +281,9 @@ const CORNERS: CSSProperties[] = [
   { right: '4%', bottom: '21%' },
 ]
 const TILTS = [-14, 12, 9, -10]
+
+// The 3D scene failed: tell the welcome, which then shows the fruit's sticker in its place.
+function Failed({ onFail }: { onFail: () => void }) {
+  useEffect(() => { onFail() }, [onFail])
+  return null
+}

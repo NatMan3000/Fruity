@@ -32,6 +32,7 @@ export function Picture({ fruit, look, outcome, progress, shade, qKey }: Picture
       {fruit && <span className="absolute inset-x-6 top-2 bottom-1 rounded-[58%_42%_49%_51%/46%_55%_45%_54%] bg-(--pop) opacity-70" />}
       {three ? (
         <Fallback poster={poster}>
+          {/* 3d-fallback-ok: the 2D picture IS the question in a timed round (an empty box would break it); QuizStage preloads from the menu */}
           <Suspense fallback={poster}>
             <QuizStage fruit={like} look={look} outcome={outcome} progress={progress} shade={shade} qKey={qKey} className="absolute inset-0" />
           </Suspense>
@@ -63,6 +64,7 @@ function Sticker2D({ fruit, look, outcome, progress }: { fruit: Fruit; look: Sta
         className={clsx('quiz-reveal', done && 'quiz-reveal-done', outcome === 'right' && 'quiz-swell', outcome === 'wrong' && 'quiz-squish')}
         style={{ ...style, transitionDuration: '500ms' }}
       >
+        {/* 3d-fallback-ok: Sticker2D, the quiz's 2D question (see the Suspense above) */}
         <FruitSticker fruit={fruit} size={180} eager slap={look === 'hero'} />
       </div>
     </div>

@@ -333,9 +333,6 @@
 .welcome-rise {
   animation: rise 520ms var(--ease-spring) backwards;
 }
-.welcome-cue {
-  animation: rise 520ms var(--ease-spring) 520ms backwards;
-}
 @keyframes welcome-blob {
   from { opacity: 0; transform: scale(0.6) rotate(-8deg); }
   to { opacity: 1; transform: none; }

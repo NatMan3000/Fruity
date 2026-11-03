@@ -102,9 +102,9 @@ export function NowPage({ month, onSeeAllPeak, onSeeInSeason }: { month: Month; 
               id="cook-week"
               Icon={CookingPot}
               title="Cook this week"
-              action={<Link to={{ name: 'cook' }} className="inline-flex min-h-11 items-center text-small font-extrabold underline">All recipes</Link>}
+              action={<Link to={{ name: 'cook' }} className="-my-1 inline-flex min-h-11 items-center text-small font-extrabold underline">All recipes</Link>}
             />
-            <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto scroll-px-4 px-4 pt-1 pb-3 scrollbar-hide">
+            <ul className="-mx-4 -mb-3 flex snap-x gap-3 overflow-x-auto scroll-px-4 px-4 pt-1 pb-3 scrollbar-hide">
               {ideas.map((r, i) => (
                 <li key={r.id} className={clsx('flex w-[272px] shrink-0 snap-start', intro && 'pop-in')} style={{ '--i': i + 5 } as CSSProperties}>
                   <RecipeCard recipe={r} month={month} stack className="w-full" />
@@ -171,7 +171,7 @@ function Rail({ id, Icon, title, note, fruits, intro, ending = false }: { id: st
   return (
     <section aria-labelledby={id} className="@container flex flex-col gap-3">
       <SectionTitle id={id} Icon={Icon} title={title} note={note} />
-      <ul className="-mx-4 flex snap-x gap-[clamp(8px,calc((100cqw_-_305px)/3),40px)] overflow-x-auto scroll-px-4 px-4 pt-1 pb-2 scrollbar-hide">
+      <ul className="-mx-4 -mb-2 flex snap-x gap-[clamp(8px,calc((100cqw_-_305px)/3),40px)] overflow-x-auto scroll-px-4 px-4 pt-1 pb-2 scrollbar-hide">
         {fruits.map((f, i) => (
           <li key={f.id} className={clsx('w-[96px] shrink-0 snap-start', intro && 'pop-in')} style={{ '--i': i + 3 } as CSSProperties}>
             <Link to={{ name: 'fruit', id: f.id }} className="press flex flex-col items-center gap-2 text-center">

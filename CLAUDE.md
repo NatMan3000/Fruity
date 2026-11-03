@@ -51,7 +51,7 @@ bun run art       # New fruit art in one step: import from ~/.cache/kai-tmp/frui
 
 ## Design
 
-`DESIGN.md` is the design system ("Sorbet Sticker", the D7 hybrid of 2 Nov 2026): season-coloured screens, each fruit a block in its own colour, die-cut sticker art inside the blocks, Shrikhand + Bricolage Grotesque, a 3D sundae dish on Now whose fruit you can cut open. Read it before touching any screen. Victoria only: there is no state selector; `stateOverrides` in fruits.ts stay on file but nothing reads them.
+`DESIGN.md` is the design system ("Sorbet Sticker", the D7 hybrid of 2 Nov 2026): season-coloured screens, each fruit a block in its own colour, die-cut sticker art inside the blocks, Shrikhand + Bricolage Grotesque, a 3D sundae dish on Now whose fruit you can cut open. Read it before touching any screen. Its 3D rule 1 (a 3D fruit's place waits empty, never its photo first) is gated by `scripts/no-photo-before-3d.test.ts`: put it in any brief that adds or changes a 3D scene. Victoria only: there is no state selector; `stateOverrides` in fruits.ts stay on file but nothing reads them.
 
 ---
 

@@ -71,6 +71,7 @@ export function BowlStage(props: BowlStageProps) {
     >
       {webgl ? (
         <SceneBoundary fallback={<FlatBowl {...props} />}>
+          {/* 3d-fallback-ok: a flat bowl outline and "Warming up", no fruit photo */}
           <Suspense fallback={<div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 font-extrabold text-(--ink-soft)"><FlatBowlShape /><span>Warming up the bowl...</span></div>}>
             {scene}
           </Suspense>
