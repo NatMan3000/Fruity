@@ -407,7 +407,7 @@ export const FLESH: Record<string, FleshSpec> = {
   // Hass: pale yellow round the stone, greening outwards to a bright green band under the dark skin.
   avocado: {
     flesh: '#BCD65E', core: '#F2EC9C', coreR: 0.8, rim: { colour: '#5E9A2E', w: 0.09 }, rind: '#1E2E14', rindW: 0.02, centre: [0.5, 0.38],
-    pit: { colour: '#EEE6A2', r: 0.38, ry: 0.4 }, stone: { colour: '#7A4A2A', r: 0.34, ry: 0.36, point: 0.12, surface: 'smooth' },
+    pit: { colour: '#EEE6A2', r: 0.5, ry: 0.52 }, stone: { colour: '#7A4A2A', r: 0.46, ry: 0.48, point: 0.12, surface: 'smooth' },
   },
   peach: STONE('#FFC64A', '#FF9A2A', '#E8483A',
     { colour: '#B4503A', r: 0.38, ry: 0.48, glow: '#EC5A3A', fibres: '#D8402E', wrinkle: '#7A3020' },
