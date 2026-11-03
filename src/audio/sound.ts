@@ -119,10 +119,11 @@ export const sfx = {
     tone(1320, 0.22, { type: 'sine', gain: 0.035 * impact, delay: 0.005 }) // the glaze's ring
     noise(0.05, { gain: 0.08 * impact, from: 3000, to: 1200 })
   },
-  plop: (i = 0) => {
+  // `vol` 0-1: a bounce plops again, softer (callers pass how hard it landed).
+  plop: (i = 0, vol = 1) => {
     const f = 300 + (i % 5) * 55
-    tone(f, 0.1, { type: 'sine', gain: 0.1, slide: 160 })
-    noise(0.04, { gain: 0.03, from: 2200, to: 900 })
+    tone(f, 0.1, { type: 'sine', gain: 0.1 * vol, slide: 160 })
+    noise(0.04, { gain: 0.03 * vol, from: 2200, to: 900 })
   },
   // The Slice button and tap-to-cut on the Now dish and a fruit's page: a quick knife swish, the snick of
   // the blade, then a little juicy splash. `join`: the halves pressed back together.

@@ -140,9 +140,10 @@ function Scene({ fruit, shade, slice, onCut, settled = false }: Omit<SpinFruitPr
       f.vy -= 20 * dt
       f.y += f.vy * dt
       if (f.y <= 0) {
+        const impact = Math.min(1, -f.vy / 9.8) // 1 for the first landing from the top
+        if (!f.plopped || impact > 0.15) { f.plopped = true; sfx.plop(0, Math.sqrt(impact)) } // the Now dish's plop, again (softer) on the bounce
         f.squash = Math.min(1, -f.vy / 8)
         f.y = 0
-        if (!f.plopped) { f.plopped = true; sfx.plop() } // the same plop as a fruit landing in the Now dish, first touch only
         f.vy = -f.vy * 0.32
         if (f.vy < 1) f.vy = 0
       }
