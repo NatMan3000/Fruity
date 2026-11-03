@@ -1,6 +1,8 @@
 // The welcome screen's fruit (src/components/Welcome.tsx): this month's lead fruit floating and slowly
-// turning in the middle of the screen, laid so its cut runs along the knife's line. On the tap it is cut
-// there and then: the pieces fly apart along the cut's normal, each turning its cut face to you, juice
+// turning in the middle of the screen, laid so its cut runs along the knife's line. On a tap whose stroke
+// crosses it, it is cut there and then (through its own middle, parallel to the stroke: its pieces are
+// built as halves about the middle, so a stroke nearer its rim still opens it in two halves): the pieces
+// fly apart along the cut's normal, each turning its cut face to you, juice
 // flies, and the welcome's two halves of the screen pull apart the same way. The canvas covers the whole
 // screen (transparent) so the pieces can fly anywhere; nothing in it takes a press (the welcome's button
 // does).
@@ -18,7 +20,9 @@ interface WelcomeFruitProps {
   size: number              // CSS px: the box the fruit fills (the sticker it replaces is this size)
   angle: number             // the knife's line, CSS degrees (negative rises to the right)
   cut: boolean              // the tap: cut it open and throw the pieces apart
-  onReady: () => void       // its first frame is on screen (the sticker can go)
+  // Its first frame is on screen (the sticker can go), with a way to read where the fruit is on screen
+  // right now: its outline's points in CSS px from the canvas's top left (for the knife: Welcome.tsx).
+  onReady: (outline: () => { x: number; y: number }[]) => void
   className?: string
 }
 
@@ -32,6 +36,37 @@ export default function WelcomeFruit({ className, ...props }: WelcomeFruitProps)
       <Scene {...props} />
     </Stage>
   )
+}
+
+// The fruit's outline for the knife: its outermost points (the hull's support points in 64 directions,
+// from up to about 4,000 of its vertices), in its own space, taken once behind the sticker's crossfade.
+// At the tap these are put where the fruit is in that frame and projected, so the welcome can tell
+// whether the stroke crossed the fruit as it was on screen (it turns, and seen from a little above a
+// long fruit like the papaya reaches further across the line end-on than side-on).
+function outlineOf(model: THREE.Object3D): THREE.Vector3[] {
+  const verts: THREE.Vector3[] = []
+  const toModel = new THREE.Matrix4()
+  model.updateWorldMatrix(true, true)
+  const fromWorld = model.matrixWorld.clone().invert()
+  let total = 0
+  model.traverse(o => { if ((o as THREE.Mesh).isMesh) total += (o as THREE.Mesh).geometry.getAttribute('position')?.count ?? 0 })
+  const stride = Math.max(1, Math.ceil(total / 4000))
+  model.traverse(o => {
+    const pos = (o as THREE.Mesh).isMesh ? (o as THREE.Mesh).geometry.getAttribute('position') : undefined
+    if (!pos) return
+    toModel.multiplyMatrices(fromWorld, o.matrixWorld)
+    for (let i = 0; i < pos.count; i += stride) verts.push(new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(toModel))
+  })
+  const out = new Set<THREE.Vector3>()
+  const dir = new THREE.Vector3()
+  for (let k = 0; k < 64; k++) { // directions spread evenly over a sphere
+    const y = 1 - (2 * (k + 0.5)) / 64, r = Math.sqrt(1 - y * y), a = k * Math.PI * (3 - Math.sqrt(5))
+    dir.set(Math.cos(a) * r, y, Math.sin(a) * r)
+    let best: THREE.Vector3 | undefined, most = -Infinity
+    for (const v of verts) { const d = v.dot(dir); if (d > most) { most = d; best = v } }
+    if (best) out.add(best)
+  }
+  return [...out]
 }
 
 interface Flying { obj: THREE.Object3D; v: THREE.Vector3; a: THREE.Vector3; axis: THREE.Vector3; w: number }
@@ -62,6 +97,8 @@ function Scene({ fruit, size, angle, cut, onReady }: Omit<WelcomeFruitProps, 'cl
     return { scale: (FILL * size) / ppu, mid }
   }, [model, size, view.height])
 
+  const viewNow = useRef(view) // the canvas's size at the tap, not at mount
+  viewNow.current = view
   const t = useRef(0)
   const arrive = useRef({ s: still ? 1 : 0.55, v: 0 })
   const flying = useRef<Flying[] | null>(null)
@@ -88,7 +125,15 @@ function Scene({ fruit, size, angle, cut, onReady }: Omit<WelcomeFruitProps, 'cl
           console.warn('[Fruity] could not warm the welcome fruit up; the cut will compile as it goes', error)
         }
         faces.forEach(f => { f.visible = false })
-        onReady()
+        const points = outlineOf(model)
+        const v = new THREE.Vector3()
+        onReady(() => {
+          model.updateWorldMatrix(true, false)
+          return points.map(p => {
+            v.copy(p).applyMatrix4(model.matrixWorld).project(camera)
+            return { x: ((v.x + 1) / 2) * viewNow.current.width, y: ((1 - v.y) / 2) * viewNow.current.height }
+          })
+        })
       })
     })
     return () => { cancelAnimationFrame(a); cancelAnimationFrame(b) }

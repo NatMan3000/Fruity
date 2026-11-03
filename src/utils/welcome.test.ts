@@ -3,7 +3,7 @@ import { FRUITS } from '../assets/fruits'
 import type { Month } from '../types/fruit'
 import { dishFruits } from './dishFruits'
 import { hasArt } from './images'
-import { cutLine, FLICKER_MS, sprinkleField, stickerRing, welcomeFruits, welcomeOnHide, welcomeOnReturn, welcomeStage, type Stage } from './welcome'
+import { cutCrosses, cutLine, cutThrough, EDGE_MIN, EDGE_SHARE, FLICKER_MS, sideOfCut, sprinkleField, stickerRing, welcomeFruits, welcomeOnHide, welcomeOnReturn, welcomeStage, type Stage } from './welcome'
 
 describe('when the welcome shows on a return', () => {
   it('goes up as the app is hidden, over any screen but Cook mode', () => {
@@ -42,6 +42,79 @@ describe('cutLine', () => {
     expect(c.travel).toBeGreaterThanOrEqual(Math.hypot(393, 852))
     expect(c.top).toMatch(/^polygon\(/)
     expect(c.bottom).toMatch(/^polygon\(/)
+  })
+})
+
+describe('the cut goes where the finger touched', () => {
+  const W = 393, H = 852, A = -16
+  const slope = Math.tan((A * Math.PI) / 180)
+  const edge = Math.max(EDGE_MIN, H * EDGE_SHARE)
+  // The cut line's height at screen x, for a line through p
+  const yAt = (p: { x: number; y: number }, x: number) => p.y + (x - p.x) * slope
+
+  it('runs through the touch itself anywhere away from the top and bottom edges', () => {
+    for (const [x, y] of [[196, 443], [40, 200], [360, 700], [10, 426], [383, 150], [196, 760]]) {
+      expect(cutThrough(W, H, x, y, A)).toEqual({ x, y })
+    }
+  })
+
+  it('moves a touch at the very top or bottom in, so each half is still a slice right across the screen', () => {
+    for (const [x, y] of [[196, 2], [0, 0], [393, 10], [196, 850], [0, 852], [393, 830], [20, 40]]) {
+      const p = cutThrough(W, H, x, y, A)
+      // still on screen, on a line at the knife's angle that stays inside both edges all the way across
+      expect(p.x).toBeGreaterThanOrEqual(0)
+      expect(p.x).toBeLessThanOrEqual(W)
+      for (const sx of [0, W / 2, W]) {
+        expect(yAt(p, sx)).toBeGreaterThanOrEqual(edge - 1e-6)
+        expect(yAt(p, sx)).toBeLessThanOrEqual(H - edge + 1e-6)
+      }
+      // and as near the finger as that allows: the line just touches the edge allowance at one side
+      const ends = [yAt(p, 0), yAt(p, W)]
+      expect(Math.min(Math.abs(Math.min(...ends) - edge), Math.abs(Math.max(...ends) - (H - edge)))).toBeLessThan(1e-6)
+      // the point is the touch's nearest point on that line (the move is along the cut's normal), unless
+      // that lies past a side, when it is where the line meets that side
+      const n = { x: -Math.sin((A * Math.PI) / 180), y: Math.cos((A * Math.PI) / 180) }
+      const mx = x - p.x, my = y - p.y
+      if (p.x > 0 && p.x < W) expect(Math.abs(mx * n.y - my * n.x)).toBeLessThan(1e-6)
+      else expect(Math.abs(mx * n.y - my * n.x)).toBeLessThan(40)
+    }
+  })
+
+  it('a touch on the fruit cuts it; one well above or below it misses, on the side the fruit is on', () => {
+    // The fruit as it is on screen: points round a circle of radius 60 at (196.5, 443)
+    const cx = 196.5, cy = 443, r = 60
+    const fruit = Array.from({ length: 48 }, (_, i) => ({ x: cx + r * Math.cos((i / 48) * 2 * Math.PI), y: cy + r * Math.sin((i / 48) * 2 * Math.PI) }))
+    expect(cutCrosses(fruit, cutThrough(W, H, 100, 450, A), A, 4)).toBe(true) // left of it, the line still crosses it
+    expect(cutCrosses(fruit, { x: cx, y: cy }, A, 4)).toBe(true)
+    const high = cutThrough(W, H, 196, 160, A) // through the title
+    expect(cutCrosses(fruit, high, A, 4)).toBe(false)
+    expect(sideOfCut(high, A, cx, cy)).toBeGreaterThan(0) // the fruit is below the cut: it goes down with the bottom half
+    const low = cutThrough(W, H, 196, 760, A) // through the bottom stickers
+    expect(cutCrosses(fruit, low, A, 4)).toBe(false)
+    expect(sideOfCut(low, A, cx, cy)).toBeLessThan(0) // above it: up with the top half
+    // Grazing: the distance across the cut decides (along its normal, not straight down), with the margin
+    const across = (d: number) => ({ x: cx, y: cy - d / Math.cos((A * Math.PI) / 180) })
+    expect(cutCrosses(fruit, across(r + 3), A, 4)).toBe(true)
+    expect(cutCrosses(fruit, across(r + 5), A, 4)).toBe(false)
+    expect(cutCrosses(fruit, across(-(r + 3)), A, 4)).toBe(true)
+    expect(cutCrosses(fruit, across(-(r + 5)), A, 4)).toBe(false)
+    // A long fruit lying along the knife's line is crossed by a stroke near its end only if the stroke
+    // reaches it: its outline, not a circle round its middle, decides
+    const rad = (A * Math.PI) / 180
+    const long = Array.from({ length: 48 }, (_, i) => {
+      const u = 120 * Math.cos((i / 48) * 2 * Math.PI), v = 30 * Math.sin((i / 48) * 2 * Math.PI) // 30 px either side of its cut
+      return { x: cx + u * Math.cos(rad) - v * Math.sin(rad), y: cy + u * Math.sin(rad) + v * Math.cos(rad) }
+    })
+    expect(cutCrosses(long, across(40), A, 4)).toBe(false)
+    expect(cutCrosses(long, across(20), A, 4)).toBe(true)
+  })
+
+  it('agrees with cutLine about which half a point is in', () => {
+    const p = cutThrough(W, H, 300, 250, A)
+    const c = cutLine(W, H, p.x, p.y, A)
+    for (const [x, y] of [[0, 0], [393, 852], [196, 300], [50, 320]]) {
+      expect(Math.sign(sideOfCut(p, A, x, y))).toBe(Math.sign((x - p.x) * c.nx + (y - p.y) * c.ny))
+    }
   })
 })
 

@@ -49,6 +49,53 @@ export function cutLine(width: number, height: number, cx: number, cy: number, a
 
 const round = (v: number) => Math.round(v * 10) / 10
 
+// Where the knife goes (Nathan, 3 Nov 2026: "wherever I touch the finger is where it slices from"): the cut
+// runs through the point the finger touched, at the knife's angle. A touch so near the top or bottom that
+// the line would leave one half a scrap (or nothing) is moved in just far enough that the line stays at
+// least `EDGE_SHARE` of the screen's height (and `EDGE_MIN` px) inside the top and bottom edges right
+// across the screen, so both halves read as a slice; the point returned is the one on that line nearest
+// the touch (the touch itself when it needed no moving).
+export const EDGE_SHARE = 0.04
+export const EDGE_MIN = 24
+
+export interface CutPoint { x: number; y: number }
+
+export function cutThrough(width: number, height: number, x: number, y: number, angle: number): CutPoint {
+  const a = (angle * Math.PI) / 180
+  const dx = Math.cos(a), dy = Math.sin(a)
+  const slope = dy / dx
+  const mid = y + (width / 2 - x) * slope // the line's height in the middle of the screen
+  const reach = (width / 2) * Math.abs(slope) // how far it rises or falls from there to either side
+  const edge = Math.max(EDGE_MIN, height * EDGE_SHARE)
+  const lo = edge + reach, hi = height - edge - reach
+  const at = lo > hi ? height / 2 : Math.min(hi, Math.max(lo, mid))
+  if (at === mid) return { x, y }
+  // The nearest point to the touch on the line through (width / 2, at), kept on the screen (a corner
+  // touch's nearest point can lie just past the side)
+  const along = (x - width / 2) * dx + (y - at) * dy
+  const px = Math.min(width, Math.max(0, width / 2 + dx * along))
+  return { x: px, y: at + (px - width / 2) * slope }
+}
+
+// Which side of the cut through `p` at `angle` the point (x, y) is on, in px: negative is the top half,
+// positive the bottom (the cut's normal points down the screen, as in cutLine).
+export function sideOfCut(p: CutPoint, angle: number, x: number, y: number): number {
+  const a = (angle * Math.PI) / 180
+  return (x - p.x) * -Math.sin(a) + (y - p.y) * Math.cos(a)
+}
+
+// Does the cut through `p` cross a shape given by points round its outline (the fruit as it is on screen),
+// or pass within `margin` px of it? It does when the points are not all clear on one side.
+export function cutCrosses(outline: CutPoint[], p: CutPoint, angle: number, margin: number): boolean {
+  let lo = Infinity, hi = -Infinity
+  for (const q of outline) {
+    const s = sideOfCut(p, angle, q.x, q.y)
+    lo = Math.min(lo, s)
+    hi = Math.max(hi, s)
+  }
+  return lo < margin && hi > -margin
+}
+
 // ---- The welcome's life (DESIGN.md "Welcome": the stickers, sprinkles and sparkles round the fruit) ----
 
 // The month's fruit stuck round the welcome: the rest of the Now dish first, then what has just landed,

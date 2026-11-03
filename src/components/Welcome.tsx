@@ -1,8 +1,10 @@
 // The welcome screen (DESIGN.md "Welcome", Nathan's D21, 3 Nov 2026): "Fruity" in big Shrikhand over
 // this month's lead fruit, floating and slowly turning in 3D on the season's colour. No "Tap to slice"
 // cue: it is obvious what to do (Nathan, 3 Nov 2026).
-// The whole screen is one button. The tap cuts the fruit along a knife stroke (the slice sound, juice),
-// the pieces fly apart and the screen itself splits along the same line, its two halves pulling apart to
+// The whole screen is one button. The tap sends a knife stroke through the point the finger touched (the
+// slice sound; Nathan, 3 Nov 2026: "wherever I touch the finger is where it slices from"): if the stroke
+// crosses the fruit it is cut (juice, the pieces fly apart), if not the fruit flies off whole with its
+// half, and the screen itself splits along the same line, its two halves pulling apart to
 // show the app underneath (Now on a launch, the linked screen on a deep link, whatever was there on a
 // return), in about 0.8 s. The tap is also the gesture iOS needs to start sound, so the Now bowl that
 // drops in after it is heard (the heroes wait for the welcome to go: useWelcome.ts).
@@ -33,7 +35,7 @@ import { MONTH_NAMES } from '../utils/months'
 import { parseRoute } from '../utils/route'
 import { seasonOf } from '../utils/seasonality'
 import { seasonTones, toneVars } from '../utils/tones'
-import { cutLine, seeded, sprinkleField, stickerRing, welcomeFruits, welcomeStage, type Sprinkle, type StickerSpot } from '../utils/welcome'
+import { cutCrosses, cutLine, cutThrough, seeded, sideOfCut, sprinkleField, stickerRing, welcomeFruits, welcomeStage, type CutPoint, type Sprinkle, type StickerSpot } from '../utils/welcome'
 import { FruitSticker } from './FruitSticker'
 import { Fallback, Slash } from './Lazy3D'
 import { HeroDish, SpinFruit } from './heroScenes'
@@ -44,6 +46,7 @@ const SEASON_ICON: Record<Season, LucideIcon> = { Spring: Flower2, Summer: Sun, 
 
 // The knife's line (CSS degrees: rising to the right), and the exit's beats in ms from the tap.
 const ANGLE = -16
+const KNIFE_PX = 4      // a stroke this close past the 3D fruit's edge still catches it
 const PART_DELAY = 50   // the halves start to part just after the stroke starts
 const PART_MS = 700     // ...and are off the screen by about 750
 const FADE_3D_AT = 420  // the flying pieces fade over the revealed screen
@@ -107,11 +110,14 @@ function WelcomeScreen({ month }: { month: Month }) {
   const fontReady = useDisplayFont()
   const three = webgl && MODELLED.has(lead.id)
 
-  // Layout: the fruit's middle a little below the screen's, the cut through it
+  // Layout: the fruit's middle a little below the screen's
   const size = Math.round(Math.min(w * 0.66, h * 0.36, 320))
   const cx = w / 2, cy = Math.round(h * 0.52)
-  const line = useMemo(() => cutLine(w, h, cx, cy, ANGLE), [w, h, cx, cy])
   const canvasH = h + 2 * Math.abs(cy - h / 2) // centred on the fruit, still covering the whole screen
+  const canvasTop = cy - canvasH / 2
+  // Where the knife went (set by the tap): through the finger, or through the fruit for a key
+  const [knife, setKnife] = useState<CutPoint | null>(null)
+  const kx = knife?.x ?? cx, ky = knife?.y ?? cy
 
   // The life round the fruit is laid out once the title's place is known (measured before the first
   // paint; it does not depend on the font, since the wordmark's line height is fixed).
@@ -130,8 +136,11 @@ function WelcomeScreen({ month }: { month: Month }) {
   const pieces3d = useRef<HTMLDivElement>(null)
   const leaving = useRef(false)
   const [ready3d, setReady3d] = useState(false)
+  const outline3d = useRef<(() => CutPoint[]) | null>(null) // the 3D fruit's outline on screen now (WelcomeFruit)
   const [failed3d, setFailed3d] = useState(false) // the scene threw: the sticker is the fruit after all
-  const [cut, setCut] = useState<'whole' | 'cut' | 'cut2d'>('whole')
+  // 'cut' the 3D fruit is cut; 'ride' the knife missed it and it flies off whole with its half; 'cut2d'
+  // there is no 3D fruit (yet): only the screen splits (a sticker fruit is cut, or not, by the clip)
+  const [cut, setCut] = useState<'whole' | 'cut' | 'ride' | 'cut2d'>('whole')
   const [slash, showSlash] = useSlash()
   const like = useMemo(() => ({ id: lead.id, name: lead.name, colour: lead.colour }), [lead.id, lead.name, lead.colour])
 
@@ -235,7 +244,8 @@ function WelcomeScreen({ month }: { month: Month }) {
     finishWelcome()
   }
 
-  const enter = () => {
+  // `touch`: where the finger came down (a tap or click); none for a key, which cuts through the fruit.
+  const enter = (touch: CutPoint | null) => {
     if (leaving.current) return
     leaving.current = true
     unlockAudio() // in the gesture itself: iOS starts (or resumes) Web Audio only here
@@ -250,14 +260,24 @@ function WelcomeScreen({ month }: { month: Month }) {
       return
     }
     sfx.slice()
+    // The cut runs through the finger (moved in from a top or bottom edge so each half is a real slice),
+    // and cuts the 3D fruit only if it crosses it; otherwise the fruit rides whole on its own half.
+    const at = touch ? cutThrough(w, h, touch.x, touch.y, ANGLE) : { x: cx, y: cy }
+    const line = cutLine(w, h, at.x, at.y, ANGLE)
+    // (the outline is in the canvas's px, which starts canvasTop down the screen)
+    const outline = ready3d ? outline3d.current?.() : undefined
+    const hits = !!outline && cutCrosses(outline, { x: at.x, y: at.y - canvasTop }, ANGLE, KNIFE_PX)
+    const origin = `${at.x}px ${at.y}px`
     const [top, bottom] = halves.current
     if (top && bottom) {
       top.style.clipPath = line.top
       top.style.visibility = 'visible'
       bottom.style.clipPath = line.bottom
+      top.style.transformOrigin = bottom.style.transformOrigin = origin // (and in the render, from knife)
     }
-    setCut(ready3d ? 'cut' : 'cut2d')
-    showSlash({ x: cx, y: cy, angle: ANGLE })
+    setKnife(at)
+    setCut(!ready3d ? 'cut2d' : hits ? 'cut' : 'ride')
+    showSlash({ x: at.x, y: at.y, angle: ANGLE })
     // Each half moves off along the cut's normal (top up and left, bottom down and right), a quick
     // little parting first, then pulled away faster and faster, hinging a few degrees about the cut.
     const part = (el: HTMLDivElement | null, sign: number) => el?.animate([
@@ -265,8 +285,18 @@ function WelcomeScreen({ month }: { month: Month }) {
       { transform: `translate(${sign * line.nx * 26}px, ${sign * line.ny * 26}px) rotate(${sign * 1.5}deg)`, offset: 0.2, easing: 'cubic-bezier(0.5, 0, 0.75, 0.45)' },
       { transform: `translate(${sign * line.nx * line.travel}px, ${sign * line.ny * line.travel}px) rotate(${sign * 9}deg)` },
     ], { duration: PART_MS, delay: PART_DELAY, fill: 'forwards' })
-    const fade = pieces3d.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE_3D_MS, delay: FADE_3D_AT, easing: 'ease-in', fill: 'forwards' })
-    done([part(halves.current[0], -1), part(halves.current[1], 1), fade])
+    // The 3D fruit, cut: its pieces fly and fade over the revealed screen. Missed: it goes with the half it
+    // sits on, moving exactly as that half does (same keyframes, the same hinge in its own box).
+    const fruit = pieces3d.current
+    let fly: Animation | undefined
+    if (fruit && ready3d && !hits) {
+      fruit.style.transformOrigin = `${at.x}px ${at.y - canvasTop}px`
+      // (missed, so every point of its outline is on the same side: any one says which)
+      fly = part(fruit, outline?.length && sideOfCut({ x: at.x, y: at.y - canvasTop }, ANGLE, outline[0].x, outline[0].y) < 0 ? -1 : 1)
+    } else {
+      fly = fruit?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE_3D_MS, delay: FADE_3D_AT, easing: 'ease-in', fill: 'forwards' })
+    }
+    done([part(halves.current[0], -1), part(halves.current[1], 1), fly])
   }
 
   // One half of the screen: everything drawn on the welcome, clipped to its side of the cut. Until the
@@ -278,7 +308,7 @@ function WelcomeScreen({ month }: { month: Month }) {
       ref={el => { halves.current[k] = el }}
       aria-hidden="true"
       className={clsx('absolute inset-0 bg-(--page)', k === 0 && 'invisible')}
-      style={{ transformOrigin: `${cx}px ${cy}px` }}
+      style={{ transformOrigin: `${kx}px ${ky}px` }}
     >
       {/* Sundae sprinkles drifting behind everything */}
       <Sprinkles sprinkles={sprinkles} />
@@ -312,10 +342,10 @@ function WelcomeScreen({ month }: { month: Month }) {
           <FruitSticker fruit={lead} size={Math.round(size * 0.9)} tilt={-6} eager />
         </span>
       )}
-      {/* The cut's own face along each half's edge, once it is cut */}
+      {/* The cut's own face along each half's edge, once it is cut, on the knife's line */}
       <span
         className={clsx('absolute bg-(--bright)', cut === 'whole' && 'opacity-0')}
-        style={{ left: cx - line.travel * 2, top: cy - 9, width: line.travel * 4, height: 18, transform: `rotate(${ANGLE}deg)`, transformOrigin: '50% 50%' }}
+        style={{ left: kx - 2 * (w + h), top: ky - 9, width: 4 * (w + h), height: 18, transform: `rotate(${ANGLE}deg)`, transformOrigin: '50% 50%' }}
       />
     </div>
   )
@@ -326,15 +356,15 @@ function WelcomeScreen({ month }: { month: Month }) {
       aria-label="Welcome to Fruity"
       className="welcome fixed inset-0 m-0 size-full max-h-none max-w-none overflow-hidden border-0 bg-transparent p-0 text-(--light) backdrop:bg-transparent"
       style={{ ...toneVars(tones), '--shadow': tones.ink } as CSSProperties}
-      onCancel={e => { e.preventDefault(); enter() }}
+      onCancel={e => { e.preventDefault(); enter(null) }}
     >
       {half(0)}
       {half(1)}
       {three && visible && cut !== 'cut2d' && (
-        <div ref={pieces3d} aria-hidden="true" className="pointer-events-none absolute inset-x-0" style={{ top: cy - canvasH / 2, height: canvasH }}>
+        <div ref={pieces3d} aria-hidden="true" className="pointer-events-none absolute inset-x-0" style={{ top: canvasTop, height: canvasH }}>
           <Fallback poster={<Failed onFail={() => setFailed3d(true)} />}>
             <Suspense fallback={null}>
-              <WelcomeFruit fruit={like} size={size} angle={ANGLE} cut={cut === 'cut'} onReady={() => setReady3d(true)} className={clsx('absolute inset-0 transition-opacity duration-200', !ready3d && 'opacity-0')} />
+              <WelcomeFruit fruit={like} size={size} angle={ANGLE} cut={cut === 'cut'} onReady={o => { outline3d.current = o; setReady3d(true) }} className={clsx('absolute inset-0 transition-opacity duration-200', !ready3d && 'opacity-0')} />
             </Suspense>
           </Fallback>
         </div>
@@ -345,7 +375,7 @@ function WelcomeScreen({ month }: { month: Month }) {
       {/* The whole screen is the button: a tap, a click, Enter or Space (Escape too) all go in */}
       <button
         type="button"
-        onClick={enter}
+        onClick={e => enter(e.detail > 0 ? { x: e.clientX, y: e.clientY } : null)} // detail 0: Enter or Space
         className="absolute inset-0 touch-none outline-none select-none focus-visible:outline-3 focus-visible:-outline-offset-8 focus-visible:outline-(--light)"
       >
         <span className="sr-only">Enter Fruity</span>
