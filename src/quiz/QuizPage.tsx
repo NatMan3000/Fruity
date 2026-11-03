@@ -12,7 +12,7 @@ import { seasonOf } from '../utils/seasonality'
 import { seasonTones, toneVars, tonesOf } from '../utils/tones'
 import { FruitSticker } from '../components/FruitSticker'
 import { TopBar } from '../components/TopBar'
-import { setSound } from '../cafe/sound'
+import { useSound } from '../audio/sound'
 import { QuizGame, type GameSetup } from './QuizGame'
 import { SoundToggle } from './components/Hud'
 import { webgl } from '../hooks/useLazy3D'
@@ -33,7 +33,6 @@ export default function QuizPage({ month }: { month: Month }) {
   const [today] = useState(() => dateKey())
   const ink = useMemo(() => seasonTones(seasonOf(month)).ink, [month])
 
-  useEffect(() => { setSound(progress.sound) }, [progress.sound])
   useEffect(() => {
     const t = setTimeout(() => { if (webgl) import('../three/QuizStage').catch(() => undefined) }, 300) // fails quietly: the game falls back to stickers
     return () => clearTimeout(t)
@@ -68,7 +67,7 @@ export default function QuizPage({ month }: { month: Month }) {
     }
   }, [setProgress, today])
 
-  const toggleSound = () => setProgress(p => ({ ...p, sound: !p.sound }))
+  const [sound, toggleSound] = useSound()
 
   if (view === 'game' && setup) {
     return (
@@ -79,7 +78,7 @@ export default function QuizPage({ month }: { month: Month }) {
         prevBest={setup.mode === 'pass' ? 0 : progress.best[setup.mode]}
         dayStreak={liveDayStreak(progress.dayStreak, today)}
         ink={ink}
-        sound={progress.sound}
+        sound={sound}
         onSound={toggleSound}
         onFinish={finish}
         onAgain={setup.mode === 'daily' ? undefined : () => start(setup)}
@@ -104,7 +103,7 @@ export default function QuizPage({ month }: { month: Month }) {
   const streak = liveDayStreak(progress.dayStreak, today)
   return (
     <div className="flex flex-col pb-6">
-      <TopBar back={{ name: 'play' }} bag={false} right={<SoundToggle on={progress.sound} onToggle={() => { setSound(!progress.sound); toggleSound() }} />} />
+      <TopBar back={{ name: 'play' }} bag={false} right={<SoundToggle on={sound} onToggle={toggleSound} />} />
       <h1 className="rise px-5 pb-1 font-display text-[clamp(2.5rem,13vw,3.5rem)] leading-none">Guess the fruit</h1>
       <p className="px-5 pb-5 text-body font-semibold">Cut-open fruit, spinning shadows, close-ups, seasons and pairs. Fast answers score more; three wrong and you're out.</p>
       <ul className="flex flex-col gap-4 px-4">

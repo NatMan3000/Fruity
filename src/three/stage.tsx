@@ -1,7 +1,7 @@
 // Shared 3D plumbing for the lazy hero chunk: the canvas (render on demand, dpr capped at 2,
 // transparent so the page's sorbet shows through), studio lighting with a generated room for
 // reflections, and a shadow catcher tinted in the page's ink.
-import { useEffect, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
@@ -77,11 +77,12 @@ function Lights({ keyLight }: { keyLight: [number, number, number] }) {
 }
 
 // A floor that shows only the shadows, tinted with the page's ink so they read as coloured shade.
-export function ShadowFloor({ colour, opacity = 0.4 }: { colour: string; opacity?: number }) {
+// `material` hands the shadow's material to a scene that grows it as something lands.
+export function ShadowFloor({ colour, opacity = 0.4, material }: { colour: string; opacity?: number; material?: RefObject<THREE.ShadowMaterial | null> }) {
   return (
     <mesh rotation-x={-Math.PI / 2} position-y={-0.012} receiveShadow>
       <planeGeometry args={[12, 12]} />
-      <shadowMaterial color={colour} opacity={opacity} transparent />
+      <shadowMaterial ref={material} color={colour} opacity={opacity} transparent />
     </mesh>
   )
 }

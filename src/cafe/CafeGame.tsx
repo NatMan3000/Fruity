@@ -20,7 +20,7 @@ import {
 } from './logic/progress'
 import { traitsOf } from './logic/traits'
 import type { BowlItem } from './three/BowlScene'
-import { setSound, sfx, speak } from './sound'
+import { sfx, speak, useSound } from '../audio/sound'
 import './cafe.css'
 
 // Fruit Salad Cafe: customers order by pictures, the kid fills a 3D bowl (drop, chop, stir),
@@ -91,7 +91,7 @@ export default function CafeGame({ month }: { month: Month }) {
     return () => { html.style.overflow = before }
   }, [])
 
-  useEffect(() => { setSound(progress.sound) }, [progress.sound])
+  const [sound, flipSound] = useSound()
   useEffect(() => () => window.clearTimeout(moodTimer.current), [])
 
   const fruitsById = useMemo(() => new Map(FRUITS.map(f => [f.id, f])), [])
@@ -141,10 +141,9 @@ export default function CafeGame({ month }: { month: Month }) {
   }
 
   const toggleSound = () => {
-    const on = !progress.sound
-    setSound(on) // inside the tap, so iOS lets audio start
-    setProgress(p => ({ ...p, sound: on }))
-    if (on) sfx.boop()
+    const wasOn = sound
+    flipSound() // inside the tap, so iOS lets audio start
+    if (!wasOn) sfx.boop()
   }
 
   // ---------- Bowl actions ----------
@@ -286,7 +285,7 @@ export default function CafeGame({ month }: { month: Month }) {
       <button type="button" className="cafe-iconbtn" onClick={() => setOverlay('stickers')} aria-label="Sticker book">
         <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round"><path d="M5 4h11l3 3v13H5z" /><path d="M9 13l2 2 4-4" strokeLinecap="round" /></svg>
       </button>
-      <SoundButton on={progress.sound} onToggle={toggleSound} />
+      <SoundButton on={sound} onToggle={toggleSound} />
     </header>
   )
 
@@ -299,7 +298,7 @@ export default function CafeGame({ month }: { month: Month }) {
             <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
           </button>
           <span />
-          <SoundButton on={progress.sound} onToggle={toggleSound} />
+          <SoundButton on={sound} onToggle={toggleSound} />
         </header>
         <div className="cafe-awning" aria-hidden="true" />
         <h1 className="cafe-sign">Fruit Salad <span>Cafe</span></h1>

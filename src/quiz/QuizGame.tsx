@@ -7,7 +7,7 @@ import { ArrowRight, CalendarDays, Citrus, Heart, Moon, Shuffle, ZoomIn } from '
 import type { Fruit, Month } from '../types/fruit'
 import { toneVars, tonesOf } from '../utils/tones'
 import { FruitSticker } from '../components/FruitSticker'
-import { setSound, sfx } from '../cafe/sound'
+import { sfx } from '../audio/sound'
 import { activePlayer, advance, answer, current, dailyRng, startGame, turnOf, type GameState, type Mode } from './logic/game'
 import type { Kind } from './logic/questions'
 import { mulberry32, randomSeed } from './logic/rng'
@@ -160,10 +160,7 @@ export function QuizGame({ setup, fruits, prevBest, dayStreak, ink, sound, onSou
     onExit()
   }
 
-  const toggleSound = () => {
-    setSound(!sound) // inside the tap, so iOS lets audio start
-    onSound()
-  }
+  const toggleSound = onSound // the tap itself lets iOS start audio
 
   if (game.phase === 'done') {
     return (

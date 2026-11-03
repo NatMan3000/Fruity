@@ -1,14 +1,13 @@
-// The kid's progress: stars, stickers and level, saved on the phone (localStorage 'fruity.cafe').
+// The kid's progress: stars, stickers and level, saved on the phone (localStorage 'fruity.cafe'). Sound is app-wide (src/audio/sound.ts); an older save's `sound` field is ignored.
 
 export interface CafeProgress {
   v: 1
   stars: number
   served: number
   stickers: string[] // 'fruit:<id>' and 'friend:<customerId>'
-  sound: boolean     // off until someone taps the speaker
 }
 
-export const NEW_PROGRESS: CafeProgress = { v: 1, stars: 0, served: 0, stickers: [], sound: false }
+export const NEW_PROGRESS: CafeProgress = { v: 1, stars: 0, served: 0, stickers: [] }
 
 export function isProgress(v: unknown): v is CafeProgress {
   if (typeof v !== 'object' || v === null) return false
@@ -16,8 +15,7 @@ export function isProgress(v: unknown): v is CafeProgress {
   return p.v === 1 &&
     Number.isFinite(p.stars) && p.stars >= 0 &&
     Number.isFinite(p.served) && p.served >= 0 &&
-    Array.isArray(p.stickers) && p.stickers.every(s => typeof s === 'string') &&
-    typeof p.sound === 'boolean'
+    Array.isArray(p.stickers) && p.stickers.every(s => typeof s === 'string')
 }
 
 // Stars needed to reach each level (index 0 is level 1).

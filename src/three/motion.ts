@@ -189,3 +189,26 @@ export function useAnimation(step: (dt: number) => boolean) {
     if (step(Math.min(dt, 1 / 30))) invalidate()
   })
 }
+
+// While something drops in from above the canvas, the canvas's top fades in over `px` CSS px, so it appears
+// through a soft edge instead of a hard line under the top bar. `clear()` takes the fade off once it has
+// landed, so nothing at rest or turned is ever faded. Nothing is faded when `active` is false.
+export function useTopFade(active: boolean, px: number) {
+  const gl = useThree(s => s.gl)
+  const on = useRef(active)
+  useEffect(() => {
+    const el = gl.domElement
+    const set = (v: string) => { el.style.setProperty('mask-image', v); el.style.setProperty('-webkit-mask-image', v) }
+    if (on.current) set(`linear-gradient(to bottom, transparent 0, #000 ${px}px)`)
+    return () => set('')
+  }, [gl, px])
+  return {
+    fading: on,
+    clear() {
+      if (!on.current) return
+      on.current = false
+      gl.domElement.style.setProperty('mask-image', '')
+      gl.domElement.style.setProperty('-webkit-mask-image', '')
+    },
+  }
+}

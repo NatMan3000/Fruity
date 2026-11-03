@@ -8,9 +8,10 @@ import * as THREE from 'three'
 import { useThree } from '@react-three/fiber'
 import { screenPoint, stepCut, useJuice, useSliceGesture, type Cut, type CutNews } from './cutting'
 import { dishGeometry, planDish, restPoses, RIM } from './dish'
+import { sfx } from '../audio/sound'
 import { juiceOf } from './flesh'
 import { buildFruit, cutParts } from './models'
-import { reducedMotion, useAnimation, useSpin, type FruitLike } from './motion'
+import { reducedMotion, useAnimation, useTopFade, useSpin, type FruitLike } from './motion'
 import { ShadowFloor, Stage } from './stage'
 
 export type { CutNews } from './cutting'
@@ -36,7 +37,34 @@ export default function HeroDish({ className, fruits, ...props }: HeroDishProps)
   )
 }
 
-interface Drop { y: number; vy: number; delay: number; squash: number; axis: THREE.Vector3; rest: THREE.Euler; hop: number; hopV: number }
+// The entrance: the bowl drops in first (from BOWL_FROM above rest, a soft landing), and FRUIT_BEAT
+// seconds after it lands the fruit drop into it, FRUIT_GAP apart. Its shadow grows as it comes down, and the
+// canvas's top fades in (DROP_FADE px) while anything is falling, so nothing is cut off by a hard edge.
+const BOWL_FROM = 2.3
+const FRUIT_BEAT = 0.15
+const FRUIT_GAP = 0.09
+const DROP_FADE = 56
+const SHADOW = 0.4
+const BLOB_OPACITY = 0.5
+
+// A soft round shadow under the falling bowl. The light's real shadow is the bowl's size however high it is
+// (and slid sideways), so it reads as a stain; this one is small and faint while the bowl is high and grows
+// in size and darkness as it comes down, handing over to the real shadow over the last of the fall.
+function blobTexture() {
+  const c = document.createElement('canvas')
+  c.width = c.height = 128
+  const g = c.getContext('2d')!
+  const grad = g.createRadialGradient(64, 64, 0, 64, 64, 64)
+  grad.addColorStop(0, '#fff')
+  grad.addColorStop(0.55, '#aaa')
+  grad.addColorStop(1, '#000')
+  g.fillStyle = grad
+  g.fillRect(0, 0, 128, 128)
+  return new THREE.CanvasTexture(c)
+}
+const smooth = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
+
+interface Drop { y: number; vy: number; delay: number; squash: number; axis: THREE.Vector3; rest: THREE.Euler; hop: number; hopV: number; plopped: boolean }
 
 function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen, settled = false }: Omit<HeroDishProps, 'className'>) {
   const { camera, size, invalidate } = useThree()
@@ -47,20 +75,28 @@ function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen, settled = false
   const spin = useSpin(-0.3, 0, held)
   const juice = useJuice()
   const still = reducedMotion()
+  const atRest = still || settled
+  const bowlGroup = useRef<THREE.Group>(null)
+  const shadow = useRef<THREE.ShadowMaterial>(null)
+  const blob = useRef<THREE.Mesh>(null)
+  const blobMap = useMemo(() => blobTexture(), [])
+  const bowl = useRef({ y: atRest ? 0 : BOWL_FROM, vy: 0, squash: 0, landedAt: atRest ? 0 : -1 })
+  const fade = useTopFade(!atRest, DROP_FADE)
 
   const models = useMemo(() => fruits.map(f => buildFruit(f.id, f.colour)), [fruits])
   const parts = useMemo(() => models.map(m => cutParts(m)), [models])
   const poses = useMemo(() => restPoses(models), [models]) // each fruit inside the bowl, clear of the rim
   const order = useMemo(() => fruits.map((_, i) => i).reverse(), [fruits])
   const drops = useRef<Drop[]>(fruits.map((_, i) => ({
-    y: still || settled ? 0 : 2.8 + i * 0.25,
+    y: atRest ? 0 : 1.6 + i * 0.1,
     vy: 0,
-    delay: still || settled ? 0 : order.indexOf(i) * 0.14,
+    delay: atRest ? 0 : FRUIT_BEAT + order.indexOf(i) * FRUIT_GAP, // after the bowl lands
     squash: 0,
     axis: new THREE.Vector3(Math.sin(i * 12.9), Math.cos(i * 7.3), Math.sin(i * 4.1 + 1)).normalize(), // a fixed tumble per slot
     rest: poses[i].rest,
     hop: 0,
     hopV: 0,
+    plopped: false,
   })))
   const cuts = useRef<(Cut | null)[]>(fruits.map(() => null))
   const wobble = useRef({ v: 0, x: 0 })
@@ -146,10 +182,45 @@ function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen, settled = false
   useAnimation(dt => {
     clock.current += dt
     let moving = spin.step(dt)
+    // The bowl drops first: a soft landing (one small bounce, a squash), the dish rocks, the shadow grows.
+    const bw = bowl.current
+    if (bw.y > 0 || bw.vy !== 0) {
+      bw.vy -= 22 * dt
+      bw.y += bw.vy * dt
+      if (bw.y <= 0) {
+        const impact = Math.min(1, -bw.vy / 9)
+        bw.y = 0
+        bw.vy = -bw.vy * 0.25
+        bw.squash = Math.max(bw.squash, impact * 0.8)
+        wobble.current.v += impact * 0.5
+        if (bw.landedAt < 0) { bw.landedAt = clock.current; sfx.clunk(impact) } // the landing itself, not a timer
+        if (bw.vy < 1) bw.vy = 0
+      }
+      moving = true
+    }
+    bw.squash *= Math.exp(-dt * 12)
+    if (bw.squash > 0.005) moving = true
+    if (bowlGroup.current) {
+      bowlGroup.current.position.y = bw.y
+      bowlGroup.current.scale.set(1 + bw.squash * 0.1, 1 - bw.squash * 0.16, 1 + bw.squash * 0.1)
+    }
+    const near = 1 - Math.min(1, bw.y / BOWL_FROM) // 0 high up, 1 landed
+    const handover = smooth(0.7, 1, near)
+    if (shadow.current) shadow.current.opacity = SHADOW * handover
+    if (blob.current) {
+      const m = blob.current.material as THREE.MeshBasicMaterial
+      m.opacity = BLOB_OPACITY * near ** 1.5 * (1 - handover)
+      blob.current.scale.setScalar(0.45 + 0.55 * near)
+      blob.current.visible = m.opacity > 0.002
+    }
+    const started = bw.landedAt >= 0 ? clock.current - bw.landedAt : -1
     drops.current.forEach((b, i) => {
       const obj = slotRefs.current[i]
       if (!obj) return
-      if (clock.current > b.delay && (b.y > 0 || b.vy !== 0)) {
+      const falling = b.y > 0 || b.vy !== 0
+      obj.visible = !falling || started > b.delay // waiting fruit are not hanging in the air
+      if (falling && started <= b.delay) moving = true // keep frames coming through the beat after the bowl lands
+      if (started > b.delay && falling) {
         b.vy -= 22 * dt
         b.y += b.vy * dt
         if (b.y <= 0) {
@@ -157,6 +228,7 @@ function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen, settled = false
           b.y = 0
           b.vy = -b.vy * 0.34
           b.squash = Math.max(b.squash, impact)
+          if (!b.plopped) { b.plopped = true; sfx.plop(i) } // the first touch only, not the little bounces
           wobble.current.v += impact * 0.9
           if (b.vy < 1.2) b.vy = 0
         }
@@ -186,6 +258,7 @@ function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen, settled = false
       if (c && stepCut(c, dt)) moving = true
     })
     if (juice.step(dt)) moving = true
+    if (bw.y === 0 && fruits.every((_, i) => landed(i))) fade.clear() // everything is down: the top fade comes off
     // The dish rocks a little on each landing, a damped spring.
     const w = wobble.current
     w.v += -w.x * 140 * dt
@@ -206,7 +279,9 @@ function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen, settled = false
     <>
       <group ref={spinGroup}>
         <group ref={dishGroup}>
-          <Dish glaze={dish} rim={rim} />
+          <group ref={bowlGroup} position-y={atRest ? 0 : BOWL_FROM}>
+            <Dish glaze={dish} rim={rim} />
+          </group>
           {fruits.map((f, i) => (
             <group key={f.id} ref={el => { slotRefs.current[i] = el }} onPointerDown={press(i)}>
               <primitive object={models[i]} />
@@ -215,7 +290,13 @@ function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen, settled = false
         </group>
       </group>
       {juice.element}
-      <ShadowFloor colour={shade} />
+      {!atRest && (
+        <mesh ref={blob} rotation-x={-Math.PI / 2} position-y={0.004} scale={0.45}>
+          <circleGeometry args={[RIM * 1.25, 48]} />
+          <meshBasicMaterial color={shade} alphaMap={blobMap} transparent opacity={0} depthWrite={false} />
+        </mesh>
+      )}
+      <ShadowFloor colour={shade} opacity={SHADOW} material={shadow} />
     </>
   )
 }

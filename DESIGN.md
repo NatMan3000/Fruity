@@ -139,7 +139,7 @@ Every text pair above is checked for all 39 fruit and all four seasons at 4.5:1,
 | Tabs | The current pill slides across with an overshoot |
 | Page moves | A fruit, a recipe or a game slides in from the right over the screen it came from, and Back slides it off to the right again (300 ms, `--ease-out-soft`); between tabs the whole screen slides sideways, the old one off one side as the new one comes in from the other, side by side (a tab to the right moves the content left; 320 ms, both opaque). The tab bar stays put. The iPhone's back swipe is Safari's own animation: nothing is added to it. Any back move (the swipe, Back) shows the screen as it was left: no entrance replays, its pictures paint at once, and a 3D hero is already at rest (`renderBack` in `useRoute.ts`) |
 | Sheet | Springs up, slides down |
-| Hero | Drop-in, cut, juice, rejoin (above) |
+| Hero | Now: the empty area, then the bowl drops in with a soft landing (its shadow grows as it comes down, the canvas top fades in), and 150 ms after it lands the fruit drop in one after another (about 1.5 s in all). Fruit page: the fruit drops in. Then cut, juice, rejoin (above) |
 
 - Transform and opacity only. Nothing loops and nothing moves while idle: the 3D scene stops rendering once still.
 - `prefers-reduced-motion: reduce` turns all of it off: screens appear in their final state, the hero's fruit start in the dish and cut without travel, the bag skips the hop.

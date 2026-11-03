@@ -12,7 +12,7 @@ import { useThree, type ThreeEvent } from '@react-three/fiber'
 import { planCut, screenPoint, stepCut, useJuice, useSliceGesture, type Cut, type CutNews } from './cutting'
 import { juiceOf } from './flesh'
 import { buildFruit, cutParts } from './models'
-import { reducedMotion, useAnimation, useTrackball, type FruitLike } from './motion'
+import { reducedMotion, useAnimation, useTopFade, useTrackball, type FruitLike } from './motion'
 import { BLOB } from './framing'
 import { ShadowFloor, Stage } from './stage'
 
@@ -44,7 +44,7 @@ export default function SpinFruit({ className, style, ...props }: SpinFruitProps
 const DROP_FADE = 56
 
 function Scene({ fruit, shade, slice, onCut, settled = false }: Omit<SpinFruitProps, 'className' | 'style'>) {
-  const { camera, size, invalidate, gl } = useThree()
+  const { camera, size, invalidate } = useThree()
   const obj = useRef<THREE.Group>(null)
   const held = useRef(false)
   const still = reducedMotion()
@@ -53,13 +53,7 @@ function Scene({ fruit, shade, slice, onCut, settled = false }: Omit<SpinFruitPr
   const pivot = useRef<THREE.Group>(null)
   const juice = useJuice()
   const fall = useRef({ y: atRest ? 0 : 2.4, vy: 0, squash: 0, hop: 0, hopV: 0 })
-  const fading = useRef(!atRest)
-  useEffect(() => {
-    const el = gl.domElement
-    const set = (v: string) => { el.style.setProperty('mask-image', v); el.style.setProperty('-webkit-mask-image', v) }
-    if (fading.current) set(`linear-gradient(to bottom, transparent 0, #000 ${DROP_FADE}px)`)
-    return () => set('')
-  }, [gl])
+  const fade = useTopFade(!atRest, DROP_FADE)
   const model = useMemo(() => buildFruit(fruit.id, fruit.colour), [fruit.id, fruit.colour])
   const halves = useMemo(() => cutParts(model), [model])
   const cut = useRef<Cut | null>(null)
@@ -151,12 +145,7 @@ function Scene({ fruit, shade, slice, onCut, settled = false }: Omit<SpinFruitPr
         if (f.vy < 1) f.vy = 0
       }
       moving = true
-    } else if (fading.current) {
-      // Landed and settled: the top fade comes off.
-      fading.current = false
-      gl.domElement.style.setProperty('mask-image', '')
-      gl.domElement.style.setProperty('-webkit-mask-image', '')
-    }
+    } else fade.clear() // landed and settled: the top fade comes off
     if (f.hopV !== 0 || f.hop > 0) {
       f.hopV -= 20 * dt
       f.hop += f.hopV * dt
