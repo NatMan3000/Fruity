@@ -41,7 +41,7 @@ One colour becomes a family of tones at fixed OKLCH lightness, so a dark fruit (
 
 | Screen | Background | Text |
 |---|---|---|
-| Now, Fruit, Year, Cook, Play, quiz, bag sheet | the season's `page` | `light` |
+| Now, Fruit, Year, Cook, Play, quiz, cafe, bag sheet | the season's `page` | `light` |
 | A fruit's page | the fruit's `pop` | `ink` |
 
 Each season owns a sorbet: spring raspberry (`#B7014E` page), summer blood orange (`#BC3A06`), autumn plum (`#7E2FB8`), winter kiwi (`#006E5A`). Spring's raspberry is the splash and first-paint colour (`index.html`, the manifest).
@@ -63,7 +63,7 @@ Nathan's mapping, unchanged: peak bright green, in season lighter green, out of 
 
 ### Contrast (scripts/colour-contrast.test.ts)
 
-Every text pair above is checked for all 39 fruit and all four seasons at 4.5:1, the season-bar fills at 3:1 on their dark track, and each status word on its fill at 4.5:1. The test reads the static hexes from `src/index.css`, so re-tuning a token is what gets checked; a too-light ink or a pale status word fails it (checked by breaking both on 2 Nov 2026).
+Every text pair above is checked for all 39 fruit and all four seasons at 4.5:1, the season-bar fills at 3:1 on their dark track, and each status word on its fill at 4.5:1. The cafe adds its door blocks and the friends' fur colours (4.5:1) and its meters, whose track edge and fill must read at 3:1 even when empty. The test reads the static hexes from `src/index.css`, so re-tuning a token is what gets checked; a too-light ink or a pale status word fails it (checked by breaking both on 2 Nov 2026).
 
 ## Type
 
@@ -170,13 +170,24 @@ Fruity's own recipes (`src/assets/recipes.ts`, 35, Phase 3), in the same blocks 
 
 ## Guess the fruit (src/quiz/)
 
-A game, not a flash-card set (Nathan, 2 Nov 2026: "not very fun! ... do better!"). Full screen over the tab bar like the cafe, on the season's page colour; the question card is `bright`, answers `deep`, right `peak`, wrong `off`.
+A game, not a flash-card set (Nathan, 2 Nov 2026: "not very fun! ... do better!"). The menu is a page; a game goes full screen over the tab bar like the cafe's, on the season's page colour; the question card is `bright`, answers `deep`, right `peak`, wrong `off`.
 
 - **Round types, mixed each game:** Inside out (the 3D fruit already cut open, swaying), Silhouette spin (a flat ink shape spinning, colour then shine arriving as the clock runs), Close-up (a tight zoom on the skin pulling back), Season sense (tap a peak month on a 12-month grid; which one is NOT in season, or at its peak, this month), Pairs (ingredient pictures, the right one from `pairings`, the wrong ones firmly savoury), Odd one out (shop families in `src/quiz/logic/traits.ts`). Every answer comes from the data; `src/quiz/logic/questions.test.ts` checks it.
 - **Scoring:** 100 plus up to 100 for speed (15 s clock), times a combo (x2 from 3 in a row, x3 from 6, x4 from 10), three strawberry hearts, 1 to 3 stars, personal best and the daily on this phone (`localStorage 'fruity.quiz'`). Difficulty follows the streak in Quick play and the position in the daily and Pass the phone.
-- **Feedback:** right: the 3D fruit slices open with juice (an inside-out one closes back up and hops), juice drops burst from the tapped answer, the points float up, the result bar slides up in `peak` and moves on by itself; wrong: the card squishes, the fruit wobbles, the bar in `off` shows the answer and a one-line fun fact and waits. Streaks of 3, 5 and 10 slap a sticker with rays. Sounds reuse the cafe's (`src/cafe/sound.ts`), off until switched on.
+- **Feedback:** right: the 3D fruit slices open with juice (an inside-out one closes back up and hops), juice drops burst from the tapped answer, the points float up, the result bar slides up in `peak` and moves on by itself; wrong: the card squishes, the fruit wobbles, the bar in `off` shows the answer and a one-line fun fact and waits. Streaks of 3, 5 and 10 slap a sticker with rays. Sounds are the app's shared set (`src/audio/sound.ts`, one setting with the cafe), off until switched on.
 - **Modes:** Quick play (10), Pass the phone (two named players, 6 each, a hand-over screen in the player's colour before every turn so the clock only starts when they tap), Daily fruit challenge (8, dealt from the date so both phones match, one go a day, a day streak).
 - **3D:** one canvas for the whole game (`src/three/QuizStage.tsx`, lazy, preloaded while the menu is up), frameloop demand: it renders while the clock runs and stops once the answer has played. No WebGL: the sticker does the same trick in 2D (black, blurred or zoomed, clearing with the clock).
+
+## Fruit Salad Cafe (src/cafe/)
+
+The kids' game wears the app's look, like the quiz (Nathan, 3 Nov 2026: it "is a completely different theming from the rest of the app and feels kind of weird when you change into it"; this replaces its old sky-and-wood look of its own). The game is unchanged: customers order by picture, drop, chop and stir a 3D bowl, stars, stickers, the grown-ups' recipe.
+
+- **The door** is a page like the quiz's menu: the season's page, `TopBar` with Back and the sound disc, the title in Shrikhand, and colour blocks: Open the cafe! (the Play tab's cafe yellow, the first four customers on it), the level in a `bright` block (an `ink` meter filling in `pop`), Sticker book (strawberry, a count badge), Make a fruit salad (kiwi, for grown-ups). The tab bar stays. `CafeLoading` is the same top bar and title, so the door fills in under it.
+- **The game** covers the tab bar on the season's page (`fixed`, z-40, like the quiz). The header is the quiz's: `bright` discs (Back, sticker book, sound) and an `ink` level pill (a `pop` "Lv" badge, a `deep` meter outlined and filled in `pop`, the star count). The customer stands by a `bright` speech bubble (block shadow, a tail in `bright`) with the want pictures on `pop` tiles, a `peak` ring and tick when met, a hollow-to-ink dot per fruit counted, the red "no" sign outlined in `ink`; a not-yet-right hint shows in `off` like the quiz's wrong answer. The bowl sits on a `bright` stage (a `peak` inset ring while a dragged fruit is over it); its caption is an `ink` pill, "Chop!" rises in amber edged in ink, the stir trail is `pop`, the stars to earn are `deep` pills that turn `peak`. The shelf's fruit are blocks in their own `pop` with the sticker inside and the name under it (hyphenated onto two lines, never cut), a white-edged "Fresh" `StatusSticker` and twinkles on fresh fruit, a `peak` tick once added. Empty is a `bright` pill, Serve the fat `ink` pill, both 56px.
+- **Serving**: the result is a `bright` block with the quiz's stars (amber with an ink edge, faint outlines when not earned), the reasons, a level-up `ink` pill, the new stickers slapping on, Next customer in `ink` and Make it for real in `pop`.
+- **Sticker book and recipe** cover the screen on the season's page with a close disc. The book has the Cook tab's segmented `ink` control; a sticker you have is a block in its fruit's (or the friend's fur) colour, tilted, with the white die-cut edge; one you don't is a dashed `light` space with a `?` blob in its colour (friends: a pale silhouette). The recipe is a `bright` card (Shrikhand title and headings, numbered `ink` discs, an `ending` note for out-of-season fruit), then Add fruit to bag (`ink`, turning `peak` "All in the bag"), the matching Cook recipe and Back as `bright` pills.
+- **Art keeps its own colours**: the customers' faces, the bowl (pale blue with a coral rim, 3D and flat), the bowl's face, the want pictures (colour blobs, shapes, pips, stones; their outlines are the screen's `ink`) and the fruit stickers. Everything else is a token.
+- `src/cafe/ui.ts` holds the shared classes (discs, `pill(tone)`, the overlay) and the door's colours; `cafe.css` is only the one-shot motion (walk-in, hop, shake, pop-in, twinkle, star pop, slide-up), the bubble's tail and the canvas placement. Short phones (under 700px tall) get shorter tiles, want tiles and pills.
 
 ## App icon
 

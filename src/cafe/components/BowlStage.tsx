@@ -1,8 +1,11 @@
 import { Component, lazy, Suspense, useCallback, useState, type ReactNode, type RefObject } from 'react'
+import clsx from 'clsx'
+import { X } from 'lucide-react'
 import type { Fruit } from '../../types/fruit'
 import { FruitIcon } from '../../components/FruitIcon'
 import type { BowlItem, FaceAnchor } from '../three/BowlScene'
 import { BowlFace, type BowlMood } from './BowlFace'
+import { pill } from '../ui'
 
 // The 3D scene (three + Rapier) is its own chunk, fetched while the counter is already showing.
 const BowlScene = lazy(() => import('../three/BowlScene'))
@@ -58,44 +61,58 @@ export function BowlStage(props: BowlStageProps) {
   )
 
   return (
-    <div ref={stageRef} className={`cafe-stage${dropping ? ' cafe-stage--drop' : ''}${dropping === false ? ' cafe-stage--dragging' : ''}`}>
+    <div
+      ref={stageRef}
+      className={clsx(
+        'block-shadow relative mx-4 mt-1 min-h-0 flex-1 overflow-hidden rounded-block bg-(--bright) text-(--ink) transition-shadow',
+        dropping && 'ring-5 ring-peak ring-inset',
+        dropping === false && 'ring-4 ring-(--ink-soft) ring-inset',
+      )}
+    >
       {webgl ? (
         <SceneBoundary fallback={<FlatBowl {...props} />}>
-          <Suspense fallback={<div className="cafe-stage__loading"><FlatBowlShape /><span>Warming up the bowl...</span></div>}>
+          <Suspense fallback={<div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 font-extrabold text-(--ink-soft)"><FlatBowlShape /><span>Warming up the bowl...</span></div>}>
             {scene}
           </Suspense>
         </SceneBoundary>
       ) : <FlatBowl {...props} />}
 
       {webgl && anchor && (
-        <div className="cafe-stage__face" style={{ left: anchor.x, top: anchor.y }}>
+        <div className="pointer-events-none absolute -translate-1/2 leading-none" style={{ left: anchor.x, top: anchor.y }}>
           <BowlFace mood={mood} width={Math.max(64, anchor.width)} />
         </div>
       )}
-      {caption && <p className="cafe-stage__caption" key={caption}>{caption}</p>}
+      {caption && (
+        <p className="cafe-caption-in pointer-events-none absolute top-14 left-1/2 max-w-[calc(100%-24px)] -translate-x-1/2 rounded-3xl bg-(--ink) px-4 py-1.5 text-center text-body leading-snug font-extrabold text-(--light)" key={caption}>
+          {caption}
+        </p>
+      )}
 
       {trail && trail.length > 1 && (
-        <svg className="cafe-trail" aria-hidden="true">
-          <polyline points={trail.map(p => `${p.x},${p.y}`).join(' ')} />
+        <svg className="pointer-events-none absolute inset-0 size-full" aria-hidden="true">
+          <polyline points={trail.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke="var(--pop)" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
         </svg>
       )}
       {pops.map(p => (
-        <span key={p.id} className="cafe-pop" style={{ left: p.x, top: p.y }} aria-hidden="true">{p.word}</span>
+        <span key={p.id} className="cafe-pop pointer-events-none absolute font-display text-[1.75rem] whitespace-nowrap text-ending" style={{ left: p.x, top: p.y }} aria-hidden="true">{p.word}</span>
       ))}
 
-      <p className="cafe-stage__coach" aria-live="polite">{coach}</p>
+      <p className="pointer-events-none absolute inset-x-3 bottom-12 text-center text-small font-extrabold" aria-live="polite">{coach}</p>
       {props.children}
 
       {items.length > 0 && !props.locked && (
-        <ul className="cafe-contents" aria-label="In the bowl">
+        <ul className="absolute inset-x-2.5 top-2.5 flex flex-wrap gap-1.5" aria-label="In the bowl">
           {items.map(item => {
             const f = fruits.find(x => x.id === item.fruitId)
             if (!f) return null
             return (
               <li key={item.key}>
-                <button type="button" className="cafe-chip" onClick={() => props.onRemove(item.key)} aria-label={`Take out the ${f.name}`}>
+                {/* The invisible ::before widens the hit area for small fingers. */}
+                <button type="button" className="cafe-pop-in relative inline-flex rounded-full bg-(--pop) p-1 shadow-[0_3px_0_var(--ink)] before:absolute before:-inset-1 before:content-['']" onClick={() => props.onRemove(item.key)} aria-label={`Take out the ${f.name}`}>
                   <FruitIcon fruit={f} size="sm" />
-                  <span aria-hidden="true" className="cafe-chip__x">×</span>
+                  <span aria-hidden="true" className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-(--ink) text-(--light)">
+                    <X className="size-3.5" strokeWidth={3.25} />
+                  </span>
                 </button>
               </li>
             )
@@ -129,11 +146,12 @@ class SceneBoundary extends Component<{ fallback: ReactNode; children: ReactNode
   }
 }
 
+// The bowl in 2D, drawn like the 3D one (art: its own pale blue with the coral rim).
 function FlatBowlShape() {
   return (
-    <svg className="cafe-flatbowl__shape" viewBox="0 0 200 110" aria-hidden="true">
-      <ellipse cx="100" cy="22" rx="92" ry="18" fill="#F3E6D0" />
-      <path d="M8 22 Q14 104 100 104 Q186 104 192 22 Q186 40 100 40 Q14 40 8 22 Z" fill="#FFF7EA" stroke="#FF6B6B" strokeWidth="5" />
+    <svg className="w-[62%]" viewBox="0 0 200 110" aria-hidden="true">
+      <ellipse cx="100" cy="22" rx="92" ry="18" fill="#BFD9EE" />
+      <path d="M8 22 Q14 104 100 104 Q186 104 192 22 Q186 40 100 40 Q14 40 8 22 Z" fill="#D6EEFF" stroke="#FF6B6B" strokeWidth="5" />
     </svg>
   )
 }
@@ -141,21 +159,21 @@ function FlatBowlShape() {
 // The no-3D bowl: tap a fruit to chop it, and a Stir button.
 function FlatBowl({ items, fruits, mood, onChop, onStir }: BowlStageProps) {
   return (
-    <div className="cafe-flatbowl">
-      <div className="cafe-flatbowl__fruit">
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+      <div className="relative z-1 -mb-12 flex max-w-[70%] flex-wrap justify-center gap-1">
         {items.map(item => {
           const f = fruits.find(x => x.id === item.fruitId)
           if (!f) return null
           return (
-            <button key={item.key} type="button" className={`cafe-flatbowl__piece${item.chopped ? ' is-chopped' : ''}`} onClick={() => onChop(item.key)} aria-label={item.chopped ? `${f.name}, chopped` : `Chop the ${f.name}`}>
+            <button key={item.key} type="button" className={clsx('p-0.5', item.chopped && 'rotate-[18deg]')} onClick={() => onChop(item.key)} aria-label={item.chopped ? `${f.name}, chopped` : `Chop the ${f.name}`}>
               <FruitIcon fruit={f} size={item.chopped ? 'md' : 'lg'} />
             </button>
           )
         })}
       </div>
       <FlatBowlShape />
-      <div className="cafe-flatbowl__face"><BowlFace mood={mood} width={96} /></div>
-      <button type="button" className="cafe-btn cafe-btn--small" onClick={() => onStir(Math.PI)}>Stir</button>
+      <div className="-mt-15 leading-none"><BowlFace mood={mood} width={96} /></div>
+      <button type="button" className={pill('ink', 'px-6 text-body')} onClick={() => onStir(Math.PI)}>Stir</button>
     </div>
   )
 }

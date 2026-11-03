@@ -5,6 +5,8 @@ import { SEASONS, type Season } from '../src/types/fruit'
 import { colourDistance, contrast } from '../src/utils/colour'
 import { RECIPES } from '../src/assets/recipes'
 import { BLOCK_SEPARATION, blockTone, seasonTones, tonesOf, type Tones } from '../src/utils/tones'
+import { CUSTOMERS } from '../src/cafe/customers'
+import { MENU_COLOURS } from '../src/cafe/ui'
 
 // Every text pair the Sorbet look draws, checked for every fruit and every season (DESIGN.md "Colour").
 // Static tokens are read from src/index.css, so a re-tuned hex there is what gets checked.
@@ -104,14 +106,37 @@ describe('recipe cards on a fruit page', () => {
   })
 })
 
-// The Fruit Salad Cafe has its own look (src/cafe/cafe.css); its meters sit on white pills and must
-// read as meters even when empty (audit play-F2): the track's outline at 3:1 or better on white.
-describe('cafe meters', () => {
-  const cafe = readFileSync(new URL('../src/cafe/cafe.css', import.meta.url), 'utf8')
-  it.each(['cafe-level__bar', 'cafe-goals__meter'])('%s track outline reads on white (3:1)', cls => {
-    const block = cafe.match(new RegExp(`\\.${cls} \\{([^}]*)\\}`))?.[1] ?? ''
-    const border = block.match(/border:\s*[\d.]+px solid (#[0-9A-Fa-f]{6})/)?.[1]
-    expect(border, `${cls} has an outlined track`).toBeDefined()
-    expect(contrast(border!, '#FFFFFF')).toBeGreaterThanOrEqual(3)
+// The Fruit Salad Cafe wears the app's look (DESIGN.md "Fruit Salad Cafe"): its text pairs on the season
+// screen are the SEASON_TEXT ones above and its shelf tiles and stickers are fruit blocks (FRUIT_TEXT).
+// What is its own: the door's colour blocks, the friends' stickers in each customer's fur colour, and
+// meters that must read as meters even when empty (audit play-F2): track edge and fill at 3:1.
+describe('cafe', () => {
+  const BLOCK_TEXT: Pair[] = [
+    ['ink', 'pop', 'title and name on the block'],
+    ['inkSoft', 'pop', 'the line under it, a sticker fact'],
+    ['light', 'ink', 'the chevron disc, the count badge'],
+  ]
+
+  it('door blocks keep their text at 4.5:1', () => {
+    expect(Object.entries(MENU_COLOURS).flatMap(([name, c]) => fails(tonesOf(c), BLOCK_TEXT, name))).toEqual([])
+  })
+
+  it("friends' stickers keep their text at 4.5:1", () => {
+    expect(CUSTOMERS.flatMap(c => fails(tonesOf(c.fur), BLOCK_TEXT, c.id))).toEqual([])
+  })
+
+  const METERS: [edge: keyof Tones | 'peak', on: keyof Tones | 'peak', why: string][] = [
+    ['pop', 'ink', 'level meter: its pop outline on the ink pill'],
+    ['pop', 'deep', 'level meter: the pop fill on its deep track'],
+    ['ink', 'bright', 'door level card: the ink track on the bright block'],
+    ['light', 'deep', 'stir meter: its light edge on the deep goal pill'],
+    ['ink', 'peak', 'stir meter: its ink track on the peak goal pill (stirred)'],
+    ['peak', 'ink', 'stir meter: the peak fill on its ink track'],
+  ]
+  it.each(Object.keys(SEASONS) as Season[])('%s meters read when empty (3:1)', season => {
+    const t = seasonTones(season)
+    const hex = (k: keyof Tones | 'peak') => (k === 'peak' ? token('peak') : t[k])
+    const bad = METERS.filter(([a, b]) => contrast(hex(a), hex(b)) < 3).map(([a, b, why]) => `${a} on ${b} ${contrast(hex(a), hex(b)).toFixed(2)} (${why})`)
+    expect(bad).toEqual([])
   })
 })

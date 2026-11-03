@@ -1,10 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react'
+import clsx from 'clsx'
+import { ChefHat, ChevronRight, Star, Sticker } from 'lucide-react'
 import type { Fruit, Month } from '../types/fruit'
 import { FRUITS } from '../assets/fruits'
-import { goBack } from '../hooks/useRoute'
+import { TopBar } from '../components/TopBar'
 import { useStoredState } from '../hooks/useStoredState'
 import { fruitStatus } from '../utils/seasonality'
+import { toneVars, tonesOf } from '../utils/tones'
 import { BowlStage } from './components/BowlStage'
+import { BackDisc, Disc, SoundButton } from './components/Controls'
+import { MENU_COLOURS, pill } from './ui'
 import type { BowlMood } from './components/BowlFace'
 import { CustomerFace, type CustomerMood } from './components/CustomerFace'
 import { OrderBubble } from './components/OrderBubble'
@@ -25,7 +30,8 @@ import './cafe.css'
 
 // Fruit Salad Cafe: customers order by pictures, the kid fills a 3D bowl (drop, chop, stir),
 // serves it for stars and stickers, and a grown-up can turn the bowl into a real recipe.
-// Lazy-loaded from App.tsx; its look lives in cafe.css so it is its own bright world.
+// Lazy-loaded from App.tsx. It wears the app's look (DESIGN.md "Fruit Salad Cafe"): the season's page,
+// the screen's tones, Shrikhand and Bricolage, chunky blocks; cafe.css holds only its one-shot motion.
 
 const MAX_IN_BOWL = 6
 
@@ -83,13 +89,16 @@ export default function CafeGame({ month }: { month: Month }) {
   const live = useRef({ bowl, stir })
   useEffect(() => { live.current = { bowl, stir } }, [bowl, stir])
 
-  // The game owns the whole screen: no page scroll or rubber-banding under a drag.
+  // The game and its overlays own the whole screen: no page scroll or rubber-banding under a drag.
+  // The cafe door is an ordinary page and scrolls.
+  const covered = mode !== 'menu' || overlay !== null
   useEffect(() => {
+    if (!covered) return
     const html = document.documentElement
     const before = html.style.overflow
     html.style.overflow = 'hidden'
     return () => { html.style.overflow = before }
-  }, [])
+  }, [covered])
 
   const [sound, flipSound] = useSound()
   useEffect(() => () => window.clearTimeout(moodTimer.current), [])
@@ -272,152 +281,168 @@ export default function CafeGame({ month }: { month: Month }) {
 
   // ---------- Screens ----------
 
-  const topBar = (onBack: () => void, backLabel: string) => (
-    <header className="cafe-top">
-      <button type="button" className="cafe-iconbtn" onClick={onBack} aria-label={backLabel}>
-        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
-      </button>
-      <div className="cafe-level" aria-label={`Level ${level}, ${progress.stars} stars`}>
-        <span className="cafe-level__badge">Lv {level}</span>
-        <span className="cafe-level__bar"><span style={{ width: `${Math.round(levelProgress(progress.stars) * 100)}%` }} /></span>
-        <span className="cafe-level__stars">★ {progress.stars}</span>
-      </div>
-      <button type="button" className="cafe-iconbtn" onClick={() => setOverlay('stickers')} aria-label="Sticker book">
-        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round"><path d="M5 4h11l3 3v13H5z" /><path d="M9 13l2 2 4-4" strokeLinecap="round" /></svg>
-      </button>
-      <SoundButton on={sound} onToggle={toggleSound} />
-    </header>
-  )
+  const stars = progress.stars
+  const levelBar = Math.round(levelProgress(stars) * 100)
 
   let body
   if (mode === 'menu') {
+    // The cafe door is a page like the quiz's menu: the season's page, the app's top bar, a title in
+    // Shrikhand and chunky blocks. The tab bar stays; the game itself covers it.
     body = (
-      <div className="cafe-menu">
-        <header className="cafe-top cafe-top--menu">
-          <button type="button" className="cafe-iconbtn" onClick={() => goBack({ name: 'play' })} aria-label="Back to Play">
-            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
-          </button>
-          <span />
-          <SoundButton on={sound} onToggle={toggleSound} />
-        </header>
-        <div className="cafe-awning" aria-hidden="true" />
-        <h1 className="cafe-sign">Fruit Salad <span>Cafe</span></h1>
-        <ul className="cafe-menu__queue" aria-hidden="true">
-          {CUSTOMERS.slice(0, 4).map((c, i) => (
-            <li key={c.id} style={{ animationDelay: `${i * 90}ms` }}><CustomerFace customer={c} mood={i % 2 ? 'happy' : 'neutral'} size={i === 1 || i === 2 ? 92 : 76} /></li>
-          ))}
+      <div className="flex flex-col pb-6">
+        <TopBar back={{ name: 'play' }} bag={false} right={<SoundButton on={sound} onToggle={toggleSound} />} />
+        <h1 className="rise px-5 pb-1 font-display text-[clamp(2.5rem,13vw,3.5rem)] leading-none">Fruit Salad Cafe</h1>
+        <p className="px-5 pb-5 text-body font-semibold">Customers order by picture. Drop, chop and stir their bowl for stars and stickers.</p>
+        <ul className="flex flex-col gap-4 px-4">
+          <MenuCard i={0} colour={MENU_COLOURS.cafe} title="Open the cafe!" text="A customer is waiting at the counter." onClick={openCafe} big
+            art={(
+              <span className="flex items-end -space-x-3" aria-hidden="true">
+                {CUSTOMERS.slice(0, 4).map((c, k) => (
+                  <span key={c.id} className="cafe-hop-in" style={{ animationDelay: `${180 + k * 90}ms` }}>
+                    <CustomerFace customer={c} mood={k % 2 ? 'happy' : 'neutral'} size={k === 1 || k === 2 ? 84 : 70} />
+                  </span>
+                ))}
+              </span>
+            )}
+          />
+          <li className="pop-in" style={{ '--i': 1 } as CSSProperties}>
+            <div className="flex flex-col gap-2 rounded-block bg-(--bright) p-5 text-(--ink)">
+              <span className="flex items-center justify-between gap-3">
+                <span className="font-display text-name">{LEVEL_NAMES[level - 1]}</span>
+                <span className="rounded-full bg-(--ink) px-3 py-1 text-small font-extrabold text-(--light)">Level {level}</span>
+              </span>
+              <span className="block h-3.5 overflow-hidden rounded-full bg-(--ink)" aria-hidden="true">
+                <span className="block h-full rounded-full bg-(--pop)" style={{ width: `${levelBar}%` }} />
+              </span>
+              <span className="flex items-center gap-1.5 text-small font-bold text-(--ink-soft)">
+                <Star aria-hidden="true" className="size-4 text-ending" fill="currentColor" stroke="var(--ink)" strokeWidth={2.25} />
+                {stars} stars · {progress.served} bowls served
+              </span>
+            </div>
+          </li>
+          <MenuCard i={2} colour={MENU_COLOURS.stickers} title="Sticker book" text="Fruit and friends you've collected." onClick={() => setOverlay('stickers')}
+            badge={`${progress.stickers.length}`}
+            art={<Sticker aria-hidden="true" className="size-12" strokeWidth={2.25} />}
+          />
+          <MenuCard i={3} colour={MENU_COLOURS.free} title="Make a fruit salad" text="For grown-ups: pick any fruit, get the recipe." onClick={openFree}
+            art={<ChefHat aria-hidden="true" className="size-12" strokeWidth={2.25} />}
+          />
         </ul>
-        <div className="cafe-menu__level">
-          <span className="cafe-level__badge">Level {level}</span>
-          <strong>{LEVEL_NAMES[level - 1]}</strong>
-          <span className="cafe-level__bar cafe-level__bar--wide"><span style={{ width: `${Math.round(levelProgress(progress.stars) * 100)}%` }} /></span>
-          <span className="cafe-menu__stats">★ {progress.stars} stars · {progress.served} bowls served</span>
-        </div>
-        <div className="cafe-menu__actions">
-          <button type="button" className="cafe-btn cafe-btn--go cafe-btn--huge" onClick={openCafe}>Open the cafe!</button>
-          <button type="button" className="cafe-btn cafe-btn--sun" onClick={() => setOverlay('stickers')}>
-            Sticker book <span className="cafe-count">{progress.stickers.length}</span>
-          </button>
-          <button type="button" className="cafe-btn cafe-btn--grownup" onClick={openFree}>
-            <span>Make a fruit salad</span>
-            <small>pick any fruit, get the recipe</small>
-          </button>
-        </div>
       </div>
     )
   } else {
     body = (
-      <div className={`cafe-play${mode === 'free' ? ' cafe-play--free' : ''}`}>
-        <h1 className="cafe-sr">{mode === 'free' ? 'Make a fruit salad' : 'Fruit Salad Cafe'}</h1>
-        {topBar(() => { setMode('menu'); setOverlay(null) }, 'Back to the cafe door')}
-        {mode === 'cafe' && round && (
-          <section className="cafe-counter" key={round.order.shelf.join()}>
-            <div className={`cafe-customer cafe-customer--${customerMood}`}>
-              <CustomerFace customer={round.customer} mood={customerMood} size={92} />
-              <span className="cafe-customer__name">{round.customer.name}</span>
+      <div className="cafe-game fixed inset-0 z-40 flex flex-col overflow-hidden bg-(--screen) pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)] text-(--on-screen) select-none">
+        <div className="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col">
+          <h1 className="sr-only">{mode === 'free' ? 'Make a fruit salad' : 'Fruit Salad Cafe'}</h1>
+          <header className="flex flex-none items-center gap-2 px-4 pt-2.5 pb-1">
+            <BackDisc label="Back to the cafe door" onClick={() => { setMode('menu'); setOverlay(null) }} />
+            <div className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-full bg-(--ink) py-1.5 pr-3 pl-1.5 text-(--light)" role="img" aria-label={`Level ${level}, ${stars} stars`}>
+              <span className="flex-none rounded-full bg-(--pop) px-2.5 py-1 text-small leading-none font-extrabold text-(--ink)">Lv {level}</span>
+              {/* Outlined in pop so an empty meter still reads as a meter on the ink pill. */}
+              <span className="h-3 min-w-6 flex-1 overflow-hidden rounded-full bg-(--deep) ring-2 ring-(--pop) ring-inset">
+                <span className="block h-full rounded-full bg-(--pop)" style={{ width: `${levelBar}%` }} />
+              </span>
+              <span className="flex flex-none items-center gap-1 text-small font-extrabold tabular-nums">
+                <Star aria-hidden="true" className="size-4 text-ending" fill="currentColor" strokeWidth={0} />
+                {stars}
+              </span>
             </div>
-            <OrderBubble
-              order={round.order}
-              fruits={FRUITS}
-              filled={filled}
-              avoidHit={avoidHit}
-              hello={round.hello}
-              hint={hint}
-              sentence={sentence}
-              onHear={() => speak(`${round.hello} ${hint ?? `${sentence}, please!`}`)}
-            />
-          </section>
-        )}
-        {mode === 'free' && (
-          <section className="cafe-freehead">
-            <h2>Make a fruit salad</h2>
-            <p>Pick up to {MAX_IN_BOWL} fruit. The sparkly ones are fresh now.</p>
-          </section>
-        )}
+            <Disc label="Sticker book" onClick={() => setOverlay('stickers')}><Sticker aria-hidden="true" className="size-[22px]" strokeWidth={2.4} /></Disc>
+            <SoundButton on={sound} onToggle={toggleSound} />
+          </header>
 
-        <BowlStage
-          stageRef={stageRef}
-          items={bowl}
-          fruits={FRUITS}
-          mood={bowlMood}
-          caption={caption}
-          coach={coach}
-          dropping={dropping}
-          reducedMotion={reducedMotion}
-          onChop={onChop}
-          onStir={onStir}
-          onLand={onLand}
-          onRemove={removeFruit}
-          locked={!!served}
-        >
-          {bowl.length > 0 && !served && (
-            <ul className="cafe-goals" aria-label="Stars to earn">
-              {mode === 'cafe' && <li className={allMet && !avoidHit ? 'is-done' : ''}><span aria-hidden="true">★</span> Order</li>}
-              <li className={allChopped ? 'is-done' : ''}><span aria-hidden="true">★</span> Chop</li>
-              <li className={stirred ? 'is-done' : ''}>
-                <span aria-hidden="true">★</span> Stir
-                <span className="cafe-goals__meter" aria-hidden="true"><span style={{ width: `${Math.min(100, (stir / STIR_TARGET) * 100)}%` }} /></span>
-              </li>
-            </ul>
+          {mode === 'cafe' && round && (
+            <section className="flex flex-none items-end gap-2 px-4 pt-1 pb-1" key={round.order.shelf.join()}>
+              <div className={`cafe-customer cafe-customer--${customerMood} relative flex w-24 flex-none flex-col items-center`}>
+                <CustomerFace customer={round.customer} mood={customerMood} size={92} />
+                <span className="-mt-2 rounded-full bg-(--ink) px-2 py-0.5 text-caption font-extrabold whitespace-nowrap text-(--light)">{round.customer.name}</span>
+              </div>
+              <OrderBubble
+                order={round.order}
+                fruits={FRUITS}
+                filled={filled}
+                avoidHit={avoidHit}
+                hello={round.hello}
+                hint={hint}
+                sentence={sentence}
+                onHear={() => speak(`${round.hello} ${hint ?? `${sentence}, please!`}`)}
+              />
+            </section>
           )}
-        </BowlStage>
+          {mode === 'free' && (
+            <section className="flex-none px-5 pt-1 pb-1">
+              <h2 className="font-display text-title">Make a fruit salad</h2>
+              <p className="text-small font-semibold">Pick up to {MAX_IN_BOWL} fruit. The sparkly ones are fresh now.</p>
+            </section>
+          )}
 
-        {served && round ? (
-          <ServeResult
-            customer={round.customer}
-            thanks={served.thanks}
-            score={served.score}
-            stickers={served.stickers}
+          <BowlStage
+            stageRef={stageRef}
+            items={bowl}
             fruits={FRUITS}
-            levelUp={served.levelUp}
-            onNext={() => nextCustomer(levelFor(progress.stars))}
-            onRecipe={() => setOverlay('recipe')}
-          />
-        ) : (
-          <>
-            <Shelf
-              fruits={shelfFruits}
-              inBowl={inBowl}
-              fresh={fresh}
-              stageRef={stageRef}
-              scroll={mode === 'free'}
-              onAdd={addFruit}
-              onDragging={setDropping}
+            mood={bowlMood}
+            caption={caption}
+            coach={coach}
+            dropping={dropping}
+            reducedMotion={reducedMotion}
+            onChop={onChop}
+            onStir={onStir}
+            onLand={onLand}
+            onRemove={removeFruit}
+            locked={!!served}
+          >
+            {bowl.length > 0 && !served && (
+              <ul className="pointer-events-none absolute bottom-2.5 left-1/2 flex -translate-x-1/2 gap-1.5" aria-label="Stars to earn">
+                {mode === 'cafe' && <Goal done={allMet && !avoidHit}>Order</Goal>}
+                <Goal done={allChopped}>Chop</Goal>
+                <Goal done={stirred}>
+                  Stir
+                  <span className="inline-block h-2.5 w-9 overflow-hidden rounded-full bg-(--ink) ring-[1.5px] ring-(--light)" aria-hidden="true">
+                    <span className="block h-full rounded-full bg-peak" style={{ width: `${Math.min(100, (stir / STIR_TARGET) * 100)}%` }} />
+                  </span>
+                </Goal>
+              </ul>
+            )}
+          </BowlStage>
+
+          {served && round ? (
+            <ServeResult
+              customer={round.customer}
+              thanks={served.thanks}
+              score={served.score}
+              stickers={served.stickers}
+              fruits={FRUITS}
+              levelUp={served.levelUp}
+              onNext={() => nextCustomer(levelFor(progress.stars))}
+              onRecipe={() => setOverlay('recipe')}
             />
-            <div className="cafe-actions">
-              <button type="button" className="cafe-btn cafe-btn--plain" onClick={() => { resetBowl(); sfx.boop() }} disabled={bowl.length === 0}>Empty</button>
-              <button type="button" className="cafe-btn cafe-btn--go cafe-btn--serve" onClick={serve} disabled={bowl.length === 0}>
-                {mode === 'free' ? 'Make the recipe' : 'Serve!'}
-              </button>
-            </div>
-          </>
-        )}
+          ) : (
+            <>
+              <Shelf
+                fruits={shelfFruits}
+                inBowl={inBowl}
+                fresh={fresh}
+                stageRef={stageRef}
+                scroll={mode === 'free'}
+                onAdd={addFruit}
+                onDragging={setDropping}
+              />
+              <div className="flex flex-none gap-2.5 px-4 pt-1 pb-[calc(env(safe-area-inset-bottom)+12px)]">
+                <button type="button" className={clsx(pill('bright'), 'min-w-24')} onClick={() => { resetBowl(); sfx.boop() }} disabled={bowl.length === 0}>Empty</button>
+                <button type="button" className={clsx(pill('ink', 'px-5 text-[1.375rem]'), 'flex-1')} onClick={serve} disabled={bowl.length === 0}>
+                  {mode === 'free' ? 'Make the recipe' : 'Serve!'}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     )
   }
 
   return (
-    <div className={`cafe${reducedMotion ? ' cafe--calm' : ''}`}>
+    <>
       {body}
       {overlay === 'stickers' && <StickerBook stickers={progress.stickers} fruits={FRUITS} onClose={() => setOverlay(null)} />}
       {overlay === 'recipe' && bowlFruits.length > 0 && (
@@ -425,22 +450,49 @@ export default function CafeGame({ month }: { month: Month }) {
           fruits={bowlFruits}
           allFruits={FRUITS}
           month={month}
-         
           onClose={() => setOverlay(null)}
           closeLabel={mode === 'free' ? 'Back to the bowl' : 'Back to the cafe'}
         />
       )}
-    </div>
+    </>
   )
 }
 
-function SoundButton({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+function MenuCard({ i, colour, title, text, art, badge, big, onClick }: {
+  i: number; colour: string; title: string; text: string; art: ReactNode; badge?: string; big?: boolean; onClick: () => void
+}) {
   return (
-    <button type="button" className={`cafe-iconbtn${on ? ' is-on' : ''}`} onClick={onToggle} aria-pressed={on} aria-label={on ? 'Sound on' : 'Sound off'}>
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" />
-        {on ? <path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11" /> : <path d="M17 9l5 6M22 9l-5 6" />}
-      </svg>
-    </button>
+    <li className="pop-in" style={{ '--i': i } as CSSProperties}>
+      <button
+        type="button"
+        onClick={onClick}
+        className="press block-shadow flex w-full flex-col gap-3 rounded-block bg-(--pop) p-5 text-left text-(--ink)"
+        style={toneVars(tonesOf(colour))}
+      >
+        <span className="flex items-start justify-between gap-3">
+          {art}
+          {badge && <span className="rounded-full bg-(--ink) px-3 py-1.5 text-small font-extrabold text-(--light) tabular-nums" aria-hidden="true">{badge}</span>}
+        </span>
+        <span className="flex items-end justify-between gap-3">
+          <span className="flex flex-col gap-1">
+            <span className={clsx('font-display', big ? 'text-[2rem] leading-none' : 'text-title')}>{title}{badge && <span className="sr-only">, {badge} collected</span>}</span>
+            <span className="text-small font-semibold text-(--ink-soft)">{text}</span>
+          </span>
+          <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-(--ink) text-(--light)">
+            <ChevronRight aria-hidden="true" className="size-6" strokeWidth={2.75} />
+          </span>
+        </span>
+      </button>
+    </li>
+  )
+}
+
+// A star to earn, as a pill under the bowl: `deep` until it is earned, then `peak`.
+function Goal({ done, children }: { done: boolean; children: ReactNode }) {
+  return (
+    <li className={clsx('inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-small font-extrabold whitespace-nowrap', done ? 'bg-peak text-peak-ink' : 'bg-(--deep) text-(--light)')}>
+      <Star aria-hidden="true" className="size-4" fill={done ? 'currentColor' : 'none'} strokeWidth={2.5} />
+      {children}
+    </li>
   )
 }

@@ -1,7 +1,11 @@
-import { useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
+import { useRef, useState, type PointerEvent as ReactPointerEvent, type RefObject } from 'react'
+import clsx from 'clsx'
+import { Check } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import type { Fruit } from '../../types/fruit'
 import { FruitIcon } from '../../components/FruitIcon'
+import { StatusSticker } from '../../components/StatusSticker'
+import { toneVars, tonesOf } from '../../utils/tones'
 
 interface ShelfProps {
   fruits: Fruit[]
@@ -83,16 +87,27 @@ export function Shelf({ fruits, inBowl, fresh, stageRef, scroll = false, onAdd, 
 
   return (
     <>
-      <ul className={`cafe-shelf${scroll ? ' cafe-shelf--scroll' : ''}`} aria-label="Fruit shelf">
+      <ul
+        className={clsx(
+          'grid flex-none gap-x-2 gap-y-3 px-4 pt-4 pb-2 [@media(max-height:700px)]:gap-y-2.5 [@media(max-height:700px)]:pt-3',
+          scroll ? 'scrollbar-hide auto-cols-[84px] grid-flow-col grid-rows-2 overflow-x-auto' : 'grid-cols-4',
+        )}
+        aria-label="Fruit shelf"
+      >
         {fruits.map((f, i) => {
           const isFresh = fresh.has(f.id)
           const added = inBowl.has(f.id)
           return (
-            <li key={f.id} className="cafe-shelf__slot">
+            <li key={f.id} className="min-w-0">
+              {/* Each fruit is a block in its own colours, like the app's fruit rows. */}
               <button
                 type="button"
-                className={`cafe-tile${added ? ' cafe-tile--added' : ''}${isFresh ? ' cafe-tile--fresh' : ''}`}
-                style={{ '--fruit': f.colour, animationDelay: `${i * 40}ms` } as CSSProperties}
+                className={clsx(
+                  'cafe-tile-in press block-shadow relative flex h-[92px] w-full [@media(max-height:700px)]:h-[84px] flex-col items-center justify-center gap-0.5 rounded-3xl bg-(--pop) px-1 pt-1 pb-1.5 text-(--ink)',
+                  scroll ? 'touch-pan-x' : 'touch-none',
+                  added && 'opacity-60',
+                )}
+                style={{ ...toneVars(tonesOf(f.colour)), animationDelay: `${i * 40}ms` }}
                 onPointerDown={e => onDown(e, f)}
                 onPointerMove={e => onMove(e, f)}
                 onPointerUp={e => onUp(e, f)}
@@ -101,20 +116,24 @@ export function Shelf({ fruits, inBowl, fresh, stageRef, scroll = false, onAdd, 
                 aria-label={`${added ? 'In the bowl: ' : 'Add '}${f.name}${isFresh ? ', fresh now' : ''}`}
                 aria-pressed={added}
               >
-                <span className="cafe-tile__icon">
-                  <FruitIcon fruit={f} size="lg" />
+                <span className="relative leading-none">
+                  <FruitIcon fruit={f} size="row" />
                   {isFresh && <Sparkles />}
-                  {added && <span className="cafe-tile__tick" aria-hidden="true">✓</span>}
+                  {added && (
+                    <span className="absolute -right-1.5 -bottom-0.5 flex size-6 items-center justify-center rounded-full bg-peak text-peak-ink ring-2 ring-(--pop)" aria-hidden="true">
+                      <Check className="size-4" strokeWidth={3.25} />
+                    </span>
+                  )}
                 </span>
-                <span className={`cafe-tile__name${f.name.length > 12 ? ' is-long' : ''}`}>{f.name}</span>
-                {isFresh && <span className="cafe-tile__fresh">fresh now!</span>}
+                <span className="w-full text-center text-caption leading-[1.05] font-extrabold break-words hyphens-auto">{f.name}</span>
+                {isFresh && <StatusSticker status="peak" label="Fresh" icon="new" size="sm" tilt={-3} className="absolute -top-3.5 left-1/2 -translate-x-1/2" />}
               </button>
             </li>
           )
         })}
       </ul>
       {ghost && createPortal(
-        <div ref={placeGhost} className="cafe-ghost" aria-hidden="true">
+        <div ref={placeGhost} className="pointer-events-none fixed top-0 left-0 z-80 drop-shadow-[0_10px_8px_rgb(30_8_20/0.3)] will-change-transform" aria-hidden="true">
           <FruitIcon fruit={ghost} size="xl" />
         </div>,
         document.body,
@@ -123,9 +142,10 @@ export function Shelf({ fruits, inBowl, fresh, stageRef, scroll = false, onAdd, 
   )
 }
 
+// Three twinkles round a fresh fruit (twice, then still), in the status amber outlined in ink.
 function Sparkles() {
   return (
-    <svg className="cafe-sparkles" viewBox="0 0 64 64" aria-hidden="true">
+    <svg className="pointer-events-none absolute -inset-2 size-[calc(100%+16px)] fill-ending stroke-(--ink) stroke-1" viewBox="0 0 64 64" aria-hidden="true">
       <path className="cafe-sparkle cafe-sparkle--1" d="M52 2 L54 9 L61 11 L54 13 L52 20 L50 13 L43 11 L50 9 Z" />
       <path className="cafe-sparkle cafe-sparkle--2" d="M8 40 L9.5 45 L14 46.5 L9.5 48 L8 53 L6.5 48 L2 46.5 L6.5 45 Z" />
       <path className="cafe-sparkle cafe-sparkle--3" d="M58 44 L59 47 L62 48 L59 49 L58 52 L57 49 L54 48 L57 47 Z" />
