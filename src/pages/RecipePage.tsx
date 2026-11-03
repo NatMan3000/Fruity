@@ -41,26 +41,17 @@ export default function RecipePage({ recipe, month }: { recipe: Recipe; month: M
   return (
     <article className="flex flex-col pb-8 text-(--ink)">
       {/* The finished dish, edge to edge under the top bar (its discs carry their own colour, so no text
-          sits on the photo); the main fruit drops onto its lower edge, any other fruit slap on beside it */}
+          sits on the photo). No fruit stickers on it: the fruit are already in the dish's photo (Nathan,
+          3 Nov 2026); they show in the ingredients list instead. */}
       <div className="relative">
         <DishHero key={recipe.id} recipe={recipe} />
         <div className="absolute inset-x-0 top-0 z-10">
           <TopBar back={{ name: 'cook' }} right={<SaveDisc saved={saved} onToggle={() => toggleSaved(recipe.id)} name={recipe.name} />} />
         </div>
-        <div className="pointer-events-none absolute right-3 -bottom-16 z-10 flex items-end" aria-hidden="true">
-          {/* One tight bunch in the corner (Nathan, 3 Nov 2026: two or more fruit sat spread up the photo):
-              the other fruit tuck in against the main one, overlapping it, all straddling the photo's edge. */}
-          {extras.slice(0, 2).map((f, i) => (
-            <span key={f.id} className={clsx('-mr-6', i ? 'mb-[44px]' : 'mb-[30px]')}>
-              <FruitSticker fruit={f} size={i ? 60 : 72} slap delay={520 + i * 140} tilt={i ? -10 : 8} />
-            </span>
-          )).reverse()}
-          {main && <div className="drop-squash"><FruitSticker fruit={main} size={132} tilt={-4} eager /></div>}
-        </div>
       </div>
 
       <header className="relative flex flex-col items-start gap-3 px-5 pt-6">
-        <div className="flex flex-wrap items-center gap-2 pr-[136px]">
+        <div className="flex flex-wrap items-center gap-2">
           <span
             className="slap inline-flex h-8 items-center rounded-full bg-(--ink) px-3 text-[13px] font-extrabold tracking-[0.06em] text-(--light) uppercase"
             style={{ '--tilt': '-4deg', '--delay': '560ms', transform: 'rotate(var(--tilt))' } as CSSProperties}
