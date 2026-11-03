@@ -68,6 +68,11 @@
   --ease-bounce: linear(0, 0.044, 0.159, 0.318, 0.499, 0.680, 0.847, 0.988, 1.098, 1.174, 1.218, 1.233, 1.226, 1.200, 1.164, 1.122, 1.080, 1.040, 1.006, 0.980, 0.961, 0.950, 0.946, 0.947, 0.952, 0.961, 0.970, 0.980, 0.990, 0.998, 1.004, 1.009, 1.011, 1.013, 1.013, 1.011, 1.009, 1.007, 1.005, 1.003, 1);
   --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Tab moves (the page slide and the tab bar's scoop, both ways): one length and one curve, an iOS-like
+     glide that starts briskly and settles long, without --ease-out-soft's front-loaded snap ("both the
+     same duration just to make it a bit smoother", Nathan, 3 Nov 2026). */
+  --tab-move: 420ms;
+  --ease-glide: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @layer base {
@@ -297,9 +302,14 @@
   transform: scale(1.04);
 }
 
-/* Tab bar: the current tab's scoop slides across with an overshoot. */
+/* Tab bar: the current tab's scoop glides across in step with the page slide (same length and curve).
+   While a finger drags it (TabBar.tsx) it follows with a short glide, so a press away from the scoop
+   catches up smoothly rather than jumping. */
 .tab-scoop {
-  transition: transform 440ms var(--ease-overshoot), background-color 300ms ease;
+  transition: transform var(--tab-move) var(--ease-glide), background-color 300ms ease;
+}
+.tab-scoop[data-dragging] {
+  transition: transform 120ms var(--ease-glide), background-color 300ms ease;
 }
 
 /* Hero hint and slash: the knife stroke flashes across a fruit as it is cut. */
@@ -318,7 +328,8 @@
    push: the new screen slides in from the right over the old one, which eases a little left (the
    iPhone's own push); pop is the same in reverse. next / prev (tabs): a full sideways slide, the old
    screen going right off one side as the new one comes in from the other, side by side; a tab to the
-   right moves the content left ("just a full sideways fade", Nathan, 3 Nov 2026). Both screens stay
+   right moves the content left ("just a full sideways fade", Nathan, 3 Nov 2026), both ways in --tab-move
+   on --ease-glide, the tab bar's scoop in step. Both screens stay
    opaque (no blend), so no frame is ever blank or a mix of two colours. A swipe back is Safari's own animation: nothing here
    runs for it. Where View Transitions are missing, useRoute slides the new screen in alone. */
 @keyframes nav-from-right { from { transform: translateX(100%); } }
@@ -338,10 +349,10 @@ html[data-nav='push']::view-transition-old(root) { animation: nav-to-left-part 3
 html[data-nav='push']::view-transition-new(root) { animation: nav-from-right 300ms var(--ease-out-soft) both; }
 html[data-nav='pop']::view-transition-old(root) { animation: nav-to-right 300ms var(--ease-out-soft) both; z-index: 1; }
 html[data-nav='pop']::view-transition-new(root) { animation: nav-from-left-part 300ms var(--ease-out-soft) both; }
-html[data-nav='next']::view-transition-old(root) { animation: nav-to-left 320ms var(--ease-out-soft) both; }
-html[data-nav='next']::view-transition-new(root) { animation: nav-from-right 320ms var(--ease-out-soft) both; }
-html[data-nav='prev']::view-transition-old(root) { animation: nav-to-right 320ms var(--ease-out-soft) both; }
-html[data-nav='prev']::view-transition-new(root) { animation: nav-from-left 320ms var(--ease-out-soft) both; }
+html[data-nav='next']::view-transition-old(root) { animation: nav-to-left var(--tab-move) var(--ease-glide) both; }
+html[data-nav='next']::view-transition-new(root) { animation: nav-from-right var(--tab-move) var(--ease-glide) both; }
+html[data-nav='prev']::view-transition-old(root) { animation: nav-to-right var(--tab-move) var(--ease-glide) both; }
+html[data-nav='prev']::view-transition-new(root) { animation: nav-from-left var(--tab-move) var(--ease-glide) both; }
 /* The tab bar stays put: the live new one (its scoop sliding across) sits over the old one, which stays
    underneath so a browser that fails to paint the new image still shows a tab bar (WebKit in testing). */
 ::view-transition-old(tab-bar),

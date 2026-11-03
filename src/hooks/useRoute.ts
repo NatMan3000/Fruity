@@ -26,6 +26,7 @@ let renderingBack = false
 let ticket = 0
 let pendingBack: (() => void) | null = null
 let running: { finished: Promise<void>; skipTransition: () => void } | null = null
+let moving: Promise<void> | null = null // the page move on screen now, View Transition or fallback slide
 let preload: ((route: Route) => Promise<unknown> | undefined) | null = null
 const listeners = new Set<() => void>()
 const scrollMemory = new Map<string, number>()
@@ -122,6 +123,7 @@ function transition(start: NonNullable<TransitionDoc['startViewTransition']>, mo
   root.dataset.nav = motion
   const t = start(update)
   running = t
+  track(t.finished)
   t.finished.catch(() => {}).finally(() => {
     if (running !== t) return
     running = null
@@ -129,14 +131,28 @@ function transition(start: NonNullable<TransitionDoc['startViewTransition']>, mo
   })
 }
 
+function track(done: Promise<unknown>) {
+  const p: Promise<void> = done.then(() => {}, () => {}).finally(() => { if (moving === p) moving = null })
+  moving = p
+}
+
+// Settles when the page move on screen now has finished, or null when nothing is moving. Heavy work a
+// new screen starts (the 3D heroes building a WebGL scene) waits for it: begun mid-slide it held the main
+// thread for most of the move, so every slide into Now (always leftwards) stuttered and ran long while
+// slides away from it did not (Chromium: a 320 ms slide took 1.3 s in 8 frames; /tmp/fruity-tabs.md).
+export function pageMove(): Promise<void> | null {
+  return moving
+}
+
 // Without View Transitions: the new screen alone slides and fades in.
 function slideIn(motion: NavMotion) {
   const sign = motion === 'push' || motion === 'next' ? 1 : -1
   const far = motion === 'push' || motion === 'pop' ? 48 : 24
-  document.querySelector('main')?.animate(
+  const a = document.querySelector('main')?.animate(
     [{ opacity: 0, transform: `translateX(${sign * far}px)` }, { opacity: 1, transform: 'none' }],
     { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' },
   )
+  if (a) track(a.finished)
 }
 
 const pause = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
