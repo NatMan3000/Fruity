@@ -11,10 +11,17 @@
 // that appears in the empty blob when its first frame is up. Never the fruit's photo first and then the 3D
 // (DESIGN.md "3D", rule 1: the third time it happened, 3 Nov 2026). No WebGL, or the scene fails: the
 // sticker is the fruit, and is cut with the screen. Reduced motion: still there, still needs the tap, then a short fade.
-import { lazy, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+//
+// While it waits it is alive (Nathan, 3 Nov 2026: "This feels a little plain now"): the month's other fruit
+// stuck round the edge each bob and jiggle on their own rhythm, one at a time hopping or wiggling, sundae
+// sprinkles drift behind everything, sparkles twinkle by the fruit, and the letters of "Fruity" hop in a
+// wave every few seconds, the pill wiggling on the same beat. All of it is CSS transform and opacity (the
+// hops Web Animations), it all freezes the moment the tap starts the split, and none of it runs under
+// reduced motion. Everything is drawn in both halves of the screen, so it splits with it.
+import { lazy, memo, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import clsx from 'clsx'
 import { Citrus, Flower2, Leaf, Sun, type LucideIcon } from 'lucide-react'
-import type { Month, Season } from '../types/fruit'
+import type { Fruit, Month, Season } from '../types/fruit'
 import { FRUITS } from '../assets/fruits'
 import { prepareAudio, sfx, unlockAudio } from '../audio/sound'
 import { useSlash, webgl } from '../hooks/useLazy3D'
@@ -26,7 +33,7 @@ import { MONTH_NAMES } from '../utils/months'
 import { parseRoute } from '../utils/route'
 import { seasonOf } from '../utils/seasonality'
 import { seasonTones, toneVars } from '../utils/tones'
-import { cutLine } from '../utils/welcome'
+import { cutLine, seeded, sprinkleField, stickerRing, welcomeFruits, welcomeStage, type Sprinkle, type StickerSpot } from '../utils/welcome'
 import { FruitSticker } from './FruitSticker'
 import { Fallback, Slash } from './Lazy3D'
 import { HeroDish, SpinFruit } from './heroScenes'
@@ -93,7 +100,7 @@ function WelcomeScreen({ month }: { month: Month }) {
   const tones = useMemo(() => seasonTones(season), [season])
   const dish = useMemo(() => dishFruits(FRUITS, month), [month])
   const lead = dish[0] ?? FRUITS[0]
-  const others = dish.slice(1, 5)
+  const others = useMemo(() => welcomeFruits(FRUITS, month, dish, 9), [month, dish])
   const SeasonIcon = SEASON_ICON[season]
   const { w, h } = useViewport()
   const visible = useVisible()
@@ -106,6 +113,18 @@ function WelcomeScreen({ month }: { month: Month }) {
   const line = useMemo(() => cutLine(w, h, cx, cy, ANGLE), [w, h, cx, cy])
   const canvasH = h + 2 * Math.abs(cy - h / 2) // centred on the fruit, still covering the whole screen
 
+  // The life round the fruit is laid out once the title's place is known (measured before the first
+  // paint; it does not depend on the font, since the wordmark's line height is fixed).
+  const header = useRef<HTMLElement>(null)
+  const [titleBottom, setTitleBottom] = useState<number | null>(null)
+  const stage = useMemo(() => (titleBottom === null ? null : welcomeStage(w, h, cx, cy, size, titleBottom)), [w, h, cx, cy, size, titleBottom])
+  const spots = useMemo(() => (stage ? stickerRing(stage, others.length) : []), [stage, others.length])
+  const sprinkles = useMemo(() => (stage ? sprinkleField(stage, spots, MONTH_SEED[month]) : []), [stage, spots, month])
+  const sparkles = useMemo(() => SPARKLES.map(p => {
+    const t = (p.a * Math.PI) / 180
+    return { ...p, x: cx + Math.cos(t) * size * 0.62 * p.r, y: cy + Math.sin(t) * size * 0.55 * p.r }
+  }), [cx, cy, size])
+
   const dialog = useRef<HTMLDialogElement>(null)
   const halves = useRef<(HTMLDivElement | null)[]>([])
   const pieces3d = useRef<HTMLDivElement>(null)
@@ -116,6 +135,58 @@ function WelcomeScreen({ month }: { month: Month }) {
   const [slash, showSlash] = useSlash()
   const like = useMemo(() => ({ id: lead.id, name: lead.name, colour: lead.colour }), [lead.id, lead.name, lead.colour])
 
+  // Now and then one sticker hops or wiggles (in both halves at once, so they match at the cut): one at a
+  // time, every couple of seconds, round them all in a shuffled order. Stopped by the tap (freeze()).
+  const hops = useRef<(HTMLSpanElement | null)[][]>([[], []])
+  const hopping = useRef<Animation[]>([])
+  const hopTimer = useRef(0)
+  const placed = spots.length
+  useEffect(() => {
+    if (!placed || reducedMotion()) return
+    const rnd = seeded(placed * 7919 + MONTH_SEED[month])
+    let order: number[] = []
+    let last = -1
+    const next = () => {
+      if (!order.length) {
+        order = Array.from({ length: placed }, (_, i) => i).sort(() => rnd() - 0.5)
+        if (order[0] === last && placed > 1) order.push(order.shift()!)
+      }
+      return (last = order.shift()!)
+    }
+    const hop = () => {
+      hopTimer.current = window.setTimeout(hop, 1900 + rnd() * 900)
+      if (document.visibilityState !== 'visible' || leaving.current) return
+      const i = next()
+      const frames = rnd() < 0.5 ? HOP : WIGGLE
+      hopping.current = hops.current.map(row => row[i]?.animate(frames, { duration: frames === HOP ? 620 : 680, easing: 'ease-out' })).filter((a): a is Animation => !!a)
+    }
+    hopTimer.current = window.setTimeout(hop, 1500)
+    return () => clearTimeout(hopTimer.current)
+  }, [placed, month])
+
+  // The tap: everything idle stops where it is, so the two halves fly apart as one still picture. Each
+  // loop's pose at that instant is written onto its element and the loop removed (not just paused): a
+  // half full of live compositor animations under a fresh clip-path cost WebKit a dropped frame or two
+  // at the start of the split; with still pictures it is as smooth as before the welcome came alive.
+  const freeze = () => {
+    clearTimeout(hopTimer.current)
+    const d = dialog.current
+    if (!d) return
+    // All the reads first, then all the writes, so this costs one style pass, not one per loop (commit and
+    // cancel in turn added ~10 ms to the tap in WebKit; this way the whole tap is ~1 ms more than before).
+    const loops = [...d.getAnimations({ subtree: true }), ...hopping.current].flatMap(a => {
+      const el = (a.effect as KeyframeEffect | null)?.target
+      return el instanceof HTMLElement || el instanceof SVGElement ? (el.closest('.welcome-idle') ? [{ a, el }] : []) : []
+    })
+    const poses = loops.map(({ el }) => { const cs = getComputedStyle(el); return { el, transform: cs.transform, opacity: cs.opacity } })
+    for (const { el, transform, opacity } of poses) {
+      el.style.transform = transform
+      el.style.opacity = opacity
+    }
+    for (const { a } of loops) a.cancel()
+    d.setAttribute('data-cut', '') // and the CSS loops stay off
+  }
+
   // Modal, so the app underneath can be neither reached nor heard until the tap; up before first paint.
   useLayoutEffect(() => {
     const d = dialog.current
@@ -123,6 +194,11 @@ function WelcomeScreen({ month }: { month: Month }) {
     overrideThemeColour(tones.page)
     return () => overrideThemeColour(null)
   }, [tones.page])
+  // (after showModal: a closed dialog has no layout to measure)
+  useLayoutEffect(() => {
+    const r = header.current?.getBoundingClientRect()
+    if (r?.height) setTitleBottom(Math.round(r.bottom))
+  }, [w, h])
 
   // While the welcome waits, get the hero under it ready, so it starts soon after the tap: its scene's
   // chunk, and its fruit models (buildFruit keeps each fruit it has built), one per idle moment so the
@@ -163,6 +239,7 @@ function WelcomeScreen({ month }: { month: Month }) {
     if (leaving.current) return
     leaving.current = true
     unlockAudio() // in the gesture itself: iOS starts (or resumes) Web Audio only here
+    freeze() // before leaveWelcome, whose page-wide restyle its reads would otherwise pull into the tap
     leaveWelcome()
     const guard = setTimeout(finish, GUARD_MS)
     const done = (anims: (Animation | undefined)[]) =>
@@ -203,7 +280,10 @@ function WelcomeScreen({ month }: { month: Month }) {
       className={clsx('absolute inset-0 bg-(--page)', k === 0 && 'invisible')}
       style={{ transformOrigin: `${cx}px ${cy}px` }}
     >
-      <header className="absolute inset-x-0 top-[calc(env(safe-area-inset-top)+6vh)] flex flex-col items-center gap-2 px-4 text-center">
+      {/* Sundae sprinkles drifting behind everything */}
+      <Sprinkles sprinkles={sprinkles} />
+      <header ref={k === 1 ? header : undefined} className="absolute inset-x-0 top-[calc(env(safe-area-inset-top)+6vh)] flex flex-col items-center gap-2 px-4 text-center">
+        <span className="welcome-pill welcome-idle inline-flex">
         <span
           className="welcome-rise inline-flex h-8 items-center gap-1.5 rounded-full bg-(--pop) px-3 text-[14px] font-extrabold tracking-[0.04em] text-(--ink) uppercase shadow-[0_0_0_2px_var(--color-sticker)]"
           style={{ transform: 'rotate(-3deg)' }}
@@ -211,21 +291,22 @@ function WelcomeScreen({ month }: { month: Month }) {
           <SeasonIcon aria-hidden="true" className="size-4" strokeWidth={2.75} />
           {MONTH_NAMES[month]} · {season}
         </span>
+        </span>
         <span className={clsx('welcome-word font-display leading-[0.95] text-(--light)', fontReady ? 'slap' : 'invisible')} style={{ '--tilt': '-4deg', '--delay': '80ms' } as CSSProperties}>
-          Fruity
+          {/* Each letter hops in turn, a wave every few seconds; together they still read "Fruity" */}
+          {'Fruity'.split('').map((c, i) => (
+            <span key={i} className="welcome-letter welcome-idle" style={{ '--i': i } as CSSProperties}>{c}</span>
+          ))}
         </span>
       </header>
-      {others.map((f, i) => (
-        <span key={f.id} className="absolute" style={CORNERS[i]}>
-          {/* 3d-fallback-ok: art, not a 3D stand-in (the month's other fruit as stickers round the edge) */}
-          <FruitSticker fruit={f} size={Math.round(size * 0.34)} slap delay={260 + i * 90} tilt={TILTS[i]} eager />
-        </span>
-      ))}
+      <Stickers spots={spots} fruits={others} row={hops.current[k]} />
       {/* The fruit's juicy blob, and the sticker until the 3D fruit takes its place */}
       <span
         className="welcome-blob absolute rounded-[58%_42%_49%_51%/46%_55%_45%_54%] bg-(--pop)"
         style={{ left: cx - size * 0.62, top: cy - size * 0.55, width: size * 1.24, height: size * 1.1 }}
       />
+      {/* A few sparkles twinkling by the fruit, one after another */}
+      <Sparkles sparkles={sparkles} />
       {(!three || failed3d) && (
         <span className="absolute flex items-center justify-center" style={{ left: cx - size / 2, top: cy - size / 2, width: size, height: size }}>
           <FruitSticker fruit={lead} size={Math.round(size * 0.9)} tilt={-6} eager />
@@ -273,14 +354,94 @@ function WelcomeScreen({ month }: { month: Month }) {
   )
 }
 
-// The month's other dish fruit, stuck on round the edges, partly off the screen.
-const CORNERS: CSSProperties[] = [
-  { left: '-4%', top: '29%' },
-  { right: '-3%', top: '25%' },
-  { left: '5%', bottom: '17%' },
-  { right: '4%', bottom: '21%' },
+// The life drawn in each half (memoised: the tap re-renders the welcome, and these never change with it).
+const Sprinkles = memo(function Sprinkles({ sprinkles }: { sprinkles: Sprinkle[] }) {
+  return sprinkles.map((p, i) => (
+    <span
+      key={i}
+      className={clsx('welcome-sprinkle welcome-idle absolute', p.rod ? 'h-[4px] w-[13px] rounded-full' : 'size-[6px] rounded-full')}
+      style={{
+        left: p.x - (p.rod ? 6.5 : 3), top: p.y - (p.rod ? 2 : 3), background: `var(--${p.tone})`,
+        '--rot': `${p.rot}deg`, '--dx': `${p.dx}px`, '--dy': `${p.dy}px`, '--spin': `${p.spin}deg`, '--dur': `${p.dur}ms`, '--delay': `${p.delay}ms`,
+      } as CSSProperties}
+    />
+  ))
+})
+
+// The month's other fruit round the edge: each bobs on its own rhythm (.welcome-bob), and its inner span
+// (kept in `row`) is the one the occasional hop or wiggle moves.
+const Stickers = memo(function Stickers({ spots, fruits, row }: { spots: StickerSpot[]; fruits: Fruit[]; row: (HTMLSpanElement | null)[] }) {
+  return spots.map((p, i) => {
+    const f = fruits[i]
+    const bob = BOBS[i % BOBS.length]
+    return (
+      <span key={f.id} className="absolute" style={{ left: p.x - p.size / 2, top: p.y - p.size / 2 }}>
+        <span className="welcome-bob welcome-idle block" style={{ '--dur': `${bob.dur}ms`, '--delay': `${bob.delay}ms`, '--amp': `${bob.amp}px`, '--wob': `${bob.wob}deg` } as CSSProperties}>
+          <span ref={el => { row[i] = el }} className="block">
+            {/* 3d-fallback-ok: art, not a 3D stand-in (the month's other fruit as stickers round the edge, never the lead fruit) */}
+            <FruitSticker fruit={f} size={p.size} slap delay={260 + i * 70} tilt={p.tilt} eager />
+          </span>
+        </span>
+      </span>
+    )
+  })
+})
+
+// A few sparkles twinkling by the fruit, one after another.
+const Sparkles = memo(function Sparkles({ sparkles }: { sparkles: { x: number; y: number; s: number; delay: number }[] }) {
+  return sparkles.map((p, i) => (
+    <svg
+      key={i}
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="welcome-sparkle welcome-idle absolute text-(--light)"
+      style={{ left: p.x - p.s / 2, top: p.y - p.s / 2, width: p.s, height: p.s, '--delay': `${p.delay}ms` } as CSSProperties}
+    >
+      <path d="M12 0c.9 6.6 4.8 10.6 12 12-7.2 1.4-11.1 5.4-12 12-.9-6.6-4.8-10.6-12-12C7.2 10.6 11.1 6.6 12 0Z" fill="currentColor" />
+    </svg>
+  ))
+})
+
+// Each sticker's own idle rhythm (one drift there and back), so no two move together: how long, where in
+// it each starts, how far it floats (px) and how far it rocks (degrees).
+const BOBS = [
+  { dur: 2600, delay: -300, amp: 4, wob: 3 },
+  { dur: 3100, delay: -1700, amp: 3, wob: -4 },
+  { dur: 2300, delay: -900, amp: 5, wob: 2.5 },
+  { dur: 3400, delay: -2500, amp: 4, wob: -3 },
+  { dur: 2800, delay: -1200, amp: 3, wob: 3.5 },
+  { dur: 2450, delay: -2000, amp: 4, wob: -2.5 },
+  { dur: 3250, delay: -600, amp: 5, wob: 3 },
+  { dur: 2700, delay: -2300, amp: 3, wob: -3.5 },
+  { dur: 2950, delay: -1400, amp: 4, wob: 2.5 },
 ]
-const TILTS = [-14, 12, 9, -10]
+
+// The occasional bigger move: a hop with a squash as it lands, or a quick wiggle.
+const HOP: Keyframe[] = [
+  { transform: 'none', easing: 'cubic-bezier(0.2, 0.7, 0.4, 1)' },
+  { transform: 'translateY(-18px) rotate(-7deg) scale(1.06)', offset: 0.38, easing: 'cubic-bezier(0.6, 0, 0.8, 0.4)' },
+  { transform: 'translateY(0) scale(1.12, 0.88)', offset: 0.64 },
+  { transform: 'scale(0.96, 1.04)', offset: 0.8 },
+  { transform: 'none' },
+]
+const WIGGLE: Keyframe[] = [
+  { transform: 'none' },
+  { transform: 'rotate(13deg) scale(1.04)', offset: 0.18 },
+  { transform: 'rotate(-11deg) scale(1.04)', offset: 0.4 },
+  { transform: 'rotate(7deg)', offset: 0.6 },
+  { transform: 'rotate(-3deg)', offset: 0.8 },
+  { transform: 'none' },
+]
+
+// Sparkles at the blob's rim: the angle round it, how far out (1 = on the rim), size and when each twinkles.
+const SPARKLES = [
+  { a: 312, r: 0.88, s: 26, delay: 900 },
+  { a: 168, r: 0.94, s: 18, delay: 2100 },
+  { a: 38, r: 0.96, s: 20, delay: 3300 },
+]
+
+// The sprinkles fall the same way all month, a different way each month.
+const MONTH_SEED: Record<Month, number> = { Jan: 11, Feb: 23, Mar: 37, Apr: 41, May: 53, Jun: 67, Jul: 71, Aug: 83, Sep: 97, Oct: 101, Nov: 113, Dec: 127 }
 
 // The 3D scene failed: tell the welcome, which then shows the fruit's sticker in its place.
 function Failed({ onFail }: { onFail: () => void }) {

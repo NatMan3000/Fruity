@@ -340,6 +340,70 @@
 .welcome-blob {
   animation: welcome-blob 560ms var(--ease-spring) 60ms backwards;
 }
+/* The welcome's life while it waits (DESIGN.md "Welcome"): the one place things loop, and only until the
+   tap, which holds each where it is and removes the loops ([data-cut], Welcome.tsx freeze()) so the halves
+   split as one still picture. Transform and opacity only, no will-change; reduced motion turns it all off
+   with everything else. */
+@keyframes welcome-bob { /* a float of --amp and a rock of --wob, a quarter turn apart, sampled from sines */
+  0% { transform: translateY(0) rotate(var(--wob)); }
+  12.5% { transform: translateY(calc(var(--amp) * -0.71)) rotate(calc(var(--wob) * 0.71)); }
+  25% { transform: translateY(calc(var(--amp) * -1)) rotate(0deg); }
+  37.5% { transform: translateY(calc(var(--amp) * -0.71)) rotate(calc(var(--wob) * -0.71)); }
+  50% { transform: translateY(0) rotate(calc(var(--wob) * -1)); }
+  62.5% { transform: translateY(calc(var(--amp) * 0.71)) rotate(calc(var(--wob) * -0.71)); }
+  75% { transform: translateY(var(--amp)) rotate(0deg); }
+  87.5% { transform: translateY(calc(var(--amp) * 0.71)) rotate(calc(var(--wob) * 0.71)); }
+  100% { transform: translateY(0) rotate(var(--wob)); }
+}
+.welcome-bob {
+  animation: welcome-bob var(--dur) linear var(--delay) infinite;
+}
+@keyframes welcome-drift {
+  from { transform: rotate(var(--rot)); }
+  to { transform: translate(var(--dx), var(--dy)) rotate(calc(var(--rot) + var(--spin))); }
+}
+.welcome-sprinkle {
+  opacity: 0.9;
+  transform: rotate(var(--rot)); /* its resting angle, also with reduced motion */
+  animation: welcome-drift var(--dur) ease-in-out var(--delay) infinite alternate;
+}
+/* "Fruity" waves: each letter hops in turn (70 ms apart), once every 4.8 s, the first after its slap. */
+@keyframes welcome-wave {
+  0% { transform: none; animation-timing-function: cubic-bezier(0.3, 0.7, 0.4, 1); }
+  4% { transform: translateY(-0.16em) rotate(-6deg); animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.5); }
+  8% { transform: translateY(0.02em) scale(1.04, 0.95); }
+  11% { transform: none; }
+  100% { transform: none; }
+}
+.welcome-letter {
+  display: inline-block;
+  animation: welcome-wave 4800ms linear calc(1500ms + var(--i) * 70ms) infinite;
+}
+/* The pill wiggles as the wave reaches its end. */
+@keyframes welcome-pill {
+  0%, 12% { transform: none; }
+  15% { transform: rotate(5deg); }
+  18% { transform: rotate(-4deg); }
+  21% { transform: rotate(2deg); }
+  24%, 100% { transform: none; }
+}
+.welcome-pill {
+  animation: welcome-pill 4800ms ease-in-out 1500ms infinite;
+}
+/* Sparkles by the fruit twinkle one after another, each once every 3.6 s. */
+@keyframes welcome-twinkle {
+  0% { opacity: 0; transform: scale(0) rotate(0deg); }
+  10% { opacity: 1; transform: scale(1) rotate(45deg); }
+  22%, 100% { opacity: 0; transform: scale(0) rotate(90deg); }
+}
+.welcome-sparkle {
+  opacity: 0;
+  animation: welcome-twinkle 3600ms ease-out var(--delay) infinite;
+}
+.welcome[data-cut] .welcome-idle {
+  animation: none;
+}
+
 /* While the welcome is up, the screen under it holds its entrance (a cold open's titles and blocks), and
    plays it as the welcome opens (useWelcome.ts). */
 html[data-welcome] main,
