@@ -2,7 +2,7 @@ import { tabFor, type Route } from './route'
 
 // Which way a screen change moves (DESIGN.md "Motion", Page moves). `push` slides the new screen in from
 // the right over the old one and `pop` slides it back off to the right (the iPhone's own back gesture),
-// `next` and `prev` are the shorter sideways moves between tabs, and `none` swaps without moving.
+// `next` and `prev` slide the whole screen sideways between tabs, and `none` swaps without moving.
 export type NavMotion = 'push' | 'pop' | 'next' | 'prev' | 'none'
 
 // Tab roots sit at depth 0; a fruit, a recipe or a game is one level in; cook mode is inside a recipe.

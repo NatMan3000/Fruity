@@ -23,6 +23,7 @@ interface HeroDishProps {
   slice: number      // bumped by the Slice button: cut every fruit open, or put them all back
   onCut: (news: CutNews) => void
   onOpen: (count: number) => void // how many fruit are cut open now (the button reads Put back while any are)
+  settled?: boolean  // start with the fruit already in the dish (Now was returned to by a back move)
   className?: string
 }
 
@@ -37,7 +38,7 @@ export default function HeroDish({ className, fruits, ...props }: HeroDishProps)
 
 interface Drop { y: number; vy: number; delay: number; squash: number; axis: THREE.Vector3; rest: THREE.Euler; hop: number; hopV: number }
 
-function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen }: Omit<HeroDishProps, 'className'>) {
+function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen, settled = false }: Omit<HeroDishProps, 'className'>) {
   const { camera, size, invalidate } = useThree()
   const spinGroup = useRef<THREE.Group>(null)
   const dishGroup = useRef<THREE.Group>(null)
@@ -52,9 +53,9 @@ function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen }: Omit<HeroDish
   const poses = useMemo(() => restPoses(models), [models]) // each fruit inside the bowl, clear of the rim
   const order = useMemo(() => fruits.map((_, i) => i).reverse(), [fruits])
   const drops = useRef<Drop[]>(fruits.map((_, i) => ({
-    y: still ? 0 : 2.8 + i * 0.25,
+    y: still || settled ? 0 : 2.8 + i * 0.25,
     vy: 0,
-    delay: still ? 0 : order.indexOf(i) * 0.14,
+    delay: still || settled ? 0 : order.indexOf(i) * 0.14,
     squash: 0,
     axis: new THREE.Vector3(Math.sin(i * 12.9), Math.cos(i * 7.3), Math.sin(i * 4.1 + 1)).normalize(), // a fixed tumble per slot
     rest: poses[i].rest,

@@ -11,10 +11,12 @@ export const webgl = (() => {
   }
 })()
 
-// Ask for the 3D chunk only when the browser is idle after first paint.
-export function useAfterPaint(): boolean {
-  const [ready, setReady] = useState(false)
+// Ask for the 3D chunk only when the browser is idle after first paint. `now` (a hero returned to by a
+// back move, whose chunk is already loaded) skips the wait, so the scene is there as it was left.
+export function useAfterPaint(now = false): boolean {
+  const [ready, setReady] = useState(now)
   useEffect(() => {
+    if (now) return
     const go = () => setReady(true)
     if ('requestIdleCallback' in window) {
       const id = window.requestIdleCallback(go, { timeout: 700 })
@@ -22,7 +24,7 @@ export function useAfterPaint(): boolean {
     }
     const t = setTimeout(go, 250)
     return () => clearTimeout(t)
-  }, [])
+  }, [now])
   return ready
 }
 

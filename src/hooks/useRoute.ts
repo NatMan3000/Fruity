@@ -1,6 +1,7 @@
-import { useSyncExternalStore } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { flushSync } from 'react-dom'
 import { navMotion, type NavMotion } from '../utils/navMotion'
+import { settlesOnBack } from '../utils/settle'
 import { parseRoute, routeHash, type Route } from '../utils/route'
 
 // Hash router. Every screen is a real history entry (#/fruit/mango), so deep links, Back and the
@@ -14,8 +15,14 @@ import { parseRoute, routeHash, type Route } from '../utils/route'
 // the browser restores the scroll. With 'manual', iOS throws away its picture of the previous screen when
 // the scroll position differs from when it was taken (WebKit ViewGestureControllerIOS.mm, canUseSnapshot)
 // and shows a flat colour during and after the swipe instead: the frozen "skeleton" (Nathan, 3 Nov 2026).
+//
+// Every back move (the swipe, a Back key, the Back button) shows the screen in its final state: the screen
+// is mounted afresh, so without this its entrance motion replayed and its pictures went blank until
+// decoded, which read as the page reloading once Safari dropped its swipe picture (Nathan, 3 Nov 2026).
+// See renderBack.
 
 let navigatedInApp = false
+let renderingBack = false
 let ticket = 0
 let pendingBack: (() => void) | null = null
 let running: { finished: Promise<void>; skipTransition: () => void } | null = null
@@ -38,8 +45,44 @@ function onPopState() {
   if (pendingBack) return pendingBack()
   // Anyone else's (the swipe, a Back key): no motion, and no transition of ours left running on top.
   running?.skipTransition()
-  render()
+  renderBack()
   restoreScroll()
+}
+
+// Render the screen a back move returns to, already in its final state, before the browser paints:
+// components mounted in this render see useArrivedBack() true (the 3D heroes start at rest); every CSS
+// entrance animation or transition it started is jumped to its end; and its pictures decode as they
+// paint (not a blank frame first, as `decoding="async"` does) and load at once rather than lazily.
+function renderBack() {
+  renderingBack = true
+  try {
+    render()
+  } finally {
+    renderingBack = false
+  }
+  settle()
+}
+
+function settle() {
+  for (const a of document.getAnimations()) {
+    if (!settlesOnBack(a)) continue
+    try {
+      a.finish()
+    } catch (error) {
+      // Only an infinite animation cannot finish, and Fruity should have none ("nothing loops").
+      console.warn('[Fruity] could not settle an animation on a back move', error)
+    }
+  }
+  for (const img of document.querySelectorAll<HTMLImageElement>('main img')) {
+    img.decoding = 'sync'
+    img.loading = 'eager'
+  }
+}
+
+// True in a component mounted by a back move (it should appear as it was left, without its entrance).
+export function useArrivedBack(): boolean {
+  const [back] = useState(() => renderingBack)
+  return back
 }
 
 function subscribe(cb: () => void) {
@@ -128,7 +171,7 @@ export function goBack(fallback: Route = { name: 'now' }) {
     const done = () => {
       clearTimeout(timer)
       pendingBack = null
-      render()
+      renderBack()
       restoreScroll()
       then?.()
       resolve()
