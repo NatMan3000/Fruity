@@ -10,6 +10,7 @@ import { useStoredState } from '../hooks/useStoredState'
 import { filterRecipes, TYPE_LABEL, type CookFilter, type CookView } from '../utils/recipes'
 import { ChipRow } from '../components/ChipRow'
 import { RecipeCard } from '../components/RecipeCard'
+import { COUNT_AREA, TAB_CONTROL, TabControls } from '../components/TabControls'
 import { TopBar } from '../components/TopBar'
 
 let introPlayed = false
@@ -42,9 +43,9 @@ export function CookPage({ month }: { month: Month }) {
   return (
     <div className="flex flex-col pb-6">
       <TopBar title="Cook" intro={intro} />
-      <div className="flex flex-col gap-2">
-        <div className="px-4">
-          <div role="radiogroup" aria-label="Which recipes" className="flex rounded-full bg-(--ink) p-0.5">
+      <TabControls
+        control={(
+          <div role="radiogroup" aria-label="Which recipes" className={`flex ${TAB_CONTROL} bg-(--ink) p-0.5`}>
             {VIEWS.map(({ view, label, Icon }) => {
               const on = filter.view === view
               return (
@@ -55,7 +56,7 @@ export function CookPage({ month }: { month: Month }) {
                   aria-checked={on}
                   onClick={() => setFilter(f => ({ ...f, view }))}
                   className={clsx(
-                    'chip inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full text-small font-extrabold',
+                    'chip inline-flex h-full flex-1 items-center justify-center gap-1.5 rounded-full text-small font-extrabold',
                     on ? 'bg-(--pop) text-(--ink)' : 'text-(--bright)',
                   )}
                 >
@@ -65,40 +66,41 @@ export function CookPage({ month }: { month: Month }) {
               )
             })}
           </div>
-        </div>
-
-        <ChipRow label="Recipe type" className="snap-x snap-proximity scroll-ps-4">
-          {RECIPE_TYPES.map(type => (
-            <Chip key={type} on={filter.type === type} onClick={() => setFilter(f => ({ ...f, type: f.type === type ? null : type }))}>
-              {TYPE_LABEL[type]}
-            </Chip>
-          ))}
-          <Chip on={filter.kids} onClick={() => setFilter(f => ({ ...f, kids: !f.kids }))} Icon={Smile}>Kid-friendly</Chip>
-        </ChipRow>
-
-        <div className="flex flex-col gap-4 px-4">
-          {recipes && (
-            <p aria-live="polite" className="-mt-1 text-small font-bold tabular-nums">
-              {countLine(list.length, filter.view)}
-              {narrowed && list.length > 0 && (
-                <>
-                  {' '}
-                  <button type="button" onClick={() => setFilter(f => ({ ...f, type: null, kids: false }))} className="inline-flex min-h-11 items-center underline">
-                    Clear filters
-                  </button>
-                </>
-              )}
-            </p>
-          )}
-          {recipes && list.length === 0 && <Empty view={filter.view} narrowed={narrowed} onClear={() => setFilter(f => ({ ...f, type: null, kids: false }))} onAll={() => setFilter(f => ({ ...f, view: 'all' }))} />}
-          <ul className="flex flex-col gap-4">
-            {list.map((r, i) => (
-              <li key={r.id} className={clsx(intro && i < 6 && 'pop-in')} style={{ '--i': i, '--from-tilt': i % 2 ? '3deg' : '-3deg' } as CSSProperties}>
-                <RecipeCard recipe={r} month={month} saved={filter.view !== 'saved' && box.saved.includes(r.id)} />
-              </li>
+        )}
+        chips={(
+          <ChipRow label="Recipe type" className="snap-x snap-proximity scroll-ps-4">
+            {RECIPE_TYPES.map(type => (
+              <Chip key={type} on={filter.type === type} onClick={() => setFilter(f => ({ ...f, type: f.type === type ? null : type }))}>
+                {TYPE_LABEL[type]}
+              </Chip>
             ))}
-          </ul>
-        </div>
+            <Chip on={filter.kids} onClick={() => setFilter(f => ({ ...f, kids: !f.kids }))} Icon={Smile}>Kid-friendly</Chip>
+          </ChipRow>
+        )}
+      />
+
+      <div className={COUNT_AREA}>
+        {recipes && (
+          <p aria-live="polite" className="text-small font-bold tabular-nums">
+            {countLine(list.length, filter.view)}
+            {narrowed && list.length > 0 && (
+              <>
+                {' '}
+                <button type="button" onClick={() => setFilter(f => ({ ...f, type: null, kids: false }))} className="inline-flex min-h-11 items-center underline">
+                  Clear filters
+                </button>
+              </>
+            )}
+          </p>
+        )}
+        {recipes && list.length === 0 && <Empty view={filter.view} narrowed={narrowed} onClear={() => setFilter(f => ({ ...f, type: null, kids: false }))} onAll={() => setFilter(f => ({ ...f, view: 'all' }))} />}
+        <ul className="flex flex-col gap-4">
+          {list.map((r, i) => (
+            <li key={r.id} className={clsx(intro && i < 6 && 'pop-in')} style={{ '--i': i, '--from-tilt': i % 2 ? '3deg' : '-3deg' } as CSSProperties}>
+              <RecipeCard recipe={r} month={month} saved={filter.view !== 'saved' && box.saved.includes(r.id)} />
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   )

@@ -7,6 +7,7 @@ import { BROWSE_FILTERS, browseFruits, type BrowseFilter } from '../utils/browse
 import { fruitStatus } from '../utils/seasonality'
 import { SEASON_COLOUR, toneVars, tonesOf } from '../utils/tones'
 import { ChipRow } from '../components/ChipRow'
+import { COUNT_AREA, TAB_CONTROL, TabControls } from '../components/TabControls'
 import { FruitSticker } from '../components/FruitSticker'
 import { Link } from '../components/Link'
 import { SeasonLegend, SeasonStrip } from '../components/SeasonStrip'
@@ -35,10 +36,9 @@ export function BrowsePage({ month, query, onQuery, filter, onFilter }: BrowsePa
     <div className="flex flex-col pb-6">
       <FruitTabHeader view="list" intro={intro} />
 
-      {/* Pinned: search and filter chips stay put while the list scrolls */}
-      <div className="sticky top-0 z-20 flex flex-col gap-2.5 bg-(--screen) pt-[calc(env(safe-area-inset-top)+10px)] pb-3">
-        <div className="px-4">
-          <label className="flex h-13 items-center gap-2 rounded-full bg-(--bright) pr-1 pl-4 text-(--ink) focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-(--light)">
+      <TabControls
+        control={(
+          <label className={`flex items-center gap-2 ${TAB_CONTROL} bg-(--bright) pr-1 pl-4 text-(--ink) focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-(--light)`}>
             <Search aria-hidden="true" className="size-5 shrink-0" strokeWidth={2.5} />
             <input
               type="search"
@@ -56,11 +56,11 @@ export function BrowsePage({ month, query, onQuery, filter, onFilter }: BrowsePa
               </button>
             )}
           </label>
-        </div>
-        <FilterChips filter={filter} onFilter={onFilter} />
-      </div>
+        )}
+        chips={<FilterChips filter={filter} onFilter={onFilter} />}
+      />
 
-      <div className="flex flex-col gap-3 px-4">
+      <div className={COUNT_AREA}>
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 pb-1">
           <p className="text-small font-bold tabular-nums" aria-live="polite">
             {filtered ? `${fruits.length} of ${FRUITS.length} fruit` : `${FRUITS.length} fruit, peak first`}
