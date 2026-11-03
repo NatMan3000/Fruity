@@ -176,6 +176,18 @@ export function navigate(route: Route) {
   void Promise.race([ready, pause(400)]).catch(() => {}).then(go)
 }
 
+// The welcome always opens onto Now (Nathan, 3 Nov 2026: "no matter how you've got there, it should always
+// go to the now page when you slice to open it"). Called while the welcome covers the screen, so the swap
+// is never seen; the current history entry becomes Now, with no page move.
+export function resetToNow() {
+  const now = routeHash({ name: 'now' })
+  if (keyOf(location.hash) === now) return
+  ticket++ // a move that was waiting on a preload must not land after this
+  history.replaceState(null, '', now)
+  render()
+  if (typeof window !== 'undefined') window.scrollTo(0, 0)
+}
+
 // Back one step if we arrived from inside the app, otherwise go to `fallback` (deep link entry).
 export function goBack(fallback: Route = { name: 'now' }) {
   if (!navigatedInApp) return navigate(fallback)

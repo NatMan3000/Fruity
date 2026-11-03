@@ -48,9 +48,11 @@ export default function RecipePage({ recipe, month }: { recipe: Recipe; month: M
           <TopBar back={{ name: 'cook' }} right={<SaveDisc saved={saved} onToggle={() => toggleSaved(recipe.id)} name={recipe.name} />} />
         </div>
         <div className="pointer-events-none absolute right-3 -bottom-16 z-10 flex items-end" aria-hidden="true">
+          {/* One tight bunch in the corner (Nathan, 3 Nov 2026: two or more fruit sat spread up the photo):
+              the other fruit tuck in against the main one, overlapping it, all straddling the photo's edge. */}
           {extras.slice(0, 2).map((f, i) => (
-            <span key={f.id} className={clsx('-mr-2', i ? 'mb-[100px]' : 'mb-[68px]')}>
-              <FruitSticker fruit={f} size={72} slap delay={520 + i * 140} tilt={i ? -10 : 12} />
+            <span key={f.id} className={clsx('-mr-6', i ? 'mb-[44px]' : 'mb-[30px]')}>
+              <FruitSticker fruit={f} size={i ? 60 : 72} slap delay={520 + i * 140} tilt={i ? -10 : 8} />
             </span>
           )).reverse()}
           {main && <div className="drop-squash"><FruitSticker fruit={main} size={132} tilt={-4} eager /></div>}

@@ -23,6 +23,7 @@ beforeEach(() => {
   doc.documentElement.dataset = {}
   vi.stubGlobal('document', doc)
   vi.stubGlobal('location', { hash: '#/' })
+  vi.stubGlobal('history', { replaceState: (_s: unknown, _t: string, hash: string) => { location.hash = hash } })
 })
 afterEach(() => {
   vi.useRealTimers()
@@ -37,10 +38,11 @@ const load = async () => {
 const tap = (w: Awaited<ReturnType<typeof load>>) => { w.leaveWelcome(); w.finishWelcome() }
 
 describe('the welcome screen', () => {
-  it('is up on every launch, deep links included, and the 3D heroes wait for it to go', async () => {
+  it('is up on every launch, deep links included, opens onto Now, and the 3D heroes wait for it to go', async () => {
     location.hash = '#/fruit/apple'
     const w = await load()
     expect(w.welcomeState()).toBe('showing')
+    expect(location.hash).toBe('#/') // always Now underneath (Nathan, 3 Nov 2026)
     expect('welcome' in doc.documentElement.dataset).toBe(true) // the screen's entrance waits
     const gone = w.welcomeGone()
     expect(gone).not.toBeNull()
@@ -56,19 +58,20 @@ describe('the welcome screen', () => {
     expect(w.welcomeGone()).toBeNull()
   })
 
-  it('comes back after a real time away, over the same screen', async () => {
+  it('comes back after a real time away, and opens onto Now', async () => {
     const w = await load()
     tap(w)
     away(60_000, '#/fruit/mango')
     expect(w.welcomeState()).toBe('showing')
-    expect(location.hash).toBe('#/fruit/mango')
+    expect(location.hash).toBe('#/')
   })
 
   it('stays away after a flicker of hidden (under 2 s)', async () => {
     const w = await load()
     tap(w)
-    away(800)
+    away(800, '#/fruit/mango')
     expect(w.welcomeState()).toBe('gone')
+    expect(location.hash).toBe('#/fruit/mango') // a flicker leaves you where you were
     expect(w.welcomeGone()).toBeNull()
   })
 

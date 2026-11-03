@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { parseRoute } from '../utils/route'
+import { resetToNow } from './useRoute'
 import { welcomeOnHide, welcomeOnReturn } from '../utils/welcome'
 
 // Whether the welcome screen is up (src/components/Welcome.tsx, DESIGN.md "Welcome"). It shows on every
@@ -78,11 +79,13 @@ function onVisibility() {
   if (hiddenAt === null) return
   const away = Date.now() - hiddenAt
   hiddenAt = null
-  if (raisedOnHide && state === 'showing' && !welcomeOnReturn(away)) finishWelcome()
+  if (raisedOnHide && state === 'showing' && !welcomeOnReturn(away)) return finishWelcome()
+  if (state === 'showing') resetToNow() // the welcome is staying up: it opens onto Now
 }
 
 // Every launch starts on it, before React's first paint.
 export function installWelcome() {
   showWelcome()
+  resetToNow() // a launch (a shared link included) opens onto Now too
   document.addEventListener('visibilitychange', onVisibility)
 }
