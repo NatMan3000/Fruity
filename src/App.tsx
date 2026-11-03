@@ -74,6 +74,10 @@ function App() {
         <main className="mx-auto w-full max-w-2xl">
           <Screen route={route} recipes={recipes} month={month} query={query} setQuery={setQuery} filter={filter} setFilter={setFilter} browseWith={browseWith} />
         </main>
+        {/* The sign-off at the foot of every screen, like Bready's (Nathan, 3 Nov 2026) */}
+        <footer className="px-5 pt-8 pb-2 text-center text-small font-semibold text-(--light)">
+          <p>Made with <span aria-label="strawberries" role="img">🍓</span> by Josh &amp; Kai</p>
+        </footer>
       </div>
       <TabBar active={tabFor(route)} />
       <BagSheet open={bagOpen} onClose={() => setBagOpen(false)} />
