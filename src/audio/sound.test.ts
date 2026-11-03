@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { installUnlock, resetSoundForTests, setSound, SOUND_KEY, sfx, soundOn, unlockAudio } from './sound'
+import { audioForTests, installUnlock, prepareAudio, resetSoundForTests, setSound, SOUND_KEY, sfx, soundOn, unlockAudio } from './sound'
 import { isProgress as isQuizProgress, NEW_PROGRESS as NEW_QUIZ } from '../quiz/logic/progress'
 import { isProgress as isCafeProgress, NEW_PROGRESS as NEW_CAFE } from '../cafe/logic/progress'
 
@@ -58,6 +58,33 @@ describe('sfx', () => {
     setSound(false)
     sfx.clunk()
     expect(oscillators).toBe(0)
+  })
+
+  it('a later gesture resumes a context iOS left stopped (a refused first press, or back from the background)', async () => {
+    unlockAudio()
+    const ctx = audioForTests() as unknown as FakeContext
+    await Promise.resolve()
+    expect(ctx.state).toBe('running')
+    ctx.state = 'interrupted' // iOS, after a call or time in the background
+    ctx.resume.mockClear()
+    unlockAudio() // the welcome's tap
+    expect(ctx.resume).toHaveBeenCalledTimes(1)
+    ctx.resume.mockClear()
+    await Promise.resolve()
+    unlockAudio() // running: nothing to do
+    expect(ctx.resume).not.toHaveBeenCalled()
+  })
+
+  it('a context made ahead stays silent until the gesture, which only resumes it', () => {
+    prepareAudio()
+    sfx.clunk()
+    expect(oscillators).toBe(0)
+    const made = audioForTests() as unknown as FakeContext
+    unlockAudio()
+    expect(audioForTests()).toBe(made) // the same context, not a second one
+    expect(made.resume).toHaveBeenCalled()
+    sfx.clunk()
+    expect(oscillators).toBeGreaterThan(0)
   })
 
   it('unlocks once on the first gesture, then removes its listeners', () => {

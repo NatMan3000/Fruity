@@ -7,6 +7,17 @@ import { toneVars } from '../utils/tones'
 // so the page, the overscroll, the tab bar, the sheets and the iPhone status bar all agree.
 export type ScreenKind = 'season' | 'fruit'
 
+// The iPhone's status bar colour: the screen's, unless something covering the whole screen (the welcome)
+// wears its own colour for a while.
+let screenColour = ''
+let override: string | null = null
+const applyThemeColour = () => document.querySelector('meta[name="theme-color"]')?.setAttribute('content', override ?? screenColour)
+
+export function overrideThemeColour(colour: string | null) {
+  override = colour
+  applyThemeColour()
+}
+
 export function useScreen(t: Tones, kind: ScreenKind) {
   useLayoutEffect(() => {
     const root = document.documentElement
@@ -19,6 +30,7 @@ export function useScreen(t: Tones, kind: ScreenKind) {
       '--scoop': kind === 'fruit' ? t.bright : t.pop,
     }
     for (const [k, v] of Object.entries(vars)) root.style.setProperty(k, v)
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', vars['--screen'])
+    screenColour = vars['--screen']
+    applyThemeColour()
   }, [t, kind])
 }

@@ -127,6 +127,18 @@ Every text pair above is checked for all 39 fruit and all four seasons at 4.5:1,
 - All 39 fruit are modelled (comp-3d's 31 plus dragon fruit, passionfruit, lychee, feijoa, fig, coconut, custard apple and quince).
 - **Cost:** three.js and React Three Fiber (one shared chunk, 249 KB gzip, also used by the cafe), the models, flesh and cutting (12 KB) and the two scenes (2 KB and 1 KB) load lazily, only once the Buy now list has painted (`requestIdleCallback`). No `manualChunks`: forcing a `three` chunk pulled React into it and made the main entry preload all of three.js (caught 2 Nov 2026). Render on demand (`frameloop="demand"`), DPR capped at 2, one 1024 shadow map. Until it lands the dish's place waits empty, so the dish dropping in is the first thing seen there (the sticker still flashed up first and vanished, Nathan, 3 Nov 2026); a still of three stickers in a flat dish shows only where WebGL is missing or the scene fails.
 
+## Welcome (src/components/Welcome.tsx, src/three/WelcomeFruit.tsx)
+
+A tap-to-enter front page (Nathan, D21, 3 Nov 2026: "a really fun page with cool animation when you touch it"), shown on every launch, a shared deep link included, and on every return from the background.
+
+- **On screen:** the season's `page` colour, a tilted `pop` pill with the month and season, "Fruity" huge in Shrikhand (`light`, a hard 6px `ink` shadow), this month's lead fruit (the one the Now dish leads with, `dishFruits`) floating and slowly turning in 3D on a `pop` blob, the month's other dish fruit as stickers slapped on round the edges, and an `ink` "Tap to slice" pill. The whole screen is one button (accessible name "Enter Fruity. Tap to slice", inside a modal `<dialog>` named "Welcome to Fruity", focused on open); Enter, Space and Escape go in too. The status bar wears the season's colour while it is up.
+- **The tap:** a knife stroke flashes across the fruit at -16 degrees with the slice sound, the fruit is cut along it (laid so its cut is level, then tilted to the stroke), juice flies, the pieces fly apart along the cut's normal turning their cut faces to you, and the screen itself splits along the same line: the two halves (each with a `bright` cut face along its edge) part a little, then pull away faster and faster, hinging a few degrees, and the app is underneath. About 0.77 s from the tap until the welcome has gone. The screen underneath holds its entrance motion while the welcome is up (`html[data-welcome]` pauses it) and plays it as the halves part.
+- **Why the tap:** it is the gesture iOS needs to start Web Audio. The tap calls `unlockAudio` itself (it also resumes a context iOS stopped while the app was away), and the 3D heroes wait for the welcome to go (`useAfterPaint`), so the Now bowl's drop and clunk happen where they are seen and heard: the bowl's canvas is up within about 30 ms of the welcome going and it lands about 0.6 s later.
+- **When:** every cold start. On the way into the background it goes up straight away (so the picture on the way back is the welcome, never a flash of the old screen); back within 2 s (`FLICKER_MS`, the notification shade, a quick look elsewhere) it is taken down before the first frame; never over Cook mode. It covers whatever screen was there and the tap reveals it as it was: same route, scroll, cut fruit and state (`src/utils/welcome.ts`, `src/hooks/useWelcome.ts`).
+- **Fast:** colour, wordmark, cue and the fruit's sticker paint from the main bundle (the wordmark waits up to 350 ms for Shrikhand, never shows in the fallback face); the 3D fruit is its own small chunk and crossfades in over the sticker once its first frame is up, with the cut's shaders and textures compiled and the audio context made ahead, so the tap costs nothing. While it waits it also fetches the hero under it (its scene chunk and its fruit models), so the dish starts straight after.
+- **No WebGL:** the sticker stays and is cut with the screen. **Reduced motion:** the welcome still shows, the fruit sits still, and the tap fades it out in 220 ms (no stroke, no flying halves, no sound).
+- The one thing that moves while idle: the floating fruit, and only while the welcome is up.
+
 ## Motion
 
 "We like animation." Playful, springy, one-shot. CSS only (springs as `linear()` curves in `--ease-spring` and `--ease-bounce`, Web Animations for the bag swell); no animation library ships.
@@ -141,7 +153,7 @@ Every text pair above is checked for all 39 fruit and all four seasons at 4.5:1,
 | Sheet | Springs up, slides down |
 | Hero | Now: the empty area, then the bowl drops in with a soft landing (its shadow grows as it comes down, the canvas top fades in), and 150 ms after it lands the fruit drop in one after another (about 1.5 s in all). Fruit page: the fruit drops in. Then cut, juice, rejoin (above) |
 
-- Transform and opacity only. Nothing loops and nothing moves while idle: the 3D scene stops rendering once still.
+- Transform and opacity only. Nothing loops and nothing moves while idle: the 3D scene stops rendering once still. The one exception is the welcome's floating fruit, only while the welcome is up (above).
 - `prefers-reduced-motion: reduce` turns all of it off: screens appear in their final state, the hero's fruit start in the dish and cut without travel, the bag skips the hop.
 
 ## Components

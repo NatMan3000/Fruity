@@ -324,6 +324,32 @@
   animation: slash 360ms ease-out forwards;
 }
 
+/* The welcome screen (src/components/Welcome.tsx, DESIGN.md "Welcome"). Its fruit floats until the tap;
+   the rest is one-shot like everything else. */
+.welcome-word {
+  font-size: clamp(4.5rem, 24vw, 8rem);
+  text-shadow: 0 6px 0 var(--ink);
+}
+.welcome-rise {
+  animation: rise 520ms var(--ease-spring) backwards;
+}
+.welcome-cue {
+  animation: rise 520ms var(--ease-spring) 520ms backwards;
+}
+@keyframes welcome-blob {
+  from { opacity: 0; transform: scale(0.6) rotate(-8deg); }
+  to { opacity: 1; transform: none; }
+}
+.welcome-blob {
+  animation: welcome-blob 560ms var(--ease-spring) 60ms backwards;
+}
+/* While the welcome is up, the screen under it holds its entrance (a cold open's titles and blocks), and
+   plays it as the welcome opens (useWelcome.ts). */
+html[data-welcome] main,
+html[data-welcome] main * {
+  animation-play-state: paused !important;
+}
+
 /* Page moves (src/hooks/useRoute.ts sets html[data-nav] for one View Transition of the whole screen).
    push: the new screen slides in from the right over the old one, which eases a little left (the
    iPhone's own push); pop is the same in reverse. next / prev (tabs): a full sideways slide, the old

@@ -5,7 +5,7 @@
 // (never the sticker first: it flashed up and vanished, Nathan, 3 Nov 2026). The white-edged sticker is
 // the hero only where there is no 3D: WebGL missing or failing, or a fruit without a model (it drops in
 // itself, with a squash). Come back to the page by a back move and the fruit is there at once, at rest.
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import type { Fruit } from '../types/fruit'
 import type { CutNews } from '../three/cutting'
 import { BLOB } from '../three/framing'
@@ -16,9 +16,8 @@ import { sfx } from '../audio/sound'
 import { useAfterPaint, useSlash, webgl } from '../hooks/useLazy3D'
 import { useArrivedBack } from '../hooks/useRoute'
 import { Fallback, Slash } from './Lazy3D'
+import { SpinFruit } from './heroScenes'
 import { SliceButton } from './SliceButton'
-
-const SpinFruit = lazy(() => import('../three/SpinFruit'))
 
 // The blob sits a little below the top bar with the canvas centred on it; the Slice button hangs half
 // off its lower edge, which sets the hero's height.

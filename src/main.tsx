@@ -15,8 +15,10 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { installUnlock } from './audio/sound'
+import { installWelcome } from './hooks/useWelcome'
 
 installUnlock() // the first tap anywhere lets iOS start sound (src/audio/sound.ts)
+installWelcome() // every launch opens on the welcome screen, and every return from the background (src/components/Welcome.tsx)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

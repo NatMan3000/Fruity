@@ -29,14 +29,31 @@ function mixWithOthers() {
   } catch { /* an older Safari: the default is fine */ }
 }
 
-// Create and resume the context. Only ever called from a user gesture.
-export function unlockAudio() {
-  if (unlocked) return
+function makeContext(): Ctx | null {
   const w = globalThis as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }
   const AC = w.AudioContext ?? w.webkitAudioContext
-  if (!AC) return
+  if (!AC) return null
   mixWithOthers()
-  ctx = new AC()
+  return new AC()
+}
+
+// Make the context ahead of the gesture (it starts suspended and plays nothing until a gesture resumes
+// it), so the tap that unlocks it does not also pay for creating it: about 250 ms of a blocked main
+// thread in headless Chromium, right as the welcome screen is cut open.
+export function prepareAudio() {
+  if (!ctx) ctx = makeContext()
+}
+
+// Resume (creating it if need be) the context. Only ever called from a user gesture. Called again once
+// unlocked, it resumes it if iOS left it stopped: a pointerdown that iOS did not count as a gesture, or a
+// context iOS suspended or interrupted while the app was in the background (the welcome's tap on a return).
+export function unlockAudio() {
+  if (unlocked) {
+    if (ctx && ctx.state !== 'running') void ctx.resume()
+    return
+  }
+  if (!ctx) ctx = makeContext()
+  if (!ctx) return
   unlocked = true
   void ctx.resume()
 }
@@ -65,6 +82,9 @@ export function useSound(): [boolean, () => void] {
   const on = useSyncExternalStore(l => { listeners.add(l); return () => { listeners.delete(l) } }, soundOn)
   return [on, () => setSound(!enabled)]
 }
+
+// For tests: the context, once unlocked.
+export const audioForTests = () => ctx
 
 // For tests: forget everything and read the setting afresh.
 export function resetSoundForTests() {
