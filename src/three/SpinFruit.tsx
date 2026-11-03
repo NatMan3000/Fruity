@@ -21,6 +21,7 @@ interface SpinFruitProps {
   shade: string       // shadow tint (the fruit's ink)
   slice: number       // bumped by the Slice button: cut open, or put back
   onCut: (news: CutNews) => void
+  settled?: boolean   // start at rest, as it was left (the page was returned to by a back move)
   className?: string
   style?: CSSProperties
 }
@@ -42,16 +43,17 @@ export default function SpinFruit({ className, style, ...props }: SpinFruitProps
 // once it has landed, so nothing at rest or turned is ever faded.
 const DROP_FADE = 56
 
-function Scene({ fruit, shade, slice, onCut }: Omit<SpinFruitProps, 'className' | 'style'>) {
+function Scene({ fruit, shade, slice, onCut, settled = false }: Omit<SpinFruitProps, 'className' | 'style'>) {
   const { camera, size, invalidate, gl } = useThree()
   const obj = useRef<THREE.Group>(null)
   const held = useRef(false)
   const still = reducedMotion()
-  const spin = useTrackball(-0.5, 9, held) // arrives spinning one way, coasting to a stop
+  const atRest = still || settled
+  const spin = useTrackball(-0.5, atRest ? 0 : 9, held) // arrives spinning one way, coasting to a stop
   const pivot = useRef<THREE.Group>(null)
   const juice = useJuice()
-  const fall = useRef({ y: still ? 0 : 2.4, vy: 0, squash: 0, hop: 0, hopV: 0 })
-  const fading = useRef(!still)
+  const fall = useRef({ y: atRest ? 0 : 2.4, vy: 0, squash: 0, hop: 0, hopV: 0 })
+  const fading = useRef(!atRest)
   useEffect(() => {
     const el = gl.domElement
     const set = (v: string) => { el.style.setProperty('mask-image', v); el.style.setProperty('-webkit-mask-image', v) }

@@ -1,7 +1,9 @@
 // The Now hero: this month's peak fruit drop into a sundae dish in real 3D, and you can cut them open
 // (src/three/HeroDish.tsx). The 3D chunk (three.js) is lazy and only asked for once the Buy now list
-// has painted, so the list never waits for it; until it lands, or where WebGL is missing or fails, a
-// still of the same fruit in a flat dish shows instead. No hint text (Nathan, 2 Nov 2026): the Slice
+// has painted, so the list never waits for it; until it lands the dish's place waits empty, so the dish
+// dropping in is the first thing seen there (never the stickers first: they flashed up and vanished,
+// Nathan, 3 Nov 2026). A still of the same fruit in a flat dish shows only where WebGL is missing or the
+// scene fails. Come back to Now by a back move and the dish is there at once, at rest. No hint text (Nathan, 2 Nov 2026): the Slice
 // button is the cue, and the way in for keyboard and screen-reader users: it cuts every fruit in the
 // dish open at once, then reads Put back.
 import { lazy, Suspense, useMemo, useState } from 'react'
@@ -10,13 +12,15 @@ import type { Tones } from '../utils/tones'
 import type { CutNews } from '../three/cutting'
 import { FruitSticker } from './FruitSticker'
 import { useAfterPaint, useSlash, webgl } from '../hooks/useLazy3D'
+import { useArrivedBack } from '../hooks/useRoute'
 import { Fallback, Slash } from './Lazy3D'
 import { SliceButton } from './SliceButton'
 
 const HeroDish = lazy(() => import('../three/HeroDish'))
 
 export function NowHero({ fruits, tones }: { fruits: Fruit[]; tones: Tones }) {
-  const ready = useAfterPaint()
+  const back = useArrivedBack()
+  const ready = useAfterPaint(back)
   const [slice, setSlice] = useState(0)
   const [slash, showSlash] = useSlash()
   const [said, setSaid] = useState('')
@@ -44,13 +48,13 @@ export function NowHero({ fruits, tones }: { fruits: Fruit[]; tones: Tones }) {
 
   return (
     <div className="relative h-[290px]" role="group" aria-label={label}>
-      {webgl && ready ? (
+      {!webgl ? poster : ready && (
         <Fallback poster={poster}>
-          <Suspense fallback={poster}>
-            <HeroDish fruits={likes} dish={tones.pop} rim={tones.light} shade={tones.ink} slice={slice} onCut={onCut} onOpen={setOpen} className="absolute inset-0" />
+          <Suspense fallback={null}>
+            <HeroDish fruits={likes} dish={tones.pop} rim={tones.light} shade={tones.ink} slice={slice} onCut={onCut} onOpen={setOpen} settled={back} className="absolute inset-0" />
           </Suspense>
         </Fallback>
-      ) : poster}
+      )}
       <Slash at={slash} />
       {webgl && <SliceButton onSlice={() => setSlice(s => s + 1)} label={open ? 'Put back' : 'Slice'} className="absolute right-4 bottom-0" />}
       <p aria-live="polite" className="sr-only">{said}</p>

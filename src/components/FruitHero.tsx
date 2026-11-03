@@ -4,7 +4,7 @@
 // the 3D chunk is asked for after first paint and the blob waits empty until the fruit drops onto it
 // (never the sticker first: it flashed up and vanished, Nathan, 3 Nov 2026). The white-edged sticker is
 // the hero only where there is no 3D: WebGL missing or failing, or a fruit without a model (it drops in
-// itself, with a squash).
+// itself, with a squash). Come back to the page by a back move and the fruit is there at once, at rest.
 import { lazy, Suspense, useMemo, useState } from 'react'
 import type { Fruit } from '../types/fruit'
 import type { CutNews } from '../three/cutting'
@@ -13,6 +13,7 @@ import { MODELLED } from '../three/modelled'
 import { tonesOf } from '../utils/tones'
 import { FruitSticker } from './FruitSticker'
 import { useAfterPaint, useSlash, webgl } from '../hooks/useLazy3D'
+import { useArrivedBack } from '../hooks/useRoute'
 import { Fallback, Slash } from './Lazy3D'
 import { SliceButton } from './SliceButton'
 
@@ -25,7 +26,8 @@ const CANVAS_H = BLOB_TOP * 2 + BLOB.height
 
 export function FruitHero({ fruit }: { fruit: Fruit }) {
   const three = webgl && MODELLED.has(fruit.id)
-  const ready = useAfterPaint()
+  const back = useArrivedBack()
+  const ready = useAfterPaint(back)
   const [slice, setSlice] = useState(0)
   const [open, setOpen] = useState(false)
   const [slash, showSlash] = useSlash()
@@ -64,7 +66,7 @@ export function FruitHero({ fruit }: { fruit: Fruit }) {
       {!three ? poster : ready && (
         <Fallback poster={poster}>
           <Suspense fallback={null}>
-            <SpinFruit fruit={like} shade={tonesOf(fruit.colour).ink} slice={slice} onCut={onCut} className="absolute inset-x-0 top-0" style={{ height: CANVAS_H }} />
+            <SpinFruit fruit={like} shade={tonesOf(fruit.colour).ink} slice={slice} onCut={onCut} settled={back} className="absolute inset-x-0 top-0" style={{ height: CANVAS_H }} />
           </Suspense>
         </Fallback>
       )}
