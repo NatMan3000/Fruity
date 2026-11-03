@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { pageMove } from './useRoute'
 
 // For the two 3D heroes (NowHero, FruitHero): can this device draw WebGL, wait for first paint before
 // asking for the 3D chunk, and the knife stroke's position.
@@ -11,13 +12,21 @@ export const webgl = (() => {
   }
 })()
 
-// Ask for the 3D chunk only when the browser is idle after first paint. `now` (a hero returned to by a
-// back move, whose chunk is already loaded) skips the wait, so the scene is there as it was left.
+// Ask for the 3D chunk only when the browser is idle after first paint, or, on a screen a page move
+// brought in, once the slide has finished (building the scene mid-slide stalled it: pageMove in
+// useRoute.ts). `now` (a hero returned to by a back move, whose chunk is already loaded) skips the wait,
+// so the scene is there as it was left.
 export function useAfterPaint(now = false): boolean {
   const [ready, setReady] = useState(now)
   useEffect(() => {
     if (now) return
     const go = () => setReady(true)
+    const move = pageMove()
+    if (move) {
+      let live = true
+      void move.then(() => { if (live) go() })
+      return () => { live = false }
+    }
     if ('requestIdleCallback' in window) {
       const id = window.requestIdleCallback(go, { timeout: 700 })
       return () => window.cancelIdleCallback(id)
