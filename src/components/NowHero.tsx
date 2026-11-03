@@ -11,6 +11,7 @@ import type { Fruit } from '../types/fruit'
 import type { Tones } from '../utils/tones'
 import type { CutNews } from '../three/cutting'
 import { FruitSticker } from './FruitSticker'
+import { sfx } from '../audio/sound'
 import { useAfterPaint, useSlash, webgl } from '../hooks/useLazy3D'
 import { useArrivedBack } from '../hooks/useRoute'
 import { Fallback, Slash } from './Lazy3D'
@@ -30,6 +31,8 @@ export function NowHero({ fruits, tones }: { fruits: Fruit[]; tones: Tones }) {
   const onCut = (n: CutNews) => {
     setSaid(n.open ? `${n.name} cut open.` : `${n.name} back together.`)
     if (n.open) showSlash(n)
+    if (n.open) sfx.slice()
+    else sfx.join()
   }
 
   const poster = (

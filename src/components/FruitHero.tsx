@@ -12,6 +12,7 @@ import { BLOB } from '../three/framing'
 import { MODELLED } from '../three/modelled'
 import { tonesOf } from '../utils/tones'
 import { FruitSticker } from './FruitSticker'
+import { sfx } from '../audio/sound'
 import { useAfterPaint, useSlash, webgl } from '../hooks/useLazy3D'
 import { useArrivedBack } from '../hooks/useRoute'
 import { Fallback, Slash } from './Lazy3D'
@@ -38,6 +39,8 @@ export function FruitHero({ fruit }: { fruit: Fruit }) {
     setOpen(n.open)
     setSaid(n.open ? `${n.name} cut open.` : `${n.name} back together.`)
     if (n.open) showSlash(n)
+    if (n.open) sfx.slice()
+    else sfx.join()
   }
 
   // The sticker, when it is the hero (dropping in by itself) or the 3D scene failed.

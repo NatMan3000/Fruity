@@ -124,6 +124,15 @@ export const sfx = {
     tone(f, 0.1, { type: 'sine', gain: 0.1, slide: 160 })
     noise(0.04, { gain: 0.03, from: 2200, to: 900 })
   },
+  // The Slice button and tap-to-cut on the Now dish and a fruit's page: a quick knife swish, the snick of
+  // the blade, then a little juicy splash. `join`: the halves pressed back together.
+  slice: () => {
+    noise(0.09, { gain: 0.1, from: 1200, to: 5200 })
+    noise(0.05, { gain: 0.22, from: 6000, to: 2500, delay: 0.07 })
+    tone(1100, 0.05, { type: 'triangle', gain: 0.04, delay: 0.075 })
+    noise(0.2, { gain: 0.08, from: 900, to: 300, delay: 0.11 })
+  },
+  join: () => tone(240, 0.12, { type: 'sine', gain: 0.1, slide: 120 }),
   pop: () => tone(520 + Math.random() * 180, 0.12, { type: 'triangle', slide: 300 }),
   thud: () => tone(150, 0.12, { type: 'sine', gain: 0.22, slide: -60 }),
   chop: () => {
