@@ -1,4 +1,5 @@
 import { Suspense, useCallback, useMemo, useState } from 'react'
+import clsx from 'clsx'
 import { FRUITS } from './assets/fruits'
 import { useCurrentMonth } from './hooks/useCurrentMonth'
 import { loadRecipes, useRecipes } from './hooks/useRecipes'
@@ -12,6 +13,7 @@ import { tabFor, type Route } from './utils/route'
 import { seasonOf } from './utils/seasonality'
 import { seasonTones, tonesOf } from './utils/tones'
 import { BagSheet } from './components/BagSheet'
+import { HeartBerry } from './components/HeartBerry'
 import { Link } from './components/Link'
 import { preloadable } from './components/preloadable'
 import { TabBar } from './components/TabBar'
@@ -43,6 +45,7 @@ setRoutePreload(route => {
 })
 
 const isString = (v: unknown): v is string => typeof v === 'string'
+const TAB_ROOTS = new Set<Route['name']>(['now', 'browse', 'year', 'cook', 'play'])
 
 function App() {
   const route = useRoute()
@@ -68,18 +71,26 @@ function App() {
     navigate({ name: 'browse' })
   }, [setQuery, setFilter])
 
+  const onTabRoot = TAB_ROOTS.has(route.name)
+
   return (
     <UiContext.Provider value={ui}>
-      <div className="min-h-[100dvh] pb-[calc(env(safe-area-inset-bottom)+6.5rem)]">
+      <div className={clsx('min-h-[100dvh]', onTabRoot ? 'pb-[calc(env(safe-area-inset-bottom)+5.5rem)]' : 'pb-[calc(env(safe-area-inset-bottom)+1rem)]')}>
         <main className="mx-auto w-full max-w-2xl">
           <Screen route={route} recipes={recipes} month={month} query={query} setQuery={setQuery} filter={filter} setFilter={setFilter} browseWith={browseWith} />
         </main>
-        {/* The sign-off at the foot of every screen, like Bready's (Nathan, 3 Nov 2026) */}
-        <footer className="px-5 pt-8 pb-2 text-center text-small font-semibold text-(--light)">
-          <p>Made with <span aria-label="strawberries" role="img">🍓</span> by Josh &amp; Kai</p>
+        {/* The sign-off at the foot of every screen, like Bready's (Nathan, 3 Nov 2026), in the screen's own
+            text colour. A heart-shaped strawberry sticker stands in for the emoji, which vanished on red. */}
+        <footer className="-mt-4 flex items-center justify-center gap-1.5 px-5 pb-1 text-small font-semibold">
+          Made with
+          <HeartBerry />
+          <span className="sr-only">love</span>
+          by Josh &amp; Kai
         </footer>
       </div>
-      <TabBar active={tabFor(route)} />
+      {/* Only the four tab screens show the tab bar; a fruit, a recipe or a game is a page of its own
+          (Nathan, 3 Nov 2026). It slides away on the way in and back on the way out (index.css). */}
+      {onTabRoot && <TabBar active={tabFor(route)} />}
       <BagSheet open={bagOpen} onClose={() => setBagOpen(false)} />
     </UiContext.Provider>
   )

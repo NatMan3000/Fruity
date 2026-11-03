@@ -360,6 +360,12 @@ html[data-nav='prev']::view-transition-new(root) { animation: nav-from-left var(
   mix-blend-mode: normal;
   animation: none;
 }
+/* Into a fruit, recipe or game the bar drops away below the screen; back to a tab screen it rises again
+   (only one image exists then, so :only-child). */
+@keyframes tab-bar-away { to { transform: translateY(130%); } }
+@keyframes tab-bar-back { from { transform: translateY(130%); } }
+::view-transition-old(tab-bar):only-child { animation: tab-bar-away 260ms var(--ease-out-soft) both; }
+::view-transition-new(tab-bar):only-child { animation: tab-bar-back 300ms var(--ease-out-soft) both; }
 
 /* Bottom sheet (native dialog): springs up, slides down. */
 @keyframes sheet-up {
