@@ -6,13 +6,12 @@ import { peekFit } from '../utils/peek'
 // padding (`--chip-px`, which the chips read) are nudged so the chip at the screen's edge is always
 // visibly cut (src/utils/peek.ts): an obvious "more this way", never a row that happens to end flush
 // with the edge and hides the rest. From the sm
-// breakpoint up the chips wrap, so none is ever out of reach. `wrap`: wrap on a phone too, for a set
-// where every choice should show at once (Cook's recipe types).
-export function ChipRow({ label, children, wrap = false, className }: { label: string; children: ReactNode; wrap?: boolean; className?: string }) {
+// breakpoint up the chips wrap, so none is ever out of reach.
+export function ChipRow({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
   const row = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
     const el = row.current
-    if (!el || wrap) return
+    if (!el) return
     const fit = () => {
       el.style.columnGap = ''
       el.style.removeProperty('--chip-px')
@@ -26,13 +25,13 @@ export function ChipRow({ label, children, wrap = false, className }: { label: s
     document.fonts?.ready.then(fit) // chip widths change once the font lands
     window.addEventListener('resize', fit)
     return () => window.removeEventListener('resize', fit)
-  }, [wrap, children])
+  }, [children])
   return (
     <div
       ref={row}
       role="group"
       aria-label={label}
-      className={clsx('flex gap-2 px-4 py-1', wrap ? 'flex-wrap' : 'overflow-x-auto scrollbar-hide sm:flex-wrap sm:overflow-visible', className)}
+      className={clsx('flex gap-2 overflow-x-auto px-4 py-1 scrollbar-hide sm:flex-wrap sm:overflow-visible', className)}
     >
       {children}
     </div>
