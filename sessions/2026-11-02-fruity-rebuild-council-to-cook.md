@@ -1,11 +1,12 @@
 ---
 type: auto
 session_id: b956e647-9782-4c4f-babb-25733ca0efaf
+session_ids: [b956e647-9782-4c4f-babb-25733ca0efaf, b1766049-ca03-463b-be0b-c1a83eb7df76]
 project: Fruity
-date: 2026-11-02
+date: 2026-11-02..03
 topic: Fruity rebuild - agent council plan, Phases 0-3, hybrid 3D look, cafe and quiz games, iOS home-screen icon fix
-duration: 11.7 hours
-events: 1731
+duration: 18.8 hours
+events: 2698
 events_unit: turns
 ---
 
@@ -127,8 +128,8 @@ A four-seat agent council (shopper, player, designer, skeptic) debated two round
 
 ## Next Steps
 
-- ⬜ `D15`: Nathan's go to put Cook, 35 recipes, dish photos, cut faces and the 25 audit fixes live. On yes: rebase `phase3-cook` on `origin/main`, ff-merge, push, watch the Pages run, curl live.
-- ⬜ Then remove worktrees `Fruity-wt-cook` and `Fruity-wt-cuts`, delete branches `phase3-cook` and `fix-cut-faces`, stop the :4187 and :4191 local servers.
+- ✅ `D15` (re-asked as `D19`, deployed 3 Nov): Nathan's go to put Cook, 35 recipes, dish photos, cut faces and the 25 audit fixes live. On yes: rebase `phase3-cook` on `origin/main`, ff-merge, push, watch the Pages run, curl live.
+- ✅ Then remove worktrees `Fruity-wt-cook` and `Fruity-wt-cuts`, delete branches `phase3-cook` and `fix-cut-faces`, stop the :4187 and :4191 local servers.
 - ⬜ Phase 4 (salad-to-recipe upgrade, Passport) per the plan.
 - ⬜ Five round 7-9 feedback screenshots in `research/2026-11-02-feedback/` are untracked; committed with this log.
 
@@ -139,6 +140,87 @@ A four-seat agent council (shopper, player, designer, skeptic) debated two round
 ## Timeline
 
 Fruity has no TIMELINE.md; milestone recorded here: 2026-11-02, Fruity rebuilt (Phases 0-2, hybrid 3D look, cafe and quiz games, icon fix) live; Phase 3 Cook staged for `D15`.
+
+## Continued - 2026-11-03
+
+After a `/clr` the same process picked up `phase3-cook`, ran three phone-test rounds through worktree workers, added sound, a slice-to-open welcome and a re-themed cafe, and put it all live twice (`D19`, `D23`). The full narrative was written by `/EndSession` in [2026-11-03-fruity-phone-tests-welcome-deploy.md](2026-11-03-fruity-phone-tests-welcome-deploy.md); this section only records the chain.
+
+### Segment 2 - phone-test rounds, welcome screen, two deploys
+
+**Restart ID:** `claude -r b1766049-ca03-463b-be0b-c1a83eb7df76`
+
+- Phone-test fixes: swipe-back freeze and reload flash, photo before 3D (now a DESIGN.md rule plus `scripts/no-photo-before-3d.test.ts`), even tab slides, aligned headers.
+- Sound on by default app-wide, plops on bowl and fruit page, slice sound; `D20` back to one plop per fruit.
+- Welcome screen on every open (`D21`), cafe re-theme, footer "Made with 🍓 by Josh & Kai", recipe hero stickers removed.
+- Deployed 2dfc117 (`D19`) then 26b8802 (`D23`), each checked by live bundle hash; all worktrees and branches cleaned up. 157 tests.
+
+### Workers
+
+#### Worker - fruity-photos
+
+**Restart ID:** `claude -r fe55aed9-28e3-4023-a8c7-00c9a839b94e`
+
+- Wired all new fruit and dish photos into the Cook branch (build-dishes, import-art, build-images scripts).
+
+#### Worker - fruity-fixes
+
+**Restart ID:** `claude -r 014af0c5-0d4e-48b1-8583-6f3faab6bf87`
+
+- Fixed every finding of the 3 Nov responsive audit (dish drop, chip row), keeping the audit's finding ids.
+
+#### Worker - fruity-nav
+
+**Restart ID:** `claude -r 978cac23-466d-417f-82f5-bdb96adf9c40`
+
+- Photo flash before the 3D drop-in, iOS swipe-back freeze, directional page transitions (navMotion util, useRoute).
+
+#### Worker - fruity-bag
+
+**Restart ID:** `claude -r 8867fab6-904b-45bc-bf22-010516453d64`
+
+- Cook chips in one scrolling row, Clear bag with Undo.
+
+#### Worker - fruity-swipe
+
+**Restart ID:** `claude -r df64da66-0f6a-495c-b182-5282dc88d863`
+
+- Back moves land settled with no reload flash, Now hero without sticker photos, full-width tab slide.
+
+#### Worker - fruity-tabs
+
+**Restart ID:** `claude -r 35bf8874-f382-442f-9345-298097063b0d`
+
+- One shared 420ms tab duration (right-faster cause: Now 3D built mid-slide), draggable tab selector.
+
+#### Worker - fruity-dish
+
+**Restart ID:** `claude -r 219484ab-48f1-46eb-b84d-cfb6f92cc79d`
+
+- Now bowl drops in before the fruit; app-wide sound default on with bowl and plop effects.
+
+#### Worker - fruity-welcome
+
+**Restart ID:** `claude -r 87fca8f6-4bd3-407b-ba43-bde8cbd82223`
+
+- Tap-to-slice welcome screen on every launch and return (Welcome, WelcomeFruit, useWelcome).
+
+#### Worker - fruity-cafe
+
+**Restart ID:** `claude -r 2685bb7e-504a-4f23-9f05-59bd587b0f97`
+
+- Re-themed Fruit Salad Cafe into the app's Sorbet Sticker look.
+
+#### Worker - fruity-life
+
+**Restart ID:** `claude -r 3d54589c-4c58-4fcc-8ff8-2b99b39aac03`
+
+- Livelier welcome: jiggling sticker ring, sundae sprinkles, wordmark wave.
+
+#### Worker - fruity-touchcut
+
+**Restart ID:** `claude -r f82f16f6-4a05-4ebb-a719-1f86f98cc5a9`
+
+- Welcome cut runs through the touch point (deployed as `D23`).
 
 ## Atom candidates
 
