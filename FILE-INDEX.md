@@ -27,3 +27,6 @@
 | `scripts/validate-data.ts` | Fails the build on bad fruit data (`bun run validate`) | 2026-11-02 |
 | `scripts/validate-data.test.ts` | Tests for the fruit data validator | 2026-11-02 |
 | `scripts/colour-contrast.test.ts` | Checks every text colour pair the Sorbet look draws, for every fruit and season | 2026-11-02 |
+| `scripts/build-dishes.ts` | Recipe dish photos: imports the generated plate PNGs as JPEG originals and writes the 720 and 1200 WebP crops | 2026-11-03 |
+| `scripts/originals.ts` | Shared helper that keeps each generated PNG as a q85 JPEG original in `images-src/<kind>/`, re-imported only when the PNG's SHA-256 changes | 2026-11-03 |
+| `scripts/no-photo-before-3d.test.ts` | Source-scan gate for DESIGN.md 3D rule 1: a lazy 3D scene's place waits empty, never a photo or sticker first | 2026-11-03 |
