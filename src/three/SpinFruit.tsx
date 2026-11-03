@@ -15,6 +15,7 @@ import { buildFruit, cutParts } from './models'
 import { reducedMotion, useAnimation, useTopFade, useTrackball, type FruitLike } from './motion'
 import { BLOB } from './framing'
 import { ShadowFloor, Stage } from './stage'
+import { sfx } from '../audio/sound'
 
 interface SpinFruitProps {
   fruit: FruitLike
@@ -52,7 +53,7 @@ function Scene({ fruit, shade, slice, onCut, settled = false }: Omit<SpinFruitPr
   const spin = useTrackball(-0.5, atRest ? 0 : 9, held) // arrives spinning one way, coasting to a stop
   const pivot = useRef<THREE.Group>(null)
   const juice = useJuice()
-  const fall = useRef({ y: atRest ? 0 : 2.4, vy: 0, squash: 0, hop: 0, hopV: 0 })
+  const fall = useRef({ y: atRest ? 0 : 2.4, vy: 0, squash: 0, hop: 0, hopV: 0, plopped: atRest })
   const fade = useTopFade(!atRest, DROP_FADE)
   const model = useMemo(() => buildFruit(fruit.id, fruit.colour), [fruit.id, fruit.colour])
   const halves = useMemo(() => cutParts(model), [model])
@@ -141,6 +142,7 @@ function Scene({ fruit, shade, slice, onCut, settled = false }: Omit<SpinFruitPr
       if (f.y <= 0) {
         f.squash = Math.min(1, -f.vy / 8)
         f.y = 0
+        if (!f.plopped) { f.plopped = true; sfx.plop() } // the same plop as a fruit landing in the Now dish, first touch only
         f.vy = -f.vy * 0.32
         if (f.vy < 1) f.vy = 0
       }
