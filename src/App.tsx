@@ -16,6 +16,7 @@ import { Link } from './components/Link'
 import { preloadable } from './components/preloadable'
 import { TabBar } from './components/TabBar'
 import { TopBar } from './components/TopBar'
+import { Welcome } from './components/Welcome'
 import { CafeLoading } from './cafe/CafeLoading'
 import { BrowsePage } from './pages/BrowsePage'
 import { CookPage } from './pages/CookPage'
@@ -77,6 +78,7 @@ function App() {
       </div>
       <TabBar active={tabFor(route)} />
       <BagSheet open={bagOpen} onClose={() => setBagOpen(false)} />
+      <Welcome month={month} />
     </UiContext.Provider>
   )
 }

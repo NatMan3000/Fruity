@@ -16,7 +16,8 @@ export class Fallback extends Component<{ poster: ReactNode; children: ReactNode
   }
 }
 
-export function Slash({ at }: { at: SlashAt | null }) {
+// `length` in px (the welcome's stroke crosses the whole screen); the heroes' is 144.
+export function Slash({ at, length = 144 }: { at: SlashAt | null; length?: number }) {
   if (!at) return null
   return (
     <span
@@ -25,7 +26,7 @@ export function Slash({ at }: { at: SlashAt | null }) {
       className="pointer-events-none absolute"
       style={{ left: at.x, top: at.y, transform: `translate(-50%, -50%) rotate(${at.angle}deg)` }}
     >
-      <span className="slash block h-[5px] w-36 rounded-full bg-(--light) shadow-[0_0_12px_2px_rgb(255_255_255/0.6)]" style={{ '--angle': '0deg' } as CSSProperties} />
+      <span className="slash block h-[5px] rounded-full bg-(--light) shadow-[0_0_12px_2px_rgb(255_255_255/0.6)]" style={{ width: length, '--angle': '0deg' } as CSSProperties} />
     </span>
   )
 }

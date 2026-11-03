@@ -6,7 +6,7 @@
 // scene fails. Come back to Now by a back move and the dish is there at once, at rest. No hint text (Nathan, 2 Nov 2026): the Slice
 // button is the cue, and the way in for keyboard and screen-reader users: it cuts every fruit in the
 // dish open at once, then reads Put back.
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import type { Fruit } from '../types/fruit'
 import type { Tones } from '../utils/tones'
 import type { CutNews } from '../three/cutting'
@@ -15,9 +15,8 @@ import { sfx } from '../audio/sound'
 import { useAfterPaint, useSlash, webgl } from '../hooks/useLazy3D'
 import { useArrivedBack } from '../hooks/useRoute'
 import { Fallback, Slash } from './Lazy3D'
+import { HeroDish } from './heroScenes'
 import { SliceButton } from './SliceButton'
-
-const HeroDish = lazy(() => import('../three/HeroDish'))
 
 export function NowHero({ fruits, tones }: { fruits: Fruit[]; tones: Tones }) {
   const back = useArrivedBack()
