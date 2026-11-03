@@ -228,7 +228,7 @@ function Scene({ fruits, dish, rim, shade, slice, onCut, onOpen, settled = false
           b.y = 0
           b.vy = -b.vy * 0.34
           b.squash = Math.max(b.squash, impact)
-          if (!b.plopped || impact > 0.15) { b.plopped = true; sfx.plop(i, Math.sqrt(impact)) } // every touch-down, the bounce softer
+          if (!b.plopped) { b.plopped = true; sfx.plop(i) } // the first touch only: five fruit bouncing made ten plops (Nathan, D20)
           wobble.current.v += impact * 0.9
           if (b.vy < 1.2) b.vy = 0
         }
