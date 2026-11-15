@@ -57,41 +57,13 @@ bun run art       # New fruit art in one step: import from ~/.cache/kai-tmp/frui
 
 ## Project Structure
 
-```
-src/
-├── assets/fruits.ts          # 39 Australian fruits (validator prints the count); art-manifest.json
-├── assets/recipes.ts         # Fruity's own recipes (Phase 3 Cook), validated by scripts/validate-data.ts
-├── cafe/                     # Fruit Salad Cafe kids' game (lazy chunk, in the app's look: DESIGN.md)
-├── quiz/                     # Guess the fruit (lazy chunk): logic/ (pure, tested), QuizGame, 3D stage in three/QuizStage
-├── components/               # FruitSticker, StatusSticker, SeasonStrip, TopBar, TabBar, Sheet,
-│                             # BagSheet, NowHero (lazy 3D hero), RecipeIdeas, FruitIcon
-├── hooks/                    # useRoute, useBag, useScreen (screen colours), useCurrentMonth, ...
-├── pages/                    # Now, Browse (Fruit list), Year, FruitDetail, Cook, Recipe, CookMode, Play
-├── three/                    # Lazy 3D: HeroDish (the dish and cutting), models (39 procedural
-│                             # fruit, round ones in halves), flesh (cut-face textures), stage, motion
-├── utils/                    # seasonality, status, tones (Sorbet colour families), colour maths, ...
-├── App.tsx                   # Shell: routes, screen tones, tab bar, bag sheet
-└── index.css                 # Tokens (@theme), fonts, motion keyframes
-scripts/                      # validate-data, build-images, build-stickers (+ subject-mask.swift),
-                              # build-dishes, import-art + originals (PNG to JPEG originals), build-icons,
-                              # colour-contrast.test.ts
-```
+The tree is in the code. The non-obvious parts:
 
----
-
-## Features
-
-- **Current season awareness**: Highlights fruits in peak season
-- **Search**: Filter by fruit name
-- **Season filter**: Filter by Summer/Autumn/Winter/Spring
-- **In-season toggle**: Show only currently available fruits
-- **Now**: this month's peak fruit in a 3D sundae dish you can cut open, Buy now, Just landed, Ending soon, Cook this week
-- **Fruit Salad Cafe**: Kids' game: customers order by picture, drop, chop and stir, stickers
-- **Season Calendar**: Year-at-a-glance view of all fruit seasons
-- **Fruit Quiz**: Guess the fruit game
-- **Fruit Detail Pages**: The whole page in the fruit's colour; season, add to bag, how to pick and store, recipes, pairings, origin, nutrition
-- **Offline support**: PWA works without network after install
-- **Mobile-first**: Responsive grid, installable on home screen
+- `src/assets/fruits.ts`: 39 Australian fruits (the validator prints the count), with `art-manifest.json`; `src/assets/recipes.ts` holds Fruity's own recipes, both checked by `scripts/validate-data.ts`.
+- `src/cafe/` (Fruit Salad Cafe) and `src/quiz/` (Guess the fruit) are lazy chunks; the quiz logic in `src/quiz/logic/` is pure and tested.
+- `src/three/` is the lazy 3D layer: the hero dish, 39 procedural fruit models, cut-face textures. The feature list is in `DESIGN.md`.
+- `src/utils/tones.ts` holds the Sorbet colour families; `src/hooks/useScreen` sets each screen's colour.
+- `scripts/`: validate-data, build-images, build-stickers (`subject-mask.swift`), build-dishes, import-art, build-icons, `colour-contrast.test.ts`.
 
 ---
 
@@ -101,6 +73,3 @@ Deployed to GitHub Pages via GitHub Actions workflow.
 
 **URL:** https://natman3000.github.io/Fruity/
 
----
-
-*Last updated: 2026-11-02*
