@@ -216,3 +216,17 @@ A red apple with a lime leaf on a bright green square (`scripts/build-icons.ts`,
 ## Writing
 
 Australian English (colour, favourite, fibre). No em or en dashes: use " - ", commas or colons. Write "Ai", not "AI". Plain, short, warm.
+
+## Feature list (moved from CLAUDE.md, 2026-11-15)
+
+- **Current season awareness**: Highlights fruits in peak season
+- **Search**: Filter by fruit name
+- **Season filter**: Filter by Summer/Autumn/Winter/Spring
+- **In-season toggle**: Show only currently available fruits
+- **Now**: this month's peak fruit in a 3D sundae dish you can cut open, Buy now, Just landed, Ending soon, Cook this week
+- **Fruit Salad Cafe**: Kids' game: customers order by picture, drop, chop and stir, stickers
+- **Season Calendar**: Year-at-a-glance view of all fruit seasons
+- **Fruit Quiz**: Guess the fruit game
+- **Fruit Detail Pages**: The whole page in the fruit's colour; season, add to bag, how to pick and store, recipes, pairings, origin, nutrition
+- **Offline support**: PWA works without network after install
+- **Mobile-first**: Responsive grid, installable on home screen
